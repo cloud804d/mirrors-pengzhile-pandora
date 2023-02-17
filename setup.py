@@ -27,7 +27,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "pandora = pandora.__main__:main",
+            "pandora = pandora.__main__:run",
         ]
     }
 )

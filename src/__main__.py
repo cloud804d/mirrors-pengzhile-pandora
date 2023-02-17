@@ -48,7 +48,7 @@ def main():
     ChatBot(ChatGPT(access_token, args.proxy)).run()
 
 
-if __name__ == '__main__':
+def run():
     try:
         main()
     except KeyboardInterrupt:
@@ -56,3 +56,7 @@ if __name__ == '__main__':
         sys.exit(0)
     except Exception as e:
         Console.error_bh('### Error occurred: ' + str(e))
+
+
+if __name__ == '__main__':
+    run()
