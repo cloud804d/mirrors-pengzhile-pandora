@@ -5,14 +5,14 @@
 
 ## 如何运行：
 
-* 直接运行
+* 直接运行（`Python`版本目测起码要`3.7`）
  
     ```shell
     python setup.py install
     pandora
     ```
 
-* Docker运行：
+* `Docker`运行：
 
     ```shell
     docker build -t pandora .
