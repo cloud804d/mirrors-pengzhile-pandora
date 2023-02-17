@@ -30,15 +30,16 @@ def main():
     parser.add_argument(
         '-t',
         '--access_token',
-        help='Alternative to email and password authentication.',
-        required=False,
-        type=str,
-        default=None,
+        help='Login with your access token.',
+        action='store_true',
     )
     args, _ = parser.parse_known_args()
 
     access_token = args.access_token
-    if access_token is None:
+    if access_token:
+        Console.info_b('Please enter your access token to log in ChatGPT!')
+        access_token = getpass.getpass('  Access Token: ')
+    else:
         Console.info_b('Please enter your email and password to log in ChatGPT!')
         email = input('  Email: ')
         password = getpass.getpass('  Password: ')

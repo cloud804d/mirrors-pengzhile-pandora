@@ -162,6 +162,6 @@ class ChatGPT:
     @staticmethod
     def __get_error(response):
         try:
-            return response.json()['detail']
+            return str(response.json()['detail'])
         except:
             return response.text
