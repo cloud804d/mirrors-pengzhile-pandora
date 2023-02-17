@@ -31,7 +31,7 @@ class Auth0:
             return self.access_token
 
         if not self.__check_email(self.email) or not self.password:
-            raise Exception('invalid email or password')
+            raise Exception('invalid email or password.')
 
         if self.proxy:
             self.session.proxies = {
@@ -53,7 +53,7 @@ class Auth0:
             csrf_token = response.json()['csrfToken']
             return self.__part_three(token=csrf_token)
         else:
-            raise Exception('Error logging in')
+            raise Exception('Error logging in.')
 
     def __part_three(self, token: str) -> str:
         url = 'https://home.apps.openai.com/api/auth/signin/auth0?prompt=login'
@@ -75,7 +75,7 @@ class Auth0:
                 raise Exception('You have been rate limited.')
             return self.__part_four(url=url)
         else:
-            raise Exception('Error get login url')
+            raise Exception('Error get login url.')
 
     def __part_four(self, url: str) -> str:
         headers = {
@@ -90,9 +90,9 @@ class Auth0:
                 state = url_params['state'][0]
                 return self.__part_five(state)
             except IndexError as exc:
-                raise Exception('Rate limit hit') from exc
+                raise Exception('Rate limit hit.') from exc
         else:
-            raise Exception('Error request login url')
+            raise Exception('Error request login url.')
 
     def __part_five(self, state: str) -> str:
         url = 'https://auth0.openai.com/u/login/identifier?state=' + state
@@ -115,7 +115,7 @@ class Auth0:
         if response.status_code == 302:
             return self.__part_six(state=state)
         else:
-            raise Exception('Error check email')
+            raise Exception('Error check email.')
 
     def __part_six(self, state: str) -> str:
         url = 'https://auth0.openai.com/u/login/password?state=' + state
@@ -135,9 +135,9 @@ class Auth0:
         if response.status_code == 200:
             return self.get_access_token()
         if response.status_code == 400:
-            raise Exception('Wrong email or password')
+            raise Exception('Wrong email or password.')
         else:
-            raise Exception('Error login')
+            raise Exception('Error login.')
 
     def get_access_token(self) -> str:
         url = 'https://home.apps.openai.com/api/auth/session'
@@ -149,8 +149,11 @@ class Auth0:
 
         if response.status_code == 200:
             json = response.json()
+            if 'accessToken' not in json:
+                raise Exception('Get access token failed, maybe you need a proxy.')
+
             self.access_token = json['accessToken']
             self.expires = dt.strptime(json['expires'], '%Y-%m-%dT%H:%M:%S.%fZ') - datetime.timedelta(minutes=5)
             return self.access_token
         else:
-            raise Exception('Error get access token')
+            raise Exception('Error get access token.')

@@ -4,10 +4,10 @@ import argparse
 import getpass
 import sys
 
-from pandora.openai.api import ChatGPT
-from pandora.openai.auth import Auth0
-from pandora.openai.bot import ChatBot
-from pandora.openai.utils import Console
+from .openai.api import ChatGPT
+from .openai.auth import Auth0
+from .openai.bot import ChatBot
+from .openai.utils import Console
 
 
 def main():
@@ -48,7 +48,7 @@ def main():
     ChatBot(ChatGPT(access_token, args.proxy)).run()
 
 
-def run():
+if __name__ == '__main__':
     try:
         main()
     except KeyboardInterrupt:

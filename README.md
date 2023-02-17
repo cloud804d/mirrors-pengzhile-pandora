@@ -1,11 +1,20 @@
 # Pandora
 
 ### `潘多拉`，一个命令行的`ChatGPT`。
-### 实现了网页版`ChatGPT`的主要操作。能过`Cloudflare`，理论上不开代理也能用。
+### 实现了网页版`ChatGPT`的主要操作。能过`Cloudflare`，理论上速度还可以。
 
 ## 如何运行：
 
-* 直接运行（`Python`版本目测起码要`3.7`）
+* `Python`版本目测起码要`3.7`
+
+* `pip`安装运行
+
+	```shell
+	pip install Pandora-ChatGPT
+	pandora
+	```
+  
+* 编译运行
  
     ```shell
     python setup.py install
@@ -38,6 +47,8 @@
 * `/regen` 如果对`ChatGPT`当前回答不满意，可以让它重新回答。
 * `/new` 直接开启一个新会话。
 * `/del` 删除当前会话，回到会话选择界面。
+* `/token` 打印当前的`Access Token`，也许你用得上，但不要泄露。
+* `/clear` 清屏，应该不用解释。
 * `/exit` 退出`潘多拉`。
 
 ## 其他说明

@@ -3,8 +3,8 @@
 import asyncio
 import uuid
 
-from pandora.openai.api import ChatGPT
-from pandora.openai.utils import Console
+from .api import ChatGPT
+from .utils import Console
 
 
 class Prompt:
@@ -19,7 +19,9 @@ class Prompt:
 
 
 class State:
-    def __init__(self, conversation_id=None, model_slug=None, user_prompt=Prompt(), chatgpt_prompt=Prompt()):
+    def __init__(self, title=None, conversation_id=None, model_slug=None, user_prompt=Prompt(),
+                 chatgpt_prompt=Prompt()):
+        self.title = title
         self.conversation_id = conversation_id
         self.model_slug = model_slug
         self.user_prompt = user_prompt
@@ -91,6 +93,10 @@ class ChatBot:
             self.__talk_loop()
         elif '/regen' == command or '/regenerate' == command:
             self.__regenerate_reply(self.state)
+        elif '/token' == command:
+            self.__print_access_token()
+        elif '/cls' == command or '/clear' == command:
+            self.__clear_screen()
         elif '/help' == command or 'usage' == command or '/?' == command:
             self.__print_usage()
 
@@ -104,13 +110,25 @@ class ChatBot:
         print('/regen\t\tRegenerate response.')
         print('/new\t\tStart a new conversation.')
         print('/del\t\tDelete the current conversation.')
+        print('/token\t\tPrint your access token.')
+        print('/clear\t\tClear your screen.')
         print('/exit\t\tExit Pandora.')
         print()
+
+    def __print_access_token(self):
+        Console.warn_b('\n#### Your access token (keep it private)')
+        Console.warn(self.chatgpt.access_token)
+        print()
+
+    def __clear_screen(self):
+        Console.clear()
+        self.__print_conversation_title(self.state.title)
 
     def __new_conversation(self):
         self.state = State(model_slug=self.__choice_model()['slug'])
 
-        self.__print_conversation_title('New Chat')
+        self.state.title = 'New Chat'
+        self.__print_conversation_title(self.state.title)
 
     @staticmethod
     def __print_conversation_title(title: str):
@@ -128,6 +146,7 @@ class ChatBot:
             return
 
         if self.chatgpt.set_conversation_title(state.conversation_id, new_title):
+            self.state.title = new_title
             Console.success('#### Set title success.')
         else:
             Console.error('#### Set title failed.')
@@ -160,7 +179,8 @@ class ChatBot:
             nodes.insert(0, node)
             current_node_id = node['parent']
 
-        self.__print_conversation_title(result['title'])
+        self.state.title = result['title']
+        self.__print_conversation_title(self.state.title)
 
         for node in nodes:
             message = node['message']
@@ -197,6 +217,7 @@ class ChatBot:
         if first_prompt:
             new_title = self.chatgpt.gen_conversation_title(self.state.conversation_id, self.state.model_slug,
                                                             self.state.chatgpt_prompt.message_id)
+            self.state.title = new_title
             Console.success_bh('#### Title generated: ' + new_title)
 
     def __regenerate_reply(self, state):

@@ -3,21 +3,24 @@
 import os
 
 from termcolor import colored
+from colorama import just_fix_windows_console
 
 
 class Console:
     @staticmethod
-    def __clear():
-        os.system('cls' if 'nt' == os.name else 'clear')
-
-    @staticmethod
     def __colored(text: str, color, highlight, bold):
+        just_fix_windows_console()
+
         white = 'white'
         black = 'black'
         for_color = (black if white == color else white) if highlight else color
         bg_color = 'on_' + color if highlight else None
 
         return colored(text, color=for_color, on_color=bg_color, attrs=['bold'] if bold else None)
+
+    @staticmethod
+    def clear():
+        os.system('cls' if 'nt' == os.name else 'clear')
 
     @staticmethod
     def info(text: str, highlight=False, bold=False, output=True, end='\n', flush=False):

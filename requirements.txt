@@ -1,3 +1,4 @@
 aiohttp==3.8.3
 termcolor==2.2.0
 tls_client==0.1.8
+colorama==0.4.6
