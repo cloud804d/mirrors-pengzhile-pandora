@@ -40,7 +40,9 @@
 
 ## 关于 Access Token
 * 通常使用`Google`或`Microsoft`账号登录`ChatGPT`的人会用到
-* 首先正常登录`ChatGPT`登录成功到聊天页面后打开`https://chat.openai.com/api/auth/session`即可见到
+* 首先正常登录`ChatGPT`，不管是账号密码，还是`Google`或是`Microsoft`。
+* 登录成功到聊天页面后打开：`https://chat.openai.com/api/auth/session`。
+* 其中`accessToken`字段的那一长串内容即是`Access Token`。
 * `Access Token`可以复制保存，其有效期目前为`1个月`。
 * 不要泄露你的`Access Token`，使用它可以操纵你的账号。
 
