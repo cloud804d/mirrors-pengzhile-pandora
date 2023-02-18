@@ -17,17 +17,18 @@ setup(
     long_description_content_type='text/markdown',
     url="https://github.com/pengzhile/pandora",
     packages=['pandora', 'pandora.openai'],
-    package_dir={'pandora': 'src'},
+    package_dir={'pandora': 'src/pandora'},
     include_package_data=True,
     install_requires=[
-        'aiohttp == 3.8.3',
+        'aiohttp == 3.8.4',
+        'colorama == 0.4.6',
+        'pyreadline == 2.1; platform_system == "Windows"',
         'termcolor == 2.2.0',
         'tls_client == 0.1.8',
-        'colorama == 0.4.6',
     ],
     entry_points={
         "console_scripts": [
-            "pandora = pandora.__main__:run",
+            "pandora = pandora.launcher:run",
         ]
     }
 )

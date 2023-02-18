@@ -2,12 +2,20 @@
 
 import argparse
 import getpass
+import os
 import sys
 
 from .openai.api import ChatGPT
 from .openai.auth import Auth0
 from .openai.bot import ChatBot
 from .openai.utils import Console
+
+if 'nt' == os.name:
+    import pyreadline as readline
+else:
+    import readline
+
+    readline.set_completer_delims('')
 
 
 def main():
@@ -29,16 +37,21 @@ def main():
     )
     parser.add_argument(
         '-t',
-        '--access_token',
-        help='Login with your access token.',
-        action='store_true',
+        '--token_file',
+        help='Specify an access token file and login with your access token.',
+        required=False,
+        type=str,
+        default=None,
     )
     args, _ = parser.parse_known_args()
 
-    access_token = args.access_token
-    if access_token:
-        Console.info_b('Please enter your access token to log in ChatGPT!')
-        access_token = getpass.getpass('  Access Token: ')
+    token_file = args.token_file
+    if token_file:
+        if not os.path.isfile(token_file):
+            raise Exception('Error: {} is not a file.'.format(token_file))
+
+        with open(token_file, 'r') as f:
+            access_token = f.read().strip()
     else:
         Console.info_b('Please enter your email and password to log in ChatGPT!')
         email = input('  Email: ')
@@ -57,7 +70,3 @@ def run():
         sys.exit(0)
     except Exception as e:
         Console.error_bh('### Error occurred: ' + str(e))
-
-
-if __name__ == '__main__':
-    run()

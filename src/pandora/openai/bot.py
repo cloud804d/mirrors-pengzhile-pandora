@@ -78,7 +78,7 @@ class ChatBot:
     def __process_command(self, command):
         command = command.strip().lower()
 
-        if '/quit' == command or '/exit' == command:
+        if '/quit' == command or '/exit' == command or '/bye' == command:
             raise KeyboardInterrupt
         elif '/del' == command or '/delete' == command or '/remove' == command:
             self.__del_conversation(self.state)

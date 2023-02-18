@@ -35,7 +35,7 @@
 
 * 可通过 `pandora --help` 查看。
 * `-p` 或 `--proxy` 指定代理，格式：`http://user:pass@ip:port`。
-* `-t` 或 `--access_token` 使用`Access Token`登录，提示输入`Access Token`。
+* `-t` 或 `--token_file` 指定一个存放`Access Token`的文件，使用`Access Token`登录。
 * 使用`Access Token`方式登录，可以无代理直连。
 
 ## 关于 Access Token
