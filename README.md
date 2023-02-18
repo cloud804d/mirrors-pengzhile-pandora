@@ -5,9 +5,9 @@
 
 ## 如何运行：
 
-* `Python`版本目测起码要`3.7`
+* Python版本目测起码要`3.7`
 
-* `pip`安装运行
+* pip安装运行
 
 	```shell
 	pip install Pandora-ChatGPT
@@ -21,7 +21,7 @@
     pandora
     ```
 
-* `Docker`运行：
+* Docker运行：
 
     ```shell
     docker build -t pandora .
@@ -37,6 +37,12 @@
 * `-p` 或 `--proxy` 指定代理，格式：`http://user:pass@ip:port`。
 * `-t` 或 `--access_token` 使用`Access Token`登录，提示输入`Access Token`。
 * 使用`Access Token`方式登录，可以无代理直连。
+
+## 关于 Access Token
+* 通常使用`Google`或`Microsoft`账号登录`ChatGPT`的人会用到
+* 首先正常登录`ChatGPT`登录成功到聊天页面后打开`https://chat.openai.com/api/auth/session`即可见到
+* `Access Token`可以复制保存，其有效期目前为`1个月`。
+* 不要泄露你的`Access Token`，使用它可以操纵你的账号。
 
 ## 操作命令
 
