@@ -3,13 +3,13 @@
 import json
 
 import aiohttp
-import tls_client
+import requests as requests
 
 
 class ChatGPT:
     def __init__(self, access_token, proxy=None):
         self.access_token = access_token
-        self.session = tls_client.Session(client_identifier='chrome_109')
+        self.session = requests.Session()
         if proxy:
             self.session.proxies = {
                 'http': proxy,
@@ -28,34 +28,34 @@ class ChatGPT:
 
     def list_models(self):
         url = 'https://apps.openai.com/api/models'
-        response = self.session.get(url=url, headers=self.basic_headers)
+        resp = self.session.get(url=url, headers=self.basic_headers, allow_redirects=False, timeout=100)
 
-        if response.status_code != 200:
-            raise Exception('list models failed: ' + self.__get_error(response))
+        if resp.status_code != 200:
+            raise Exception('list models failed: ' + self.__get_error(resp))
 
-        result = response.json()
+        result = resp.json()
         if 'models' not in result:
-            raise Exception('list models failed: ' + response.text)
+            raise Exception('list models failed: ' + resp.text)
 
         return result['models']
 
     def list_conversations(self, offset, limit):
         url = 'https://apps.openai.com/api/conversations?offset={}&limit={}'.format(offset, limit)
-        response = self.session.get(url=url, headers=self.basic_headers)
+        resp = self.session.get(url=url, headers=self.basic_headers, allow_redirects=False, timeout=100)
 
-        if response.status_code != 200:
-            raise Exception('list conversations failed: ' + self.__get_error(response))
+        if resp.status_code != 200:
+            raise Exception('list conversations failed: ' + self.__get_error(resp))
 
-        return response.json()
+        return resp.json()
 
     def get_conversation(self, conversation_id):
         url = 'https://apps.openai.com/api/conversation/' + conversation_id
-        response = self.session.get(url=url, headers=self.basic_headers)
+        resp = self.session.get(url=url, headers=self.basic_headers, allow_redirects=False, timeout=100)
 
-        if response.status_code != 200:
-            raise Exception('get conversation failed: ' + self.__get_error(response))
+        if resp.status_code != 200:
+            raise Exception('get conversation failed: ' + self.__get_error(resp))
 
-        return response.json()
+        return resp.json()
 
     def del_conversation(self, conversation_id) -> bool:
         data = {
@@ -69,14 +69,14 @@ class ChatGPT:
             'model': model,
             'message_id': message_id,
         }
-        response = self.session.post(url=url, headers=self.basic_headers, json=data)
+        resp = self.session.post(url=url, headers=self.basic_headers, json=data, allow_redirects=False, timeout=100)
 
-        if response.status_code != 200:
-            raise Exception('gen title failed: ' + self.__get_error(response))
+        if resp.status_code != 200:
+            raise Exception('gen title failed: ' + self.__get_error(resp))
 
-        result = response.json()
+        result = resp.json()
         if 'title' not in result:
-            raise Exception('gen title failed: ' + response.text)
+            raise Exception('gen title failed: ' + resp.text)
 
         return result['title']
 
@@ -134,11 +134,11 @@ class ChatGPT:
                    'Content-Type': 'application/json'}
 
         async with aiohttp.ClientSession() as session:
-            async with session.post(url, json=data, headers=headers, timeout=600) as response:
-                if response.status != 200:
-                    raise Exception('request conversation failed: ' + str(response.status))
+            async with session.post(url, json=data, headers=headers, timeout=600) as resp:
+                if resp.status != 200:
+                    raise Exception('request conversation failed: ' + str(resp.status))
 
-                async for line in response.content:
+                async for line in resp.content:
                     utf8_line = line.decode()
                     if 'data: [DONE]' == utf8_line[0:12]:
                         break
@@ -148,20 +148,20 @@ class ChatGPT:
 
     def __update_conversation(self, conversation_id, data) -> bool:
         url = 'https://apps.openai.com/api/conversation/' + conversation_id
-        response = self.session.patch(url=url, headers=self.basic_headers, json=data)
+        resp = self.session.patch(url=url, headers=self.basic_headers, json=data, allow_redirects=False, timeout=100)
 
-        if response.status_code != 200:
-            raise Exception('set conversation title failed: ' + self.__get_error(response))
+        if resp.status_code != 200:
+            raise Exception('set conversation title failed: ' + self.__get_error(resp))
 
-        result = response.json()
+        result = resp.json()
         if 'success' not in result:
-            raise Exception('set conversation title failed: ' + response.text)
+            raise Exception('set conversation title failed: ' + resp.text)
 
         return result['success']
 
     @staticmethod
-    def __get_error(response):
+    def __get_error(resp):
         try:
-            return str(response.json()['detail'])
+            return str(resp.json()['detail'])
         except:
-            return response.text
+            return resp.text

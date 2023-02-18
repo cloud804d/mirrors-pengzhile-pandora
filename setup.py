@@ -24,7 +24,7 @@ setup(
         'colorama == 0.4.6',
         'pyreadline == 2.1; platform_system == "Windows"',
         'termcolor == 2.2.0',
-        'tls_client == 0.1.8',
+        'requests==2.28.2',
     ],
     entry_points={
         "console_scripts": [

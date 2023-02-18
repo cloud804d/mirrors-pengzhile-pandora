@@ -2,8 +2,8 @@
 
 import os
 
-from termcolor import colored
 from colorama import just_fix_windows_console
+from termcolor import colored
 
 
 class Console:

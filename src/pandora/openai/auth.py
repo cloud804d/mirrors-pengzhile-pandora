@@ -5,7 +5,7 @@ import re
 from datetime import datetime as dt
 from urllib.parse import urlparse, parse_qs
 
-import tls_client
+import requests as requests
 
 
 class Auth0:
@@ -15,7 +15,7 @@ class Auth0:
         self.password = password
         self.proxy = proxy
         self.use_cache = use_cache
-        self.session = tls_client.Session(client_identifier='chrome_109')
+        self.session = requests.Session()
         self.access_token = None
         self.expires = None
         self.user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) ' \
@@ -47,10 +47,10 @@ class Auth0:
             'User-Agent': self.user_agent,
             'Referer': 'https://home.apps.openai.com/auth/login',
         }
-        response = self.session.get(url=url, headers=headers)
+        resp = self.session.get(url=url, headers=headers, allow_redirects=False, timeout=100)
 
-        if response.status_code == 200:
-            csrf_token = response.json()['csrfToken']
+        if resp.status_code == 200:
+            csrf_token = resp.json()['csrfToken']
             return self.__part_three(token=csrf_token)
         else:
             raise Exception('Error logging in.')
@@ -67,10 +67,10 @@ class Auth0:
             'csrfToken': token,
             'json': 'true',
         }
-        response = self.session.post(url=url, headers=headers, data=data)
+        resp = self.session.post(url=url, headers=headers, data=data, allow_redirects=False, timeout=100)
 
-        if response.status_code == 200:
-            url = response.json()['url']
+        if resp.status_code == 200:
+            url = resp.json()['url']
             if not url.startswith('https://auth0.openai.com/authorize?'):
                 raise Exception('You have been rate limited.')
             return self.__part_four(url=url)
@@ -82,11 +82,11 @@ class Auth0:
             'User-Agent': self.user_agent,
             'Referer': 'https://home.apps.openai.com/',
         }
-        response = self.session.get(url=url, headers=headers, allow_redirects=True)
+        resp = self.session.get(url=url, headers=headers, allow_redirects=True, timeout=100)
 
-        if response.status_code == 200:
+        if resp.status_code == 200:
             try:
-                url_params = parse_qs(urlparse(response.url).query)
+                url_params = parse_qs(urlparse(resp.url).query)
                 state = url_params['state'][0]
                 return self.__part_five(state)
             except IndexError as exc:
@@ -110,9 +110,9 @@ class Auth0:
             'webauthn-platform-available': 'true',
             'action': 'default',
         }
-        response = self.session.post(url, headers=headers, data=data)
+        resp = self.session.post(url, headers=headers, data=data, allow_redirects=False, timeout=100)
 
-        if response.status_code == 302:
+        if resp.status_code == 302:
             return self.__part_six(state=state)
         else:
             raise Exception('Error check email.')
@@ -130,11 +130,11 @@ class Auth0:
             'password': self.password,
             'action': 'default',
         }
-        response = self.session.post(url, headers=headers, data=data, allow_redirects=True)
+        resp = self.session.post(url, headers=headers, data=data, allow_redirects=True, timeout=100)
 
-        if response.status_code == 200:
+        if resp.status_code == 200:
             return self.get_access_token()
-        if response.status_code == 400:
+        if resp.status_code == 400:
             raise Exception('Wrong email or password.')
         else:
             raise Exception('Error login.')
@@ -145,10 +145,10 @@ class Auth0:
             'User-Agent': self.user_agent,
             'Referer': 'https://home.apps.openai.com/chat',
         }
-        response = self.session.get(url=url, headers=headers)
+        resp = self.session.get(url=url, headers=headers, allow_redirects=False, timeout=100)
 
-        if response.status_code == 200:
-            json = response.json()
+        if resp.status_code == 200:
+            json = resp.json()
             if 'accessToken' not in json:
                 raise Exception('Get access token failed, maybe you need a proxy.')
 
