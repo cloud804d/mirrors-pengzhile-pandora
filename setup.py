@@ -21,10 +21,10 @@ setup(
     include_package_data=True,
     install_requires=[
         'aiohttp == 3.8.4',
-        'colorama == 0.4.6',
         'pyreadline == 2.1; platform_system == "Windows"',
-        'termcolor == 2.2.0',
-        'requests==2.28.2',
+        'requests == 2.28.2',
+        'rich == 13.3.1',
+        'appdirs == 1.4.4',
     ],
     entry_points={
         "console_scripts": [

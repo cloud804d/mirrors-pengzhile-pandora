@@ -3,11 +3,13 @@
 import asyncio
 import uuid
 
+from rich.prompt import Prompt, Confirm
+
 from .api import ChatGPT
 from .utils import Console
 
 
-class Prompt:
+class ChatPrompt:
     def __init__(self, prompt: str = None, parent_id=None, message_id=None):
         self.prompt = prompt
         self.parent_id = parent_id if parent_id else self.gen_message_id()
@@ -19,8 +21,8 @@ class Prompt:
 
 
 class State:
-    def __init__(self, title=None, conversation_id=None, model_slug=None, user_prompt=Prompt(),
-                 chatgpt_prompt=Prompt()):
+    def __init__(self, title=None, conversation_id=None, model_slug=None, user_prompt=ChatPrompt(),
+                 chatgpt_prompt=ChatPrompt()):
         self.title = title
         self.conversation_id = conversation_id
         self.model_slug = model_slug
@@ -60,11 +62,7 @@ class ChatBot:
     def __get_input():
         lines = []
         while True:
-            try:
-                line = input()
-            except UnicodeDecodeError:
-                Console.error('#### Input error. Retry:')
-                continue
+            line = input()
 
             if not line:
                 break
@@ -102,7 +100,7 @@ class ChatBot:
 
     @staticmethod
     def __print_usage():
-        Console.info_b('\n#### Command list')
+        Console.info_b('\n#### Command list:')
         print('/?\t\tShow this help message.')
         print('/title\t\tSet the current conversation\'s title.')
         print('/select\t\tChoice a different conversation.')
@@ -133,27 +131,30 @@ class ChatBot:
     @staticmethod
     def __print_conversation_title(title: str):
         Console.info_bh('==================== {} ===================='.format(title))
-        Console.success_h('Double enter to send. Type /? for help.')
+        Console.debug_h('Double enter to send. Type /? for help.')
 
     def __set_conversation_title(self, state: State):
         if not state.conversation_id:
             Console.error('#### Conversation has not been created.')
             return
 
-        new_title = input('New title: ')
+        new_title = Prompt.ask('New title')
         if len(new_title) > 64:
             Console.error('#### Title too long.')
             return
 
         if self.chatgpt.set_conversation_title(state.conversation_id, new_title):
             self.state.title = new_title
-            Console.success('#### Set title success.')
+            Console.debug('#### Set title success.')
         else:
             Console.error('#### Set title failed.')
 
     def __del_conversation(self, state: State):
         if not state.conversation_id:
             Console.error('#### Conversation has not been created.')
+            return
+
+        if not Confirm.ask('Are you sure?', default=False):
             return
 
         if self.chatgpt.del_conversation(state.conversation_id):
@@ -195,8 +196,8 @@ class ChatBot:
             else:
                 prompt = self.state.chatgpt_prompt
 
-                Console.debug_b('ChatGPT:')
-                Console.debug(message['content']['parts'][0])
+                Console.success_b('ChatGPT:')
+                Console.success(message['content']['parts'][0])
 
             prompt.prompt = message['content']['parts'][0]
             prompt.parent_id = node['parent']
@@ -205,10 +206,10 @@ class ChatBot:
             print()
 
     def __talk(self, prompt):
-        Console.debug_b('ChatGPT:')
+        Console.success_b('ChatGPT:')
 
         first_prompt = not self.state.conversation_id
-        self.state.user_prompt = Prompt(prompt, parent_id=self.state.chatgpt_prompt.message_id)
+        self.state.user_prompt = ChatPrompt(prompt, parent_id=self.state.chatgpt_prompt.message_id)
 
         generator = self.chatgpt.talk(prompt, self.state.model_slug, self.state.user_prompt.message_id,
                                       self.state.user_prompt.parent_id, self.state.conversation_id)
@@ -218,7 +219,7 @@ class ChatBot:
             new_title = self.chatgpt.gen_conversation_title(self.state.conversation_id, self.state.model_slug,
                                                             self.state.chatgpt_prompt.message_id)
             self.state.title = new_title
-            Console.success_bh('#### Title generated: ' + new_title)
+            Console.debug_bh('#### Title generated: ' + new_title)
 
     def __regenerate_reply(self, state):
         if not state.conversation_id:
@@ -228,7 +229,7 @@ class ChatBot:
         generator = self.chatgpt.regenerate_reply(state.user_prompt.prompt, state.model_slug, state.conversation_id,
                                                   state.user_prompt.message_id, state.user_prompt.parent_id)
         print()
-        Console.debug_b('ChatGPT:')
+        Console.success_b('ChatGPT:')
         asyncio.run(self.__print_reply(generator))
 
     async def __print_reply(self, generator):
@@ -251,7 +252,7 @@ class ChatBot:
             self.state.chatgpt_prompt.message_id = message['id']
 
             if text:
-                Console.debug(text, end='', flush=True)
+                Console.success(text, end='')
 
             if message['end_turn']:
                 print()
@@ -262,48 +263,39 @@ class ChatBot:
         if not conversations['total']:
             return None
 
+        choices = ['c']
         items = conversations['items']
         first_page = 0 == conversations['offset']
         last_page = (conversations['offset'] + conversations['limit']) >= conversations['total']
 
         Console.info_b('Choice conversation (Page {}):'.format(page))
         for idx, item in enumerate(items):
-            print('  {}. {}'.format(idx + 1, item['title']))
+            number = str(idx + 1)
+            choices.append(number)
+            Console.info('  {}. {}'.format(number, item['title']))
 
         if not last_page:
+            choices.append('n')
             Console.warn('  n. >> Next page')
 
         if not first_page:
+            choices.append('p')
             Console.warn('  p. << Previous page')
 
         Console.warn('  c. ** Start new chat')
 
-        choice_range = range(1, len(items) + 1)
         while True:
-            choice = input('Your choice: ')
+            choice = Prompt.ask('Your choice', choices=choices, show_choices=False)
             if 'c' == choice:
                 return None
 
             if 'n' == choice:
-                if last_page:
-                    Console.error('#### It\'s last page!')
-                    continue
                 return self.__choice_conversation(page + 1, page_size)
 
             if 'p' == choice:
-                if first_page:
-                    Console.error('#### It\'s first page!')
-                    continue
                 return self.__choice_conversation(page - 1, page_size)
 
-            try:
-                choice = int(choice)
-                if choice in choice_range:
-                    return items[choice - 1]
-            except:
-                pass
-
-            Console.error('#### Invalid choice!')
+            return items[int(choice) - 1]
 
     def __choice_model(self):
         models = self.chatgpt.list_models()
@@ -312,17 +304,13 @@ class ChatBot:
         if 1 == size:
             return models[0]
 
+        choices = []
         Console.info_b('Choice model:')
         for idx, item in enumerate(models):
-            print('  {}. {} - {}'.format(idx + 1, item['title'], item['description']))
+            number = str(idx + 1)
+            choices.append(number)
+            Console.info('  {}. {} - {}'.format(number, item['title'], item['description']))
 
-        choice_range = range(1, size + 1)
         while True:
-            try:
-                choice = int(input('Your choice: '))
-                if choice in choice_range:
-                    return models[choice - 1]
-            except:
-                pass
-
-            Console.error('#### Invalid choice!')
+            choice = Prompt.ask('Your choice', choices=choices, show_choices=False)
+            return models[int(choice) - 1]

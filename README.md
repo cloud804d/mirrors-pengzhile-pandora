@@ -36,9 +36,10 @@
 * 可通过 `pandora --help` 查看。
 * `-p` 或 `--proxy` 指定代理，格式：`http://user:pass@ip:port`。
 * `-t` 或 `--token_file` 指定一个存放`Access Token`的文件，使用`Access Token`登录。
-* 使用`Access Token`方式登录，可以无代理直连。
+* `-v` 或 `--verbose` 显示调试信息，且出错时打印异常堆栈信息，供查错使用。
 
 ## 关于 Access Token
+* 使用`Access Token`方式登录，可以无代理直连。
 * 通常使用`Google`或`Microsoft`账号登录`ChatGPT`的人会用到
 * 首先正常登录`ChatGPT`，不管是账号密码，还是`Google`或是`Microsoft`。
 * 登录成功到聊天页面后打开：`https://chat.openai.com/api/auth/session`。

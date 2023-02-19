@@ -2,127 +2,110 @@
 
 import os
 
-from colorama import just_fix_windows_console
-from termcolor import colored
+from rich.console import Console as RichConsole
+from rich.theme import Theme
 
 
 class Console:
-    @staticmethod
-    def __colored(text: str, color, highlight, bold):
-        just_fix_windows_console()
+    __theme = Theme({
+        'info': 'white',
+        'info_b': 'white bold',
+        'debug': 'cyan',
+        'debug_b': 'cyan bold',
+        'warn': 'yellow',
+        'warn_b': 'yellow bold',
+        'error': 'red',
+        'error_b': 'red bold',
+        'success': 'green',
+        'success_b': 'green bold',
+    })
 
-        white = 'white'
-        black = 'black'
-        for_color = (black if white == color else white) if highlight else color
-        bg_color = 'on_' + color if highlight else None
-
-        return colored(text, color=for_color, on_color=bg_color, attrs=['bold'] if bold else None)
+    __console = RichConsole(theme=__theme)
 
     @staticmethod
     def clear():
         os.system('cls' if 'nt' == os.name else 'clear')
 
     @staticmethod
-    def info(text: str, highlight=False, bold=False, output=True, end='\n', flush=False):
-        result = Console.__colored(text, 'white', highlight, bold)
-
-        if output:
-            print(result, end=end, flush=flush)
-
-        return result
+    def print(msg):
+        Console.__console.print(msg)
 
     @staticmethod
-    def info_b(text: str, highlight=False, output=True, end='\n', flush=False):
-        Console.info(text, highlight, True, output, end, flush)
+    def info(text: str, highlight=False, bold=False, end='\n'):
+        Console.__console.print(text, style='info_b' if bold else 'info', highlight=highlight, end=end)
 
     @staticmethod
-    def info_h(text: str, bold=False, output=True, end='\n', flush=False):
-        Console.info(text, True, bold, output, end, flush)
+    def info_b(text: str, highlight=False, end='\n'):
+        Console.info(text, highlight, True, end)
 
     @staticmethod
-    def info_bh(text: str, output=True, end='\n', flush=False):
-        Console.info(text, True, True, output, end, flush)
+    def info_h(text: str, bold=False, end='\n'):
+        Console.info(text, True, bold, end)
 
     @staticmethod
-    def debug(text: str, highlight=False, bold=False, output=True, end='\n', flush=False):
-        result = Console.__colored(text, 'blue', highlight, bold)
-
-        if output:
-            print(result, end=end, flush=flush)
-
-        return result
+    def info_bh(text: str, end='\n'):
+        Console.info(text, True, True, end)
 
     @staticmethod
-    def debug_b(text: str, highlight=False, output=True, end='\n', flush=False):
-        Console.debug(text, highlight, True, output, end, flush)
+    def debug(text: str, highlight=False, bold=False, end='\n'):
+        Console.__console.print(text, style='debug_b' if bold else 'debug', highlight=highlight, end=end)
 
     @staticmethod
-    def debug_h(text: str, bold=False, output=True, end='\n', flush=False):
-        Console.debug(text, True, bold, output, end, flush)
+    def debug_b(text: str, highlight=False, end='\n'):
+        Console.debug(text, highlight, True, end)
 
     @staticmethod
-    def debug_bh(text: str, output=True, end='\n', flush=False):
-        Console.debug(text, True, True, output, end, flush)
+    def debug_h(text: str, bold=False, end='\n'):
+        Console.debug(text, True, bold, end)
 
     @staticmethod
-    def error(text: str, highlight=False, bold=False, output=True, end='\n', flush=False):
-        result = Console.__colored(text, 'red', highlight, bold)
-
-        if output:
-            print(result, end=end, flush=flush)
-
-        return result
+    def debug_bh(text: str, end='\n'):
+        Console.debug(text, True, True, end)
 
     @staticmethod
-    def error_b(text: str, highlight=False, output=True, end='\n', flush=False):
-        Console.error(text, highlight, True, output, end, flush)
+    def error(text: str, highlight=False, bold=False, end='\n'):
+        Console.__console.print(text, style='error_b' if bold else 'error', highlight=highlight, end=end)
 
     @staticmethod
-    def error_h(text: str, bold=False, output=True, end='\n', flush=False):
-        Console.error(text, True, bold, output, end, flush)
+    def error_b(text: str, highlight=False, end='\n'):
+        Console.error(text, highlight, True, end)
 
     @staticmethod
-    def error_bh(text: str, output=True, end='\n', flush=False):
-        Console.error(text, True, True, output, end, flush)
+    def error_h(text: str, bold=False, end='\n'):
+        Console.error(text, True, bold, end)
 
     @staticmethod
-    def success(text: str, highlight=False, bold=False, output=True, end='\n', flush=False):
-        result = Console.__colored(text, 'green', highlight, bold)
-
-        if output:
-            print(result, end=end, flush=flush)
-
-        return result
+    def error_bh(text: str, end='\n'):
+        Console.error(text, True, True, end)
 
     @staticmethod
-    def success_b(text: str, highlight=False, output=True, end='\n', flush=False):
-        Console.success(text, highlight, True, output, end, flush)
+    def success(text: str, highlight=False, bold=False, end='\n'):
+        Console.__console.print(text, style='success_b' if bold else 'success', highlight=highlight, end=end)
 
     @staticmethod
-    def success_h(text: str, bold=False, output=True, end='\n', flush=False):
-        Console.success(text, True, bold, output, end, flush)
+    def success_b(text: str, highlight=False, end='\n'):
+        Console.success(text, highlight, True, end)
 
     @staticmethod
-    def success_bh(text: str, output=True, end='\n', flush=False):
-        Console.success(text, True, True, output, end, flush)
+    def success_h(text: str, bold=False, end='\n'):
+        Console.success(text, True, bold, end)
 
     @staticmethod
-    def warn(text: str, highlight=False, bold=False, output=True, end='\n', flush=False):
-        result = Console.__colored(text, 'yellow', highlight, bold)
-
-        if output:
-            print(result, end=end, flush=flush)
-
-        return result
+    def success_bh(text: str, end='\n'):
+        Console.success(text, True, True, end)
 
     @staticmethod
-    def warn_b(text: str, highlight=False, output=True, end='\n', flush=False):
-        Console.warn(text, highlight, True, output, end, flush)
+    def warn(text: str, highlight=False, bold=False, end='\n'):
+        Console.__console.print(text, style='warn_b' if bold else 'warn', highlight=highlight, end=end)
 
     @staticmethod
-    def warn_h(text: str, bold=False, output=True, end='\n', flush=False):
-        Console.warn(text, True, bold, output, end, flush)
+    def warn_b(text: str, highlight=False, end='\n'):
+        Console.warn(text, highlight, True, end)
 
     @staticmethod
-    def warn_bh(text: str, output=True, end='\n', flush=False):
-        Console.warn(text, True, True, output, end, flush)
+    def warn_h(text: str, bold=False, end='\n'):
+        Console.warn(text, True, bold, end)
+
+    @staticmethod
+    def warn_bh(text: str, end='\n'):
+        Console.warn(text, True, True, end)
