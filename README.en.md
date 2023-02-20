@@ -11,24 +11,24 @@
 
 * Run with pip
 
-        ```shell
-        pip install Pandora-ChatGPT
-        pandora
-        ```
+  ```shell
+  pip install Pandora-ChatGPT
+  pandora
+  ```
 
 * Run with compilation
 
-    ```shell
-    python setup.py install
-    pandora
-    ```
+  ```shell
+  pip install .
+  pandora
+  ```
 
 * Run with Docker:
 
-    ```shell
-    docker build -t pandora .
-    docker run -it --rm pandora
-    ```
+  ```shell
+  docker build -t pandora .
+  docker run -it --rm pandora
+  ```
 
 * Simple, straightforward, and elegant.
 

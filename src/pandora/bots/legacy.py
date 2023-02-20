@@ -5,8 +5,8 @@ import uuid
 
 from rich.prompt import Prompt, Confirm
 
-from .api import ChatGPT
-from .utils import Console
+from ..openai.api import ChatGPT
+from ..openai.utils import Console
 
 
 class ChatPrompt:

@@ -16,7 +16,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url="https://github.com/pengzhile/pandora",
-    packages=['pandora', 'pandora.openai'],
+    packages=['pandora', 'pandora.openai', 'pandora.bots'],
     package_dir={'pandora': 'src/pandora'},
     include_package_data=True,
     install_requires=[

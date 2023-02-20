@@ -11,24 +11,24 @@
 
 * pip安装运行
 
-	```shell
-	pip install Pandora-ChatGPT
-	pandora
-	```
+  ```shell
+  pip install Pandora-ChatGPT
+  pandora
+  ```
   
 * 编译运行
  
-    ```shell
-    python setup.py install
-    pandora
-    ```
+  ```shell
+  pip install .
+  pandora
+  ```
 
 * Docker运行：
 
-    ```shell
-    docker build -t pandora .
-    docker run -it --rm pandora
-    ```
+  ```shell
+  docker build -t pandora .
+  docker run -it --rm pandora
+  ```
 
 * 输入用户名密码登录即可，登录密码理论上不显示出来，莫慌。
 * 简单而粗暴，不失优雅。

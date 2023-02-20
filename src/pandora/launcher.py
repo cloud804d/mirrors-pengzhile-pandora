@@ -8,9 +8,9 @@ import traceback
 from appdirs import user_config_dir
 from rich.prompt import Prompt, Confirm
 
+from .bots.legacy import ChatBot as ChatBotLegacy
 from .openai.api import ChatGPT
 from .openai.auth import Auth0
-from .openai.bot import ChatBot
 from .openai.utils import Console
 
 if 'nt' == os.name:
@@ -121,7 +121,7 @@ def main():
     if need_save and Confirm.ask('Do you want to save your access token for the next login?', default=False):
         save_access_token(access_token)
 
-    ChatBot(ChatGPT(access_token, args.proxy)).run()
+    ChatBotLegacy(ChatGPT(access_token, args.proxy)).run()
 
 
 def run():
