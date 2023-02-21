@@ -66,6 +66,7 @@ jobs:
           [[ "${{ github.ref }}" == "refs/tags/"* ]] && IMAGE_VERSION=$(echo $IMAGE_VERSION | sed -e 's/^v//')
           
           echo VERSION=$IMAGE_VERSION
+          export IMAGE_VERSION
 
       - name: Docker Login
         uses: docker/login-action@v2
