@@ -47,8 +47,8 @@
 * Docker Hub运行
 
   ```shell
-  docker pull ghcr.io/pengzhile/pandora
-  docker run -it --rm ghcr.io/pengzhile/pandora
+  docker pull pengzhile/pandora
+  docker run -it --rm pengzhile/pandora
   ```
   
 * Docker编译运行

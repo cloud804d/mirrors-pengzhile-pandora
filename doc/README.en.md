@@ -47,8 +47,8 @@
 * Run with Docker Hub
 
   ```shell
-  docker pull ghcr.io/pengzhile/pandora
-  docker run -it --rm ghcr.io/pengzhile/pandora
+  docker pull pengzhile/pandora
+  docker run -it --rm pengzhile/pandora
   ```
   
 * Run with Docker compilation
