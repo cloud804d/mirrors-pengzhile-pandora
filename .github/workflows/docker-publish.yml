@@ -11,7 +11,8 @@ permissions:
   contents: read
 
 env:
-  IMAGE_NAME: "pandora"
+  IMAGE_NAME: pandora
+  PLATFORMS: linux/386,linux/amd64,linux/arm64
 
 jobs:
   get-tags:
@@ -59,7 +60,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          platforms: linux/386,linux/amd64,linux/arm/v5,linux/arm/v7,linux/arm64/v8
+          platforms: ${{ env.PLATFORMS }}
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ needs.get-tags.outputs.image_version }}
             ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
@@ -87,7 +88,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          platforms: linux/386,linux/amd64,linux/arm/v5,linux/arm/v7,linux/arm64/v8
+          platforms: ${{ env.PLATFORMS }}
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ needs.get-tags.outputs.image_version }}
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
