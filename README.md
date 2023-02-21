@@ -1,9 +1,27 @@
 # Pandora
 
-[English](./README.en.md)
+[English](doc/README.en.md)
 
 ### `潘多拉`，一个命令行的`ChatGPT`。
 ### 实现了网页版`ChatGPT`的主要操作。能过`Cloudflare`，理论上速度还可以。
+
+## 界面截图
+
+  <details>
+
+  <summary>
+
+  ![alt Screenshot5](doc/images/s05.png)
+
+  </summary>
+
+  ![alt Screenshot1](doc/images/s01.png)
+  ![alt Screenshot2](doc/images/s02.png)
+  ![alt Screenshot3](doc/images/s03.png)
+  ![alt Screenshot4](doc/images/s04.png)
+  ![alt Screenshot6](doc/images/s06.png)
+
+</details>
 
 ## 如何运行：
 

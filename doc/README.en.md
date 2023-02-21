@@ -1,9 +1,27 @@
 # Pandora
 
-[中文版本](./README.md)
+[中文版本](../README.md)
 
 ### `Pandora`, a command-line `ChatGPT`.
 ### Implements main operations of web version `ChatGPT`. Passes through `Cloudflare`, theoretically, it works fast.
+
+## Screenshots
+
+  <details>
+
+  <summary>
+
+  ![alt Screenshot5](images/s05.png)
+
+  </summary>
+
+  ![alt Screenshot1](images/s01.png)
+  ![alt Screenshot2](images/s02.png)
+  ![alt Screenshot3](images/s03.png)
+  ![alt Screenshot4](images/s04.png)
+  ![alt Screenshot6](images/s06.png)
+
+</details>
 
 ## How to Run:
 
