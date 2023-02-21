@@ -3,6 +3,7 @@
 .git/
 .idea/
 .run/
+.github/
 
 venv/
 build/
