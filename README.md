@@ -101,7 +101,7 @@
 ## macOS的神奇问题
 
 * 如果你界面报错：`certificate verify failed: unable to get local issuer certificate`。
-* 第一步：同时按键盘`Command`+`SPace`，或手动打开`Spotlight`。
+* 第一步：同时按键盘`Command`+`Space`，或手动打开`Spotlight`。
 * 第二步：输入`Install Certificates.command`执行它。
 * 问题解决。
 
