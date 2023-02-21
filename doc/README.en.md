@@ -1,5 +1,8 @@
 # Pandora
 
+[![PyPi](https://img.shields.io/pypi/v/pandora-chatgpt.svg)](https://pypi.python.org/pypi/pandora-chatgpt)
+[![Downloads](https://static.pepy.tech/badge/pandora-chatgpt)](https://pypi.python.org/pypi/pandora-chatgpt)
+
 [中文版本](../README.md)
 
 ### `Pandora`, a command-line `ChatGPT`.
@@ -11,17 +14,17 @@
 
   <summary>
 
-  ![alt Screenshot5](images/s05.png)
+  ![alt Screenshot5](https://github.com/pengzhile/pandora/raw/master/doc/images/s05.png)
 
   </summary>
 
-  ![alt Screenshot1](images/s01.png)
-  ![alt Screenshot2](images/s02.png)
-  ![alt Screenshot3](images/s03.png)
-  ![alt Screenshot4](images/s04.png)
-  ![alt Screenshot6](images/s06.png)
+  ![alt Screenshot1](https://github.com/pengzhile/pandora/raw/master/doc/images/s01.png)
+  ![alt Screenshot2](https://github.com/pengzhile/pandora/raw/master/doc/images/s02.png)
+  ![alt Screenshot3](https://github.com/pengzhile/pandora/raw/master/doc/images/s03.png)
+  ![alt Screenshot4](https://github.com/pengzhile/pandora/raw/master/doc/images/s04.png)
+  ![alt Screenshot6](https://github.com/pengzhile/pandora/raw/master/doc/images/s06.png)
 
-</details>
+  </details>
 
 ## How to Run:
 
@@ -56,6 +59,12 @@
 * `-p` or `--proxy` specify a proxy, in the format of `http://user:pass@ip:port`.
 * `-t` or `--token_file` specify a file that stores the `Access Token`, and log in using the `Access Token`.
 * `-v` or `--verbose` displays debugging information, and prints the exception stack trace when an error occurs, for debugging purposes.
+
+## Docker Environment Variables
+* `PANDORA_ACCESS_TOKEN` Specifies the `Access Token` string for.
+* `PANDORA_PROXY` Specifies a proxy in the format of http://user:pass@ip:port.
+* `PANDORA_VERBOSE` displays debugging information, and prints the exception stack trace when an error occurs, for debugging purposes.
+* When running the `Pandora` using Docker, set the corresponding environment variables, regardless of the `Program Arguments` mentioned above.
 
 ## About Access Token
 * Log in with the `Access Token` allows you to bypass the proxy.

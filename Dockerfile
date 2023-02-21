@@ -4,4 +4,4 @@ WORKDIR /opt/app
 ADD . .
 RUN pip install .
 
-ENTRYPOINT ["pandora"]
+ENTRYPOINT ["bin/startup.sh"]

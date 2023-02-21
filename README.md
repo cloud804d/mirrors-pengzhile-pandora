@@ -1,5 +1,8 @@
 # Pandora
 
+[![PyPi](https://img.shields.io/pypi/v/pandora-chatgpt.svg)](https://pypi.python.org/pypi/pandora-chatgpt)
+[![Downloads](https://static.pepy.tech/badge/pandora-chatgpt)](https://pypi.python.org/pypi/pandora-chatgpt)
+
 [English](doc/README.en.md)
 
 ### `潘多拉`，一个命令行的`ChatGPT`。
@@ -11,17 +14,17 @@
 
   <summary>
 
-  ![alt Screenshot5](doc/images/s05.png)
+  ![alt Screenshot5](https://github.com/pengzhile/pandora/raw/master/doc/images/s05.png)
 
   </summary>
 
-  ![alt Screenshot1](doc/images/s01.png)
-  ![alt Screenshot2](doc/images/s02.png)
-  ![alt Screenshot3](doc/images/s03.png)
-  ![alt Screenshot4](doc/images/s04.png)
-  ![alt Screenshot6](doc/images/s06.png)
+  ![alt Screenshot1](https://github.com/pengzhile/pandora/raw/master/doc/images/s01.png)
+  ![alt Screenshot2](https://github.com/pengzhile/pandora/raw/master/doc/images/s02.png)
+  ![alt Screenshot3](https://github.com/pengzhile/pandora/raw/master/doc/images/s03.png)
+  ![alt Screenshot4](https://github.com/pengzhile/pandora/raw/master/doc/images/s04.png)
+  ![alt Screenshot6](https://github.com/pengzhile/pandora/raw/master/doc/images/s06.png)
 
-</details>
+  </details>
 
 ## 如何运行：
 
@@ -57,6 +60,13 @@
 * `-p` 或 `--proxy` 指定代理，格式：`http://user:pass@ip:port`。
 * `-t` 或 `--token_file` 指定一个存放`Access Token`的文件，使用`Access Token`登录。
 * `-v` 或 `--verbose` 显示调试信息，且出错时打印异常堆栈信息，供查错使用。
+
+## Docker环境变量
+
+* `PANDORA_ACCESS_TOKEN` 指定`Access Token`字符串。
+* `PANDORA_PROXY` 指定代理，格式：`http://user:pass@ip:port`。
+* `PANDORA_VERBOSE` 显示调试信息，且出错时打印异常堆栈信息，供查错使用。
+* 使用Docker方式，设置环境变量即可，无视上述`程序参数`。
 
 ## 关于 Access Token
 * 使用`Access Token`方式登录，可以无代理直连。
