@@ -96,6 +96,13 @@
 * `/clear` clears the screen.
 * `/exit` exits Pandora.
 
+## macOS specific issues
+
+* If you get an error: `certificate verify failed: unable to get local issuer certificate`。
+* First: Press `Command`+`Space` buttons or open `Spotlight`.
+* Second：type `Install Certificates.command` and execute it.
+* Problem solved.
+
 ## Other Information
 
 * Pandora is an open-source project that stands on the shoulders of other giants, thank you!

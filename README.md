@@ -98,6 +98,13 @@
 * `/clear` 清屏，应该不用解释。
 * `/exit` 退出`潘多拉`。
 
+## macOS的神奇问题
+
+* 如果你界面报错：`certificate verify failed: unable to get local issuer certificate`。
+* 第一步：同时按键盘`Command`+`SPace`，或手动打开`Spotlight`。
+* 第二步：输入`Install Certificates.command`执行它。
+* 问题解决。
+
 ## 其他说明
 * 项目是站在其他巨人的肩膀上，感谢！
 * 报错、BUG之类的提出`Issue`，我会修复。
