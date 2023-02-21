@@ -95,7 +95,7 @@ class ChatBot:
             self.__print_access_token()
         elif '/cls' == command or '/clear' == command:
             self.__clear_screen()
-        elif '/help' == command or 'usage' == command or '/?' == command:
+        else:
             self.__print_usage()
 
     @staticmethod
@@ -120,7 +120,9 @@ class ChatBot:
 
     def __clear_screen(self):
         Console.clear()
-        self.__print_conversation_title(self.state.title)
+
+        if self.state:
+            self.__print_conversation_title(self.state.title)
 
     def __new_conversation(self):
         self.state = State(model_slug=self.__choice_model()['slug'])
@@ -144,7 +146,7 @@ class ChatBot:
             return
 
         if self.chatgpt.set_conversation_title(state.conversation_id, new_title):
-            self.state.title = new_title
+            state.title = new_title
             Console.debug('#### Set title success.')
         else:
             Console.error('#### Set title failed.')
@@ -272,6 +274,8 @@ class ChatBot:
         for idx, item in enumerate(items):
             number = str(idx + 1)
             choices.append(number)
+            choices.append('t' + number)
+            choices.append('d' + number)
             Console.info('  {}. {}'.format(number, item['title']))
 
         if not last_page:
@@ -282,6 +286,8 @@ class ChatBot:
             choices.append('p')
             Console.warn('  p. << Previous page')
 
+        Console.warn('  t?. Set title for the conversation, eg: t1')
+        Console.warn('  d?. Delete the conversation, eg: d1')
         Console.warn('  c. ** Start new chat')
 
         while True:
@@ -294,6 +300,14 @@ class ChatBot:
 
             if 'p' == choice:
                 return self.__choice_conversation(page - 1, page_size)
+
+            if 't' == choice[0]:
+                self.__set_conversation_title(State(conversation_id=items[int(choice[1:]) - 1]['id']))
+                return self.__choice_conversation(page, page_size)
+
+            if 'd' == choice[0]:
+                self.__del_conversation(State(conversation_id=items[int(choice[1:]) - 1]['id']))
+                continue
 
             return items[int(choice) - 1]
 
