@@ -14,23 +14,33 @@ env:
   IMAGE_NAME: "pandora"
 
 jobs:
-  push-ghcr:
+  get-tags:
     runs-on: ubuntu-latest
-
+    outputs:
+      image_version: ${{ steps.get_image_version.outputs.image_version }}
     steps:
       - uses: actions/checkout@v3
 
-      - name: Get Tags
-        id: get_tags
+      - name: Get Image Version
+        id: get_image_version
         run: |
           # Strip git ref prefix from version
           IMAGE_VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
 
           # Strip "v" prefix from tag name
           [[ "${{ github.ref }}" == "refs/tags/"* ]] && IMAGE_VERSION=$(echo $IMAGE_VERSION | sed -e 's/^v//')
-          
+
           echo VERSION=$IMAGE_VERSION
           echo "image_version=${IMAGE_VERSION}" >> $GITHUB_OUTPUT
+
+  push-ghcr:
+    needs: get-tags
+    runs-on: ubuntu-latest
+    env:
+      REGISTRY: ghcr.io
+
+    steps:
+      - uses: actions/checkout@v3
 
       - name: Docker Setup QEMU
         uses: docker/setup-qemu-action@v2
@@ -41,7 +51,7 @@ jobs:
       - name: Docker Login
         uses: docker/login-action@v2
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -49,28 +59,17 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          platforms: linux/amd64,linux/arm/v7
+          platforms: linux/386,linux/amd64,linux/arm/v5,linux/arm/v7,linux/arm64/v8
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ steps.get_tags.outputs.image_version }}
-            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ needs.get-tags.outputs.image_version }}
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
 
   push-docker-hub:
+    needs: get-tags
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Get Tags
-        id: get_tags
-        run: |
-          # Strip git ref prefix from version
-          IMAGE_VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && IMAGE_VERSION=$(echo $IMAGE_VERSION | sed -e 's/^v//')
-          
-          echo VERSION=$IMAGE_VERSION
-          echo "image_version=${IMAGE_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Docker Setup QEMU
         uses: docker/setup-qemu-action@v2
@@ -88,7 +87,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          platforms: linux/amd64,linux/arm/v7
+          platforms: linux/386,linux/amd64,linux/arm/v5,linux/arm/v7,linux/arm64/v8
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.get_tags.outputs.image_version }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ needs.get-tags.outputs.image_version }}
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
