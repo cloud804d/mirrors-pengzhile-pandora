@@ -12,6 +12,7 @@ permissions:
 
 env:
   IMAGE_NAME: "pandora"
+  IMAGE_VERSION: ""
 
 jobs:
   push-ghcr:
@@ -59,12 +60,12 @@ jobs:
       - name: Get Tags
         run: |
           # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          IMAGE_VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
 
           # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && IMAGE_VERSION=$(echo $IMAGE_VERSION | sed -e 's/^v//')
           
-          echo VERSION=$VERSION
+          echo VERSION=$IMAGE_VERSION
 
       - name: Docker Login
         uses: docker/login-action@v2
@@ -79,5 +80,5 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:$VERSION
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ IMAGE_NAME }}:${{ IMAGE_VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ IMAGE_NAME }}:latest
