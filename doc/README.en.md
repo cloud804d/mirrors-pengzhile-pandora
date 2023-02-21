@@ -44,7 +44,14 @@
   pandora
   ```
 
-* Run with Docker:
+* Run with Docker Hub
+
+  ```shell
+  docker pull ghcr.io/pengzhile/pandora
+  docker run -it --rm ghcr.io/pengzhile/pandora
+  ```
+  
+* Run with Docker compilation
 
   ```shell
   docker build -t pandora .

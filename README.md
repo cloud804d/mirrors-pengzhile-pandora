@@ -26,7 +26,7 @@
 
   </details>
 
-## 如何运行：
+## 如何运行
 
 * Python版本目测起码要`3.7`
 
@@ -44,7 +44,14 @@
   pandora
   ```
 
-* Docker运行：
+* Docker Hub运行
+
+  ```shell
+  docker pull ghcr.io/pengzhile/pandora
+  docker run -it --rm ghcr.io/pengzhile/pandora
+  ```
+  
+* Docker编译运行
 
   ```shell
   docker build -t pandora .
