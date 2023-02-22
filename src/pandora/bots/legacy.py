@@ -190,7 +190,9 @@ class ChatBot:
             if 'model_slug' in message['metadata']:
                 self.state.model_slug = message['metadata']['model_slug']
 
-            if 'user' == message['role']:
+            role = message['author']['role'] if 'author' in message else message['role']
+
+            if 'user' == role:
                 prompt = self.state.user_prompt
 
                 Console.info_b('You:')
