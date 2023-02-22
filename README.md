@@ -96,6 +96,7 @@
 * `/del` 删除当前会话，回到会话选择界面。
 * `/token` 打印当前的`Access Token`，也许你用得上，但不要泄露。
 * `/clear` 清屏，应该不用解释。
+* `/version` 打印`Pandora`的版本信息。
 * `/exit` 退出`潘多拉`。
 
 ## macOS的神奇问题

@@ -2,15 +2,14 @@
 
 from setuptools import setup
 
-with open('VERSION', 'r', encoding='utf-8') as f:
-    version = f.read().strip()
+from src.pandora import __version__
 
 with open('README.md', 'r', encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
     name='Pandora-ChatGPT',
-    version=version,
+    version=__version__,
     python_requires='>=3.7',
     author='Neo Peng',
     author_email='pengzhile@gmail.com',

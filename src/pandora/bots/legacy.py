@@ -5,6 +5,7 @@ import uuid
 
 from rich.prompt import Prompt, Confirm
 
+from .. import __version__
 from ..openai.api import ChatGPT
 from ..openai.utils import Console
 
@@ -95,6 +96,8 @@ class ChatBot:
             self.__print_access_token()
         elif '/cls' == command or '/clear' == command:
             self.__clear_screen()
+        elif '/ver' == command or '/version' == command:
+            self.__print_version()
         else:
             self.__print_usage()
 
@@ -110,6 +113,7 @@ class ChatBot:
         print('/del\t\tDelete the current conversation.')
         print('/token\t\tPrint your access token.')
         print('/clear\t\tClear your screen.')
+        print('/version\t\tPrint the version of Pandora.')
         print('/exit\t\tExit Pandora.')
         print()
 
@@ -123,6 +127,11 @@ class ChatBot:
 
         if self.state:
             self.__print_conversation_title(self.state.title)
+
+    @staticmethod
+    def __print_version():
+        Console.debug_bh('#### Version: {}'.format(__version__))
+        print()
 
     def __new_conversation(self):
         self.state = State(model_slug=self.__choice_model()['slug'])

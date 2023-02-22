@@ -8,6 +8,7 @@ import traceback
 from appdirs import user_config_dir
 from rich.prompt import Prompt, Confirm
 
+from . import __version__
 from .bots.legacy import ChatBot as ChatBotLegacy
 from .openai.api import ChatGPT
 from .openai.auth import Auth0
@@ -81,7 +82,8 @@ def main():
         '''
         Pandora - A command-line interface to ChatGPT
         Github: https://github.com/pengzhile/pandora
-        ''',
+        Version: {}
+        '''.format(__version__),
     )
 
     parser = argparse.ArgumentParser()

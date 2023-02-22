@@ -94,7 +94,8 @@
 * `/del` deletes the current conversation and returns to the conversation selection interface.
 * `/token` prints the current `Access Token`, which you may need, but do not leak it.
 * `/clear` clears the screen.
-* `/exit` exits Pandora.
+* `/version` print the version of `Pandora`.
+* `/exit` exits `Pandora`.
 
 ## macOS specific issues
 
@@ -105,7 +106,7 @@
 
 ## Other Information
 
-* Pandora is an open-source project that stands on the shoulders of other giants, thank you!
+* `Pandora` is an open-source project that stands on the shoulders of other giants, thank you!
 * Raise an issue for any errors or bugs you encounter, and the developer will fix them as soon as possible.
 * The developer may not be able to keep up with the changes in the `ChatGPT` API in the future.
 * If you like it, give the project a star, we are all old friends.
