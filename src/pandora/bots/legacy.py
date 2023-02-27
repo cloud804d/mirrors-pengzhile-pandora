@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import asyncio
+import re
 import uuid
 
 from rich.prompt import Prompt, Confirm
@@ -127,11 +128,17 @@ class ChatBot:
             return
 
         choices = []
+        pattern = re.compile(r'\s+')
         Console.info_b('Choice your prompt to edit:')
         for idx, item in enumerate(self.state.user_prompts):
             number = str(idx + 1)
             choices.append(number)
-            Console.info('  {}. {}'.format(number, item.prompt))
+
+            preview_prompt = re.sub(pattern, ' ', item.prompt)
+            if len(preview_prompt) > 40:
+                preview_prompt = '{}...'.format(preview_prompt[0:40])
+
+            Console.info('  {}. {}'.format(number, preview_prompt))
 
         choices.append('c')
         Console.warn('  c. ** Cancel')
