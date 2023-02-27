@@ -96,6 +96,7 @@
 * `/select` returns to the conversation selection interface.
 * `/reload` reloads all the contents of the current conversation, like pressing `F5`.
 * `/regen` if you are not satisfied with `ChatGPT`'s current response, you can ask it to re-answer.
+* `/edit` edit one of your previous prompt.
 * `/new` opens a new conversation directly.
 * `/del` deletes the current conversation and returns to the conversation selection interface.
 * `/token` prints the current `Access Token`, which you may need, but do not leak it.

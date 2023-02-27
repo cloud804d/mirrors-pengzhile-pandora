@@ -66,7 +66,7 @@ def confirm_access_token(token_file=None):
 
     if app_token_file_exists:
         confirm = Prompt.ask('A saved access token has been detected. Do you want to use it?',
-                             choices=['y', 'n', 'del'], default='n')
+                             choices=['y', 'n', 'del'], default='y')
         if 'y' == confirm:
             return read_access_token(app_token_file), False
         elif 'del' == confirm:
@@ -120,7 +120,7 @@ def main():
         Console.warn('### Do login, please wait...')
         access_token = Auth0(email, password, args.proxy).auth()
 
-    if need_save and Confirm.ask('Do you want to save your access token for the next login?', default=False):
+    if need_save and Confirm.ask('Do you want to save your access token for the next login?', default=True):
         save_access_token(access_token)
 
     ChatBotLegacy(ChatGPT(access_token, args.proxy)).run()

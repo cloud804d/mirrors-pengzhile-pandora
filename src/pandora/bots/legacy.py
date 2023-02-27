@@ -29,6 +29,8 @@ class State:
         self.model_slug = model_slug
         self.user_prompt = user_prompt
         self.chatgpt_prompt = chatgpt_prompt
+        self.user_prompts = []
+        self.edit_index = None
 
 
 class ChatBot:
@@ -47,7 +49,7 @@ class ChatBot:
 
     def __talk_loop(self):
         while True:
-            Console.info_b('You:')
+            Console.info_b('You{}:'.format(' (edit)' if self.state and self.state.edit_index else ''))
 
             prompt = self.__get_input()
             if not prompt:
@@ -92,6 +94,8 @@ class ChatBot:
             self.__talk_loop()
         elif '/regen' == command or '/regenerate' == command:
             self.__regenerate_reply(self.state)
+        elif '/edit' == command or '/modify' == command:
+            self.__edit_choice()
         elif '/token' == command:
             self.__print_access_token()
         elif '/cls' == command or '/clear' == command:
@@ -109,6 +113,7 @@ class ChatBot:
         print('/select\t\tChoice a different conversation.')
         print('/reload\t\tReload the current conversation.')
         print('/regen\t\tRegenerate response.')
+        print('/edit\t\tEdit one of your previous prompt.')
         print('/new\t\tStart a new conversation.')
         print('/del\t\tDelete the current conversation.')
         print('/token\t\tPrint your access token.')
@@ -116,6 +121,29 @@ class ChatBot:
         print('/version\t\tPrint the version of Pandora.')
         print('/exit\t\tExit Pandora.')
         print()
+
+    def __edit_choice(self):
+        if not self.state.user_prompts:
+            return
+
+        choices = []
+        Console.info_b('Choice your prompt to edit:')
+        for idx, item in enumerate(self.state.user_prompts):
+            number = str(idx + 1)
+            choices.append(number)
+            Console.info('  {}. {}'.format(number, item.prompt))
+
+        choices.append('c')
+        Console.warn('  c. ** Cancel')
+
+        default_choice = None if len(choices) > 2 else '1'
+        while True:
+            choice = Prompt.ask('Your choice', choices=choices, show_choices=False, default=default_choice)
+            if 'c' == choice:
+                return
+
+            self.state.edit_index = int(choice)
+            return
 
     def __print_access_token(self):
         Console.warn_b('\n#### Your access token (keep it private)')
@@ -204,6 +232,7 @@ class ChatBot:
 
             if 'user' == role:
                 prompt = self.state.user_prompt
+                self.state.user_prompts.append(ChatPrompt(message['content']['parts'][0], parent_id=node['parent']))
 
                 Console.info_b('You:')
                 Console.info(message['content']['parts'][0])
@@ -229,7 +258,18 @@ class ChatBot:
         Console.success_b('ChatGPT:')
 
         first_prompt = not self.state.conversation_id
-        self.state.user_prompt = ChatPrompt(prompt, parent_id=self.state.chatgpt_prompt.message_id)
+
+        if self.state.edit_index:
+            idx = self.state.edit_index - 1
+            user_prompt = self.state.user_prompts[idx]
+            self.state.user_prompt = ChatPrompt(prompt, parent_id=user_prompt.parent_id)
+            self.state.user_prompts = self.state.user_prompts[0:idx]
+
+            self.state.edit_index = None
+        else:
+            self.state.user_prompt = ChatPrompt(prompt, parent_id=self.state.chatgpt_prompt.message_id)
+
+        self.state.user_prompts.append(self.state.user_prompt)
 
         generator = self.chatgpt.talk(prompt, self.state.model_slug, self.state.user_prompt.message_id,
                                       self.state.user_prompt.parent_id, self.state.conversation_id)
