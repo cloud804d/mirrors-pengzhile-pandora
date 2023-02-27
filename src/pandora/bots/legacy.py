@@ -194,6 +194,7 @@ class ChatBot:
         self.state.title = result['title']
         self.__print_conversation_title(self.state.title)
 
+        merge = False
         for node in nodes:
             message = node['message']
             if 'model_slug' in message['metadata']:
@@ -206,17 +207,23 @@ class ChatBot:
 
                 Console.info_b('You:')
                 Console.info(message['content']['parts'][0])
-            else:
+            elif 'assistant' == role:
                 prompt = self.state.chatgpt_prompt
 
-                Console.success_b('ChatGPT:')
+                if not merge:
+                    Console.success_b('ChatGPT:')
                 Console.success(message['content']['parts'][0])
+
+                merge = message['end_turn'] is None
+            else:
+                continue
 
             prompt.prompt = message['content']['parts'][0]
             prompt.parent_id = node['parent']
             prompt.message_id = node['id']
 
-            print()
+            if not merge:
+                print()
 
     def __talk(self, prompt):
         Console.success_b('ChatGPT:')
@@ -267,9 +274,7 @@ class ChatBot:
             if text:
                 Console.success(text, end='')
 
-            if message['end_turn']:
-                print()
-        print()
+        print('\n')
 
     def __choice_conversation(self, page=1, page_size=20):
         conversations = self.chatgpt.list_conversations((page - 1) * page_size, page_size)
