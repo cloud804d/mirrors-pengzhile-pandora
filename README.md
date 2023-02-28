@@ -70,14 +70,14 @@
 ## 程序参数
 
 * 可通过 `pandora --help` 查看。
-* `-p` 或 `--proxy` 指定代理，格式：`http://user:pass@ip:port`。
+* `-p` 或 `--proxy` 指定代理，格式：`protocol://user:pass@ip:port`。
 * `-t` 或 `--token_file` 指定一个存放`Access Token`的文件，使用`Access Token`登录。
 * `-v` 或 `--verbose` 显示调试信息，且出错时打印异常堆栈信息，供查错使用。
 
 ## Docker环境变量
 
 * `PANDORA_ACCESS_TOKEN` 指定`Access Token`字符串。
-* `PANDORA_PROXY` 指定代理，格式：`http://user:pass@ip:port`。
+* `PANDORA_PROXY` 指定代理，格式：`protocol://user:pass@ip:port`。
 * `PANDORA_VERBOSE` 显示调试信息，且出错时打印异常堆栈信息，供查错使用。
 * 使用Docker方式，设置环境变量即可，无视上述`程序参数`。
 
@@ -119,3 +119,4 @@
 * 因为之后`ChatGPT`的API变动，我可能不会跟进修复。
 * 喜欢的可以给颗星，都是老朋友了。
 * 不影响`PHP是世界上最好的编程语言！`
+ 

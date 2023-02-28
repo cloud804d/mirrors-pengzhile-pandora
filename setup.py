@@ -23,7 +23,7 @@ setup(
     install_requires=[
         'aiohttp == 3.8.4',
         'pyreadline == 2.1; platform_system == "Windows"',
-        'requests == 2.28.2',
+        'requests[socks] == 2.28.2',
         'rich == 13.3.1',
         'appdirs == 1.4.4',
     ],

@@ -69,13 +69,13 @@
 ## Program Arguments
 
 * Use `pandora --help` to view the list of program arguments.
-* `-p` or `--proxy` specify a proxy, in the format of `http://user:pass@ip:port`.
+* `-p` or `--proxy` specify a proxy, in the format of `protocol://user:pass@ip:port`.
 * `-t` or `--token_file` specify a file that stores the `Access Token`, and log in using the `Access Token`.
 * `-v` or `--verbose` displays debugging information, and prints the exception stack trace when an error occurs, for debugging purposes.
 
 ## Docker Environment Variables
 * `PANDORA_ACCESS_TOKEN` Specifies the `Access Token` string for.
-* `PANDORA_PROXY` Specifies a proxy in the format of http://user:pass@ip:port.
+* `PANDORA_PROXY` Specifies a proxy in the format of `protocol://user:pass@ip:port`.
 * `PANDORA_VERBOSE` displays debugging information, and prints the exception stack trace when an error occurs, for debugging purposes.
 * When running the `Pandora` using Docker, set the corresponding environment variables, regardless of the `Program Arguments` mentioned above.
 

@@ -10,11 +10,11 @@ class ChatGPT:
     def __init__(self, access_token, proxy=None):
         self.access_token = access_token
         self.session = requests.Session()
-        if proxy:
-            self.session.proxies = {
-                'http': proxy,
-                'https': proxy,
-            }
+        self.proxy = proxy
+        self.session.proxies = self.proxies = {
+            'http': self.proxy,
+            'https': self.proxy,
+        } if self.proxy else None
 
         self.user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) ' \
                           'Chrome/109.0.0.0 Safari/537.36'
@@ -28,7 +28,8 @@ class ChatGPT:
 
     def list_models(self):
         url = 'https://apps.openai.com/api/models'
-        resp = self.session.get(url=url, headers=self.basic_headers, allow_redirects=False, timeout=100)
+        resp = self.session.get(url=url, headers=self.basic_headers, allow_redirects=False,
+                                timeout=100, proxies=self.proxies)
 
         if resp.status_code != 200:
             raise Exception('list models failed: ' + self.__get_error(resp))
@@ -41,7 +42,8 @@ class ChatGPT:
 
     def list_conversations(self, offset, limit):
         url = 'https://apps.openai.com/api/conversations?offset={}&limit={}'.format(offset, limit)
-        resp = self.session.get(url=url, headers=self.basic_headers, allow_redirects=False, timeout=100)
+        resp = self.session.get(url=url, headers=self.basic_headers, allow_redirects=False,
+                                timeout=100, proxies=self.proxies)
 
         if resp.status_code != 200:
             raise Exception('list conversations failed: ' + self.__get_error(resp))
@@ -50,7 +52,8 @@ class ChatGPT:
 
     def get_conversation(self, conversation_id):
         url = 'https://apps.openai.com/api/conversation/' + conversation_id
-        resp = self.session.get(url=url, headers=self.basic_headers, allow_redirects=False, timeout=100)
+        resp = self.session.get(url=url, headers=self.basic_headers, allow_redirects=False,
+                                timeout=100, proxies=self.proxies)
 
         if resp.status_code != 200:
             raise Exception('get conversation failed: ' + self.__get_error(resp))
@@ -69,7 +72,8 @@ class ChatGPT:
             'model': model,
             'message_id': message_id,
         }
-        resp = self.session.post(url=url, headers=self.basic_headers, json=data, allow_redirects=False, timeout=100)
+        resp = self.session.post(url=url, headers=self.basic_headers, json=data, allow_redirects=False,
+                                 timeout=100, proxies=self.proxies)
 
         if resp.status_code != 200:
             raise Exception('gen title failed: ' + self.__get_error(resp))
@@ -130,11 +134,11 @@ class ChatGPT:
 
     async def __request_conversation_content(self, data):
         url = 'https://apps.openai.com/api/conversation'
-        headers = {**self.session.headers, **self.basic_headers, 'Accept': 'text/event-stream',
-                   'Content-Type': 'application/json'}
+        headers = {**self.session.headers, **self.basic_headers,
+                   'Accept': 'text/event-stream', 'Content-Type': 'application/json'}
 
         async with aiohttp.ClientSession() as session:
-            async with session.post(url, json=data, headers=headers, timeout=600) as resp:
+            async with session.post(url, json=data, headers=headers, timeout=600, proxy=self.proxy) as resp:
                 if resp.status != 200:
                     raise Exception('request conversation failed: ' + str(resp.status))
 
@@ -148,7 +152,8 @@ class ChatGPT:
 
     def __update_conversation(self, conversation_id, data) -> bool:
         url = 'https://apps.openai.com/api/conversation/' + conversation_id
-        resp = self.session.patch(url=url, headers=self.basic_headers, json=data, allow_redirects=False, timeout=100)
+        resp = self.session.patch(url=url, headers=self.basic_headers, json=data, allow_redirects=False,
+                                  timeout=100, proxies=self.proxies)
 
         if resp.status_code != 200:
             raise Exception('set conversation title failed: ' + self.__get_error(resp))
