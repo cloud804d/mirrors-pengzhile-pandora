@@ -13,6 +13,10 @@ if [ -n "${PANDORA_ACCESS_TOKEN}" ]; then
   echo "${PANDORA_ACCESS_TOKEN}" >"${CONFIG_DIR}/access_token.dat"
 fi
 
+if [ -n "${PANDORA_SERVER}" ]; then
+  PANDORA_ARGS="${PANDORA_ARGS} -s ${PANDORA_SERVER}"
+fi
+
 if [ -n "${PANDORA_VERBOSE}" ]; then
   PANDORA_ARGS="${PANDORA_ARGS} -v"
 fi

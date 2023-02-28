@@ -10,6 +10,7 @@ from rich.prompt import Prompt, Confirm
 
 from . import __version__
 from .bots.legacy import ChatBot as ChatBotLegacy
+from .bots.server import ChatBot as ChatBotServer
 from .openai.api import ChatGPT
 from .openai.auth import Auth0
 from .openai.utils import Console
@@ -46,7 +47,7 @@ def save_access_token(access_token):
         print()
 
 
-def confirm_access_token(token_file=None):
+def confirm_access_token(token_file=None, silence=False):
     app_token_file = os.path.join(user_config_dir('Pandora-ChatGPT'), 'access_token.dat')
 
     app_token_file_exists = os.path.isfile(app_token_file)
@@ -65,8 +66,8 @@ def confirm_access_token(token_file=None):
         return access_token, True
 
     if app_token_file_exists:
-        confirm = Prompt.ask('A saved access token has been detected. Do you want to use it?',
-                             choices=['y', 'n', 'del'], default='y')
+        confirm = 'y' if silence else Prompt.ask('A saved access token has been detected. Do you want to use it?',
+                                                 choices=['y', 'n', 'del'], default='y')
         if 'y' == confirm:
             return read_access_token(app_token_file), False
         elif 'del' == confirm:
@@ -82,15 +83,14 @@ def main():
         '''
         Pandora - A command-line interface to ChatGPT
         Github: https://github.com/pengzhile/pandora
-        Version: {}
-        '''.format(__version__),
+        Version: {}'''.format(__version__), end=''
     )
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '-p',
         '--proxy',
-        help='Use a proxy. Format: http://user:pass@ip:port',
+        help='Use a proxy. Format: protocol://user:pass@ip:port',
         required=False,
         type=str,
         default=None,
@@ -104,6 +104,17 @@ def main():
         default=None,
     )
     parser.add_argument(
+        '-s',
+        '--server',
+        help='Start as a proxy server. Format: ip:port, default: 127.0.0.1:8008',
+        required=False,
+        type=str,
+        default=None,
+        action='store',
+        nargs='?',
+        const='127.0.0.1:8008',
+    )
+    parser.add_argument(
         '-v',
         '--verbose',
         help='Show exception traceback.',
@@ -112,7 +123,10 @@ def main():
     args, _ = parser.parse_known_args()
     __show_verbose = args.verbose
 
-    access_token, need_save = confirm_access_token(args.token_file)
+    Console.debug_b(''', Mode: {}
+        '''.format('server' if args.server else 'cli'))
+
+    access_token, need_save = confirm_access_token(args.token_file, args.server)
     if not access_token:
         Console.info_b('Please enter your email and password to log in ChatGPT!')
         email = Prompt.ask('  Email')
@@ -120,10 +134,16 @@ def main():
         Console.warn('### Do login, please wait...')
         access_token = Auth0(email, password, args.proxy).auth()
 
-    if need_save and Confirm.ask('Do you want to save your access token for the next login?', default=True):
-        save_access_token(access_token)
+    if need_save:
+        if args.server or Confirm.ask('Do you want to save your access token for the next login?', default=True):
+            save_access_token(access_token)
 
-    ChatBotLegacy(ChatGPT(access_token, args.proxy)).run()
+    chatgpt = ChatGPT(access_token, args.proxy)
+
+    if args.server:
+        return ChatBotServer(chatgpt, args.verbose).run(args.server)
+
+    ChatBotLegacy(chatgpt).run()
 
 
 def run():

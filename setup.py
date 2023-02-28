@@ -26,6 +26,9 @@ setup(
         'requests[socks] == 2.28.2',
         'rich == 13.3.1',
         'appdirs == 1.4.4',
+        'werkzeug == 2.2.3',
+        'flask[async] == 2.2.3',
+        'waitress == 2.1.2',
     ],
     entry_points={
         "console_scripts": [

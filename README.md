@@ -9,9 +9,10 @@
 [![PyPi workflow](https://github.com/pengzhile/pandora/actions/workflows/python-publish.yml/badge.svg)](https://github.com/pengzhile/pandora/actions/workflows/python-publish.yml)
 [![Docker workflow](https://github.com/pengzhile/pandora/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/pengzhile/pandora/actions/workflows/docker-publish.yml)
 
-[English](doc/README.en.md)
+[English](https://github.com/pengzhile/pandora/blob/master/doc/README.en.md)
 
 ### `潘多拉`，一个命令行的`ChatGPT`。
+
 ### 实现了网页版`ChatGPT`的主要操作。能过`Cloudflare`，理论上速度还可以。
 
 ## 界面截图
@@ -42,9 +43,9 @@
   pip install Pandora-ChatGPT
   pandora
   ```
-  
+
 * 编译运行
- 
+
   ```shell
   pip install .
   pandora
@@ -56,7 +57,7 @@
   docker pull pengzhile/pandora
   docker run -it --rm pengzhile/pandora
   ```
-  
+
 * Docker编译运行
 
   ```shell
@@ -72,16 +73,19 @@
 * 可通过 `pandora --help` 查看。
 * `-p` 或 `--proxy` 指定代理，格式：`protocol://user:pass@ip:port`。
 * `-t` 或 `--token_file` 指定一个存放`Access Token`的文件，使用`Access Token`登录。
+* `-s` 或 `--server` 以`http`服务方式启动，格式：`ip:port`。
 * `-v` 或 `--verbose` 显示调试信息，且出错时打印异常堆栈信息，供查错使用。
 
 ## Docker环境变量
 
 * `PANDORA_ACCESS_TOKEN` 指定`Access Token`字符串。
 * `PANDORA_PROXY` 指定代理，格式：`protocol://user:pass@ip:port`。
+* `PANDORA_SERVER` 以`http`服务方式启动，格式：`ip:port`。
 * `PANDORA_VERBOSE` 显示调试信息，且出错时打印异常堆栈信息，供查错使用。
 * 使用Docker方式，设置环境变量即可，无视上述`程序参数`。
 
 ## 关于 Access Token
+
 * 使用`Access Token`方式登录，可以无代理直连。
 * 通常使用`Google`或`Microsoft`账号登录`ChatGPT`的人会用到
 * 首先正常登录`ChatGPT`，不管是账号密码，还是`Google`或是`Microsoft`。
@@ -89,6 +93,10 @@
 * 其中`accessToken`字段的那一长串内容即是`Access Token`。
 * `Access Token`可以复制保存，其有效期目前为`1个月`。
 * 不要泄露你的`Access Token`，使用它可以操纵你的账号。
+
+## HTTP服务文档
+
+* 见 [doc/HTTP-API.md](https://github.com/pengzhile/pandora/blob/master/doc/HTTP-API.md)
 
 ## 操作命令
 
@@ -114,6 +122,7 @@
 * 问题解决。
 
 ## 其他说明
+
 * 项目是站在其他巨人的肩膀上，感谢！
 * 报错、BUG之类的提出`Issue`，我会修复。
 * 因为之后`ChatGPT`的API变动，我可能不会跟进修复。

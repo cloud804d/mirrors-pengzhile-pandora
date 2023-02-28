@@ -26,10 +26,13 @@ class ChatGPT:
             'Referer': 'https://home.apps.openai.com/',
         }
 
-    def list_models(self):
+    def list_models(self, raw=False):
         url = 'https://apps.openai.com/api/models'
         resp = self.session.get(url=url, headers=self.basic_headers, allow_redirects=False,
                                 timeout=100, proxies=self.proxies)
+
+        if raw:
+            return resp
 
         if resp.status_code != 200:
             raise Exception('list models failed: ' + self.__get_error(resp))
@@ -40,33 +43,40 @@ class ChatGPT:
 
         return result['models']
 
-    def list_conversations(self, offset, limit):
+    def list_conversations(self, offset, limit, raw=False):
         url = 'https://apps.openai.com/api/conversations?offset={}&limit={}'.format(offset, limit)
         resp = self.session.get(url=url, headers=self.basic_headers, allow_redirects=False,
                                 timeout=100, proxies=self.proxies)
+
+        if raw:
+            return resp
 
         if resp.status_code != 200:
             raise Exception('list conversations failed: ' + self.__get_error(resp))
 
         return resp.json()
 
-    def get_conversation(self, conversation_id):
+    def get_conversation(self, conversation_id, raw=False):
         url = 'https://apps.openai.com/api/conversation/' + conversation_id
         resp = self.session.get(url=url, headers=self.basic_headers, allow_redirects=False,
                                 timeout=100, proxies=self.proxies)
+
+        if raw:
+            return resp
 
         if resp.status_code != 200:
             raise Exception('get conversation failed: ' + self.__get_error(resp))
 
         return resp.json()
 
-    def del_conversation(self, conversation_id) -> bool:
+    def del_conversation(self, conversation_id, raw=False):
         data = {
             'is_visible': False,
         }
-        return self.__update_conversation(conversation_id, data)
 
-    def gen_conversation_title(self, conversation_id, model, message_id) -> str:
+        return self.__update_conversation(conversation_id, data, raw)
+
+    def gen_conversation_title(self, conversation_id, model, message_id, raw=False):
         url = 'https://apps.openai.com/api/conversation/gen_title/' + conversation_id
         data = {
             'model': model,
@@ -74,6 +84,9 @@ class ChatGPT:
         }
         resp = self.session.post(url=url, headers=self.basic_headers, json=data, allow_redirects=False,
                                  timeout=100, proxies=self.proxies)
+
+        if raw:
+            return resp
 
         if resp.status_code != 200:
             raise Exception('gen title failed: ' + self.__get_error(resp))
@@ -84,19 +97,23 @@ class ChatGPT:
 
         return result['title']
 
-    def set_conversation_title(self, conversation_id, title) -> bool:
+    def set_conversation_title(self, conversation_id, title, raw=False):
         data = {
             'title': title,
         }
-        return self.__update_conversation(conversation_id, data)
 
-    async def talk(self, prompt, model, message_id, parent_message_id, conversation_id=None):
+        return self.__update_conversation(conversation_id, data, raw)
+
+    async def talk(self, prompt, model, message_id, parent_message_id, conversation_id=None, raw=False):
         data = {
             'action': 'next',
             'messages': [
                 {
                     'id': message_id,
                     'role': 'user',
+                    'author': {
+                        'role': 'user',
+                    },
                     'content': {
                         'content_type': 'text',
                         'parts': [prompt],
@@ -110,15 +127,19 @@ class ChatGPT:
         if conversation_id:
             data['conversation_id'] = conversation_id
 
-        return self.__request_conversation_content(data)
+        return self.__request_conversation_content(data, raw)
 
-    async def regenerate_reply(self, prompt, model, conversation_id, last_user_message_id, last_parent_message_id):
+    async def regenerate_reply(self, prompt, model, conversation_id, last_user_message_id, last_parent_message_id,
+                               raw=False):
         data = {
             'action': 'variant',
             'messages': [
                 {
                     'id': last_user_message_id,
                     'role': 'user',
+                    'author': {
+                        'role': 'user',
+                    },
                     'content': {
                         'content_type': 'text',
                         'parts': [prompt],
@@ -130,9 +151,9 @@ class ChatGPT:
             'parent_message_id': last_parent_message_id,
         }
 
-        return self.__request_conversation_content(data)
+        return self.__request_conversation_content(data, raw)
 
-    async def __request_conversation_content(self, data):
+    async def __request_conversation_content(self, data, raw=False):
         url = 'https://apps.openai.com/api/conversation'
         headers = {**self.session.headers, **self.basic_headers,
                    'Accept': 'text/event-stream', 'Content-Type': 'application/json'}
@@ -143,6 +164,10 @@ class ChatGPT:
                     raise Exception('request conversation failed: ' + str(resp.status))
 
                 async for line in resp.content:
+                    if raw:
+                        yield line
+                        continue
+
                     utf8_line = line.decode()
                     if 'data: [DONE]' == utf8_line[0:12]:
                         break
@@ -150,10 +175,13 @@ class ChatGPT:
                     if 'data: {' == utf8_line[0:7]:
                         yield json.loads(utf8_line[6:])
 
-    def __update_conversation(self, conversation_id, data) -> bool:
+    def __update_conversation(self, conversation_id, data, raw=False):
         url = 'https://apps.openai.com/api/conversation/' + conversation_id
         resp = self.session.patch(url=url, headers=self.basic_headers, json=data, allow_redirects=False,
                                   timeout=100, proxies=self.proxies)
+
+        if raw:
+            return resp
 
         if resp.status_code != 200:
             raise Exception('set conversation title failed: ' + self.__get_error(resp))

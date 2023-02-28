@@ -9,9 +9,10 @@
 [![PyPi workflow](https://github.com/pengzhile/pandora/actions/workflows/python-publish.yml/badge.svg)](https://github.com/pengzhile/pandora/actions/workflows/python-publish.yml)
 [![Docker workflow](https://github.com/pengzhile/pandora/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/pengzhile/pandora/actions/workflows/docker-publish.yml)
 
-[中文版本](../README.md)
+[中文版本](https://github.com/pengzhile/pandora/blob/master/README.md)
 
 ### `Pandora`, a command-line `ChatGPT`.
+
 ### Implements main operations of web version `ChatGPT`. Passes through `Cloudflare`, theoretically, it works fast.
 
 ## Screenshots
@@ -56,7 +57,7 @@
   docker pull pengzhile/pandora
   docker run -it --rm pengzhile/pandora
   ```
-  
+
 * Run with Docker compilation
 
   ```shell
@@ -71,15 +72,19 @@
 * Use `pandora --help` to view the list of program arguments.
 * `-p` or `--proxy` specify a proxy, in the format of `protocol://user:pass@ip:port`.
 * `-t` or `--token_file` specify a file that stores the `Access Token`, and log in using the `Access Token`.
+* `-s` or `--server` start as a `http` server, in the format of `ip:port`.
 * `-v` or `--verbose` displays debugging information, and prints the exception stack trace when an error occurs, for debugging purposes.
 
 ## Docker Environment Variables
+
 * `PANDORA_ACCESS_TOKEN` Specifies the `Access Token` string for.
-* `PANDORA_PROXY` Specifies a proxy in the format of `protocol://user:pass@ip:port`.
+* `PANDORA_PROXY` Specifies a proxy, in the format of `protocol://user:pass@ip:port`.
+* `PANDORA_SERVER` Start as a `http` server, in the format of `ip:port`.
 * `PANDORA_VERBOSE` displays debugging information, and prints the exception stack trace when an error occurs, for debugging purposes.
 * When running the `Pandora` using Docker, set the corresponding environment variables, regardless of the `Program Arguments` mentioned above.
 
 ## About Access Token
+
 * Log in with the `Access Token` allows you to bypass the proxy.
 * It is usually used by those who log in to `ChatGPT` with their `Google` or `Microsoft` accounts.
 * Firstly, log in to `ChatGPT` normally, whether it's with a username and password, or with `Google` or `Microsoft`.
@@ -87,6 +92,10 @@
 * The long string of characters in the `accessToken` field is your `Access Token`.
 * The `Access Token` can be copied and saved, and its validity period is currently `1 month`.
 * Do not leak your `Access Token`, as it can manipulate your account.
+
+## HTTP API Doc
+
+* Visit [doc/HTTP-API.md](https://github.com/pengzhile/pandora/blob/master/doc/HTTP-API.md)
 
 ## Command Operations
 

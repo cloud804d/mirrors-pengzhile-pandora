@@ -119,7 +119,7 @@ class ChatBot:
         print('/del\t\tDelete the current conversation.')
         print('/token\t\tPrint your access token.')
         print('/clear\t\tClear your screen.')
-        print('/version\t\tPrint the version of Pandora.')
+        print('/version\tPrint the version of Pandora.')
         print('/exit\t\tExit Pandora.')
         print()
 
@@ -138,10 +138,10 @@ class ChatBot:
             if len(preview_prompt) > 40:
                 preview_prompt = '{}...'.format(preview_prompt[0:40])
 
-            Console.info('  {}. {}'.format(number, preview_prompt))
+            Console.info('  {}.\t{}'.format(number, preview_prompt))
 
         choices.append('c')
-        Console.warn('  c. ** Cancel')
+        Console.warn('  c.\t** Cancel')
 
         default_choice = None if len(choices) > 2 else '1'
         while True:
@@ -276,11 +276,11 @@ class ChatBot:
         else:
             self.state.user_prompt = ChatPrompt(prompt, parent_id=self.state.chatgpt_prompt.message_id)
 
-        self.state.user_prompts.append(self.state.user_prompt)
-
         generator = self.chatgpt.talk(prompt, self.state.model_slug, self.state.user_prompt.message_id,
                                       self.state.user_prompt.parent_id, self.state.conversation_id)
         asyncio.run(self.__print_reply(generator))
+
+        self.state.user_prompts.append(self.state.user_prompt)
 
         if first_prompt:
             new_title = self.chatgpt.gen_conversation_title(self.state.conversation_id, self.state.model_slug,
@@ -318,6 +318,9 @@ class ChatBot:
             self.state.chatgpt_prompt.parent_id = self.state.user_prompt.message_id
             self.state.chatgpt_prompt.message_id = message['id']
 
+            if 'system' == message['author']['role']:
+                self.state.user_prompt.parent_id = message['id']
+
             if text:
                 Console.success(text, end='')
 
@@ -328,7 +331,7 @@ class ChatBot:
         if not conversations['total']:
             return None
 
-        choices = ['c']
+        choices = ['c', 'r']
         items = conversations['items']
         first_page = 0 == conversations['offset']
         last_page = (conversations['offset'] + conversations['limit']) >= conversations['total']
@@ -339,24 +342,28 @@ class ChatBot:
             choices.append(number)
             choices.append('t' + number)
             choices.append('d' + number)
-            Console.info('  {}. {}'.format(number, item['title']))
+            Console.info('  {}.\t{}'.format(number, item['title']))
 
         if not last_page:
             choices.append('n')
-            Console.warn('  n. >> Next page')
+            Console.warn('  n.\t>> Next page')
 
         if not first_page:
             choices.append('p')
-            Console.warn('  p. << Previous page')
+            Console.warn('  p.\t<< Previous page')
 
-        Console.warn('  t?. Set title for the conversation, eg: t1')
-        Console.warn('  d?. Delete the conversation, eg: d1')
-        Console.warn('  c. ** Start new chat')
+        Console.warn('  t?.\tSet title for the conversation, eg: t1')
+        Console.warn('  d?.\tDelete the conversation, eg: d1')
+        Console.warn('  r.\tRefresh conversation list')
+        Console.warn('  c.\t** Start new chat')
 
         while True:
             choice = Prompt.ask('Your choice', choices=choices, show_choices=False)
             if 'c' == choice:
                 return None
+
+            if 'r' == choice:
+                return self.__choice_conversation(page, page_size)
 
             if 'n' == choice:
                 return self.__choice_conversation(page + 1, page_size)
@@ -381,13 +388,18 @@ class ChatBot:
         if 1 == size:
             return models[0]
 
-        choices = []
+        choices = ['r']
         Console.info_b('Choice model:')
         for idx, item in enumerate(models):
             number = str(idx + 1)
             choices.append(number)
-            Console.info('  {}. {} - {}'.format(number, item['title'], item['description']))
+            Console.info('  {}.\t{} - {}'.format(number, item['title'], item['description']))
+
+        Console.warn('  r.\tRefresh model list')
 
         while True:
             choice = Prompt.ask('Your choice', choices=choices, show_choices=False)
+            if 'r' == choice:
+                return self.__choice_model()
+
             return models[int(choice) - 1]
