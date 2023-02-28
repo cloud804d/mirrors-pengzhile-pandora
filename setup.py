@@ -28,6 +28,7 @@ setup(
         'appdirs == 1.4.4',
         'werkzeug == 2.2.3',
         'flask[async] == 2.2.3',
+        'flask-cors == 3.0.10',
         'waitress == 2.1.2',
     ],
     entry_points={

@@ -4,6 +4,7 @@ import asyncio
 import logging
 
 from flask import Flask, jsonify, make_response, request, Response
+from flask_cors import CORS
 from waitress import serve
 from werkzeug.exceptions import default_exceptions
 
@@ -26,6 +27,18 @@ class ChatBot:
         host, port = self.__parse_bind(bind_str)
 
         app = Flask(__name__)
+
+        CORS(app, resources={r'/api/*': {'supports_credentials': True, 'expose_headers': [
+            'Content-Type',
+            'Authorization',
+            'X-Requested-With',
+            'Accept',
+            'Origin',
+            'Access-Control-Request-Method',
+            'Access-Control-Request-Headers',
+            'Content-Disposition',
+        ], 'max_age': 600}})
+
         for ex in default_exceptions:
             app.register_error_handler(ex, self.__handle_error)
 
