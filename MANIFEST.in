@@ -1,1 +1,1 @@
-include VERSION
+recursive-include src/pandora/flask *

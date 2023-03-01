@@ -93,9 +93,10 @@
 * The `Access Token` can be copied and saved, and its validity period is currently `1 month`.
 * Do not leak your `Access Token`, as it can manipulate your account.
 
-## HTTP API Doc
+## HTTP Server Doc
 
-* Visit [doc/HTTP-API.md](https://github.com/pengzhile/pandora/blob/master/doc/HTTP-API.md)
+* If you start the `http` server, you can access a minimalist version of ChatGPT by visiting the URL you specified with `http://ip:port`.
+* Visit API doc [doc/HTTP-API.md](https://github.com/pengzhile/pandora/blob/master/doc/HTTP-API.md)
 
 ## Command Operations
 

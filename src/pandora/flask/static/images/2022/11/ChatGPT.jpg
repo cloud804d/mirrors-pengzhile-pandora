@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://github.githubassets.com/" crossorigin="">
+<link rel="preconnect" href="https://fonts.googleapis.com/" crossorigin=""><link rel="modulepreload" as="script" crossorigin href="/_nuxt/entry.6d5c3260.js"><link rel="preload" as="style" href="/_nuxt/entry.168c6f46.css"><link rel="prefetch" as="script" crossorigin href="/_nuxt/app.5e2f6a08.js"><link rel="prefetch" as="script" crossorigin href="/_nuxt/usePageTransition.3a10d059.js"><link rel="prefetch" as="script" crossorigin href="/_nuxt/useAsyncNavigationData.8ec41f34.js"><link rel="prefetch" as="script" crossorigin href="/_nuxt/usePageLoading.a333c805.js"><link rel="prefetch" as="script" crossorigin href="/_nuxt/error-component.d820bde0.js"><link rel="prefetch" as="style" href="/_nuxt/Footer.c1b7bc3a.css"><link rel="prefetch" as="script" crossorigin href="/_nuxt/Footer.a38237d3.js"><link rel="prefetch" as="script" crossorigin href="/_nuxt/lang.4a9029fb.js"><link rel="stylesheet" href="/_nuxt/entry.168c6f46.css"></head>
+<body ><div id="__nuxt"></div><script>window.__NUXT__=(function(a){return {serverRendered:false,config:{public:{TWILL_API_BASE:"https:\u002F\u002Fproduction-openaicom-api.azureedge.net",TWILL_API_AUTH_TOKEN:a,APP_ENV:"production",SENTRY_DSN:"https:\u002F\u002F5079bf1f31174cd393afc17c1eb3441f@o1272610.ingest.sentry.io\u002F6585380",GOOGLE_ANALYTICS_ID:"G-9YTZJE58M9"},app:{baseURL:"\u002F",buildAssetsDir:"\u002F_nuxt\u002F",cdnURL:a}},data:{},state:{}}}(""))</script><script type="module" src="/_nuxt/entry.6d5c3260.js" crossorigin></script></body>
+</html>

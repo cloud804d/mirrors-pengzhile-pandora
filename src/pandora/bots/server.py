@@ -2,12 +2,15 @@
 
 import asyncio
 import logging
+from os.path import join, abspath, dirname
 
-from flask import Flask, jsonify, make_response, request, Response
+from flask import Flask, jsonify, make_response, request, Response, render_template
 from flask_cors import CORS
 from waitress import serve
 from werkzeug.exceptions import default_exceptions
+from werkzeug.serving import WSGIRequestHandler
 
+from .. import __version__
 from ..openai.api import ChatGPT
 
 
@@ -18,7 +21,7 @@ class ChatBot:
     def __init__(self, chatgpt: ChatGPT, debug=False):
         self.chatgpt = chatgpt
         self.debug = debug
-        self.log_level = logging.DEBUG if debug else logging.ERROR
+        self.log_level = logging.DEBUG if debug else logging.INFO
 
         logging.basicConfig(level=self.log_level, format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s')
         self.logger = logging.getLogger('waitress')
@@ -26,7 +29,11 @@ class ChatBot:
     def run(self, bind_str):
         host, port = self.__parse_bind(bind_str)
 
-        app = Flask(__name__)
+        resource_path = abspath(join(dirname(__file__), '..', 'flask'))
+        app = Flask(__name__, static_url_path='',
+                    static_folder=join(resource_path, 'static'),
+                    template_folder=join(resource_path, 'templates'))
+        app.after_request(self.__after_request)
 
         CORS(app, resources={r'/api/*': {'supports_credentials': True, 'expose_headers': [
             'Content-Type',
@@ -52,7 +59,18 @@ class ChatBot:
         app.route('/api/conversation/talk', methods=['POST'])(self.talk)
         app.route('/api/conversation/regenerate', methods=['POST'])(self.regenerate)
 
+        app.route('/')(self.chat)
+        app.route('/chat')(self.chat)
+        app.route('/chat/<conversation_id>')(self.chat)
+
+        WSGIRequestHandler.protocol_version = 'HTTP/1.1'
         serve(app, host=host, port=port, ident=None)
+
+    @staticmethod
+    def __after_request(resp):
+        resp.headers['X-Server'] = 'pandora/{}'.format(__version__)
+
+        return resp
 
     def __parse_bind(self, bind_str):
         sections = bind_str.split(':', 2)
@@ -72,6 +90,12 @@ class ChatBot:
             'code': e.code,
             'message': str(e.original_exception if self.debug and hasattr(e, 'original_exception') else e.name)
         }), 500)
+
+    @staticmethod
+    def chat(conversation_id=None):
+        query = {'chatId': [conversation_id]} if conversation_id else {}
+
+        return render_template('chat.html', pandora_base=request.url_root.strip('/'), query=query)
 
     def list_models(self):
         return self.__proxy_result(self.chatgpt.list_models(True))
