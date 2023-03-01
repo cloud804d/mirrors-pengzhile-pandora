@@ -69,6 +69,27 @@ class ChatGPT:
 
         return resp.json()
 
+    def clear_conversations(self, raw=False):
+        data = {
+            'is_visible': False,
+        }
+
+        url = 'https://apps.openai.com/api/conversations'
+        resp = self.session.patch(url=url, headers=self.basic_headers, json=data, allow_redirects=False,
+                                  timeout=100, proxies=self.proxies)
+
+        if raw:
+            return resp
+
+        if resp.status_code != 200:
+            raise Exception('clear conversations failed: ' + self.__get_error(resp))
+
+        result = resp.json()
+        if 'success' not in result:
+            raise Exception('clear conversations failed: ' + resp.text)
+
+        return result['success']
+
     def del_conversation(self, conversation_id, raw=False):
         data = {
             'is_visible': False,
@@ -184,11 +205,11 @@ class ChatGPT:
             return resp
 
         if resp.status_code != 200:
-            raise Exception('set conversation title failed: ' + self.__get_error(resp))
+            raise Exception('update conversation failed: ' + self.__get_error(resp))
 
         result = resp.json()
         if 'success' not in result:
-            raise Exception('set conversation title failed: ' + resp.text)
+            raise Exception('update conversation failed: ' + resp.text)
 
         return result['success']
 

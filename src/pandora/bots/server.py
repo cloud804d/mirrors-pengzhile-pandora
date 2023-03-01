@@ -44,6 +44,7 @@ class ChatBot:
 
         app.route('/api/models')(self.list_models)
         app.route('/api/conversations')(self.list_conversations)
+        app.route('/api/conversations', methods=['DELETE'])(self.clear_conversations)
         app.route('/api/conversation/<conversation_id>')(self.get_conversation)
         app.route('/api/conversation/<conversation_id>', methods=['DELETE'])(self.del_conversation)
         app.route('/api/conversation/<conversation_id>', methods=['PATCH'])(self.set_conversation_title)
@@ -86,6 +87,9 @@ class ChatBot:
 
     def del_conversation(self, conversation_id):
         return self.__proxy_result(self.chatgpt.del_conversation(conversation_id, True))
+
+    def clear_conversations(self):
+        return self.__proxy_result(self.chatgpt.clear_conversations(True))
 
     def set_conversation_title(self, conversation_id):
         title = request.json()['title']

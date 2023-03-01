@@ -195,6 +195,15 @@ class ChatBot:
         else:
             Console.error('#### Set title failed.')
 
+    def __clear_conversations(self):
+        if not Confirm.ask('Are you sure?', default=False):
+            return
+
+        if self.chatgpt.clear_conversations():
+            self.run()
+        else:
+            Console.error('#### Clear conversations failed.')
+
     def __del_conversation(self, state: State):
         if not state.conversation_id:
             Console.error('#### Conversation has not been created.')
@@ -331,7 +340,7 @@ class ChatBot:
         if not conversations['total']:
             return None
 
-        choices = ['c', 'r']
+        choices = ['c', 'r', 'dd']
         items = conversations['items']
         first_page = 0 == conversations['offset']
         last_page = (conversations['offset'] + conversations['limit']) >= conversations['total']
@@ -354,6 +363,7 @@ class ChatBot:
 
         Console.warn('  t?.\tSet title for the conversation, eg: t1')
         Console.warn('  d?.\tDelete the conversation, eg: d1')
+        Console.warn('  dd.\t!! Clear all conversations')
         Console.warn('  r.\tRefresh conversation list')
         Console.warn('  c.\t** Start new chat')
 
@@ -370,6 +380,10 @@ class ChatBot:
 
             if 'p' == choice:
                 return self.__choice_conversation(page - 1, page_size)
+
+            if 'dd' == choice:
+                self.__clear_conversations()
+                continue
 
             if 't' == choice[0]:
                 self.__set_conversation_title(State(conversation_id=items[int(choice[1:]) - 1]['id']))

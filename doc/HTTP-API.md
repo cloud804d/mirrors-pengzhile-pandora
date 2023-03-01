@@ -14,6 +14,12 @@
     * `limit` 数字类型，默认为：`20`。
 * **接口描述：** 以分页方式列出会话列表。
 
+### `/api/conversations`
+
+* **HTTP方法：**`DELETE`
+* **URL参数：** `无`
+* **接口描述：** 删除所有会话。
+
 ### `/api/conversation/<conversation_id>`
 
 * **HTTP方法：** `GET`
