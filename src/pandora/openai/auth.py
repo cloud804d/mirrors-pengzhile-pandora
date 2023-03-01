@@ -5,7 +5,8 @@ import re
 from datetime import datetime as dt
 from urllib.parse import urlparse, parse_qs
 
-import requests as requests
+import requests
+from certifi import where
 
 
 class Auth0:
@@ -16,6 +17,8 @@ class Auth0:
         self.proxy = proxy
         self.use_cache = use_cache
         self.session = requests.Session()
+        self.session.trust_env = False
+        self.session.verify = where()
         self.access_token = None
         self.expires = None
         self.user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) ' \

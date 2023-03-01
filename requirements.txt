@@ -1,3 +1,4 @@
+certifi
 aiohttp==3.8.4
 pyreadline==2.1
 requests[socks]==2.28.2

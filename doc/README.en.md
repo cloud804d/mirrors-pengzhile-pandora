@@ -22,6 +22,7 @@
   <summary>
 
   ![alt Screenshot5](https://github.com/pengzhile/pandora/raw/master/doc/images/s05.png)
+  ![alt Screenshot10](https://github.com/pengzhile/pandora/raw/master/doc/images/s10.jpeg)
 
   </summary>
 
@@ -29,6 +30,7 @@
   ![alt Screenshot2](https://github.com/pengzhile/pandora/raw/master/doc/images/s02.png)
   ![alt Screenshot3](https://github.com/pengzhile/pandora/raw/master/doc/images/s03.png)
   ![alt Screenshot4](https://github.com/pengzhile/pandora/raw/master/doc/images/s04.png)
+  ![alt Screenshot11](https://github.com/pengzhile/pandora/raw/master/doc/images/s11.jpeg)
   ![alt Screenshot6](https://github.com/pengzhile/pandora/raw/master/doc/images/s06.png)
 
   </details>
@@ -96,7 +98,7 @@
 ## HTTP Server Doc
 
 * If you start the `http` server, you can access a minimalist version of ChatGPT by visiting the URL you specified with `http://ip:port`.
-* Visit API doc [doc/HTTP-API.md](https://github.com/pengzhile/pandora/blob/master/doc/HTTP-API.md)
+* Visit API doc: [doc/HTTP-API.md](https://github.com/pengzhile/pandora/blob/master/doc/HTTP-API.md)
 
 ## Command Operations
 
@@ -113,13 +115,6 @@
 * `/clear` clears the screen.
 * `/version` print the version of `Pandora`.
 * `/exit` exits `Pandora`.
-
-## macOS specific issues
-
-* If you get an error: `certificate verify failed: unable to get local issuer certificate`。
-* First: Press `Command`+`Space` buttons or open `Spotlight`.
-* Second：type `Install Certificates.command` and execute it.
-* Problem solved.
 
 ## Other Information
 

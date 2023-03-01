@@ -21,6 +21,7 @@ setup(
     package_dir={'pandora': 'src/pandora'},
     include_package_data=True,
     install_requires=[
+        'certifi',
         'aiohttp == 3.8.4',
         'pyreadline == 2.1; platform_system == "Windows"',
         'requests[socks] == 2.28.2',

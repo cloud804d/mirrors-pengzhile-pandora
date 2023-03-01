@@ -22,6 +22,7 @@
   <summary>
 
   ![alt Screenshot5](https://github.com/pengzhile/pandora/raw/master/doc/images/s05.png)
+  ![alt Screenshot10](https://github.com/pengzhile/pandora/raw/master/doc/images/s10.jpeg)
 
   </summary>
 
@@ -29,6 +30,7 @@
   ![alt Screenshot2](https://github.com/pengzhile/pandora/raw/master/doc/images/s02.png)
   ![alt Screenshot3](https://github.com/pengzhile/pandora/raw/master/doc/images/s03.png)
   ![alt Screenshot4](https://github.com/pengzhile/pandora/raw/master/doc/images/s04.png)
+  ![alt Screenshot11](https://github.com/pengzhile/pandora/raw/master/doc/images/s11.jpeg)
   ![alt Screenshot6](https://github.com/pengzhile/pandora/raw/master/doc/images/s06.png)
 
   </details>
@@ -97,7 +99,7 @@
 ## HTTP服务文档
 
 * 如果你以`http`服务方式启动，现在你可以打开一个极简版的`ChatGPT`了。通过你指定的`http://ip:port`来访问。
-* API文档见 [doc/HTTP-API.md](https://github.com/pengzhile/pandora/blob/master/doc/HTTP-API.md)
+* API文档见：[doc/HTTP-API.md](https://github.com/pengzhile/pandora/blob/master/doc/HTTP-API.md)
 
 ## 操作命令
 
@@ -114,13 +116,6 @@
 * `/clear` 清屏，应该不用解释。
 * `/version` 打印`Pandora`的版本信息。
 * `/exit` 退出`潘多拉`。
-
-## macOS的神奇问题
-
-* 如果你界面报错：`certificate verify failed: unable to get local issuer certificate`。
-* 第一步：同时按键盘`Command`+`Space`，或手动打开`Spotlight`。
-* 第二步：输入`Install Certificates.command`执行它。
-* 问题解决。
 
 ## 其他说明
 
