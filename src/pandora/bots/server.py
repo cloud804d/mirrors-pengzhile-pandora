@@ -8,6 +8,7 @@ from flask import Flask, jsonify, make_response, request, Response, render_templ
 from flask_cors import CORS
 from waitress import serve
 from werkzeug.exceptions import default_exceptions
+from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.serving import WSGIRequestHandler
 
 from .. import __version__
@@ -33,6 +34,7 @@ class ChatBot:
         app = Flask(__name__, static_url_path='',
                     static_folder=join(resource_path, 'static'),
                     template_folder=join(resource_path, 'templates'))
+        app.wsgi_app = ProxyFix(app.wsgi_app)
         app.after_request(self.__after_request)
 
         CORS(app, resources={r'/api/*': {'supports_credentials': True, 'expose_headers': [
