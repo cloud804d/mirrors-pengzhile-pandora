@@ -8,7 +8,7 @@
 
 ### `/api/conversations`
 
-* **HTTP方法：**`GET`
+* **HTTP方法：** `GET`
 * **URL参数：**
     * `offset` 数字类型，默认为：`1`。
     * `limit` 数字类型，默认为：`20`。
@@ -16,7 +16,7 @@
 
 ### `/api/conversations`
 
-* **HTTP方法：**`DELETE`
+* **HTTP方法：** `DELETE`
 * **URL参数：** `无`
 * **接口描述：** 删除所有会话。
 

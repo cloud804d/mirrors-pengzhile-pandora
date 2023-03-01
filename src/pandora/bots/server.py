@@ -92,7 +92,7 @@ class ChatBot:
         return self.__proxy_result(self.chatgpt.clear_conversations(True))
 
     def set_conversation_title(self, conversation_id):
-        title = request.json()['title']
+        title = request.json['title']
 
         return self.__proxy_result(self.chatgpt.set_conversation_title(conversation_id, title, True))
 
