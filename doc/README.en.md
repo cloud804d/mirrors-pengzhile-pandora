@@ -30,8 +30,8 @@
   ![alt Screenshot2](https://github.com/pengzhile/pandora/raw/master/doc/images/s02.png)
   ![alt Screenshot3](https://github.com/pengzhile/pandora/raw/master/doc/images/s03.png)
   ![alt Screenshot4](https://github.com/pengzhile/pandora/raw/master/doc/images/s04.png)
-  ![alt Screenshot11](https://github.com/pengzhile/pandora/raw/master/doc/images/s11.jpeg)
   ![alt Screenshot6](https://github.com/pengzhile/pandora/raw/master/doc/images/s06.png)
+  ![alt Screenshot11](https://github.com/pengzhile/pandora/raw/master/doc/images/s11.jpeg)
 
   </details>
 

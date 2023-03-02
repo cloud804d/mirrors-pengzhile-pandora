@@ -176,8 +176,7 @@ class ChatGPT:
 
     async def __request_conversation_content(self, data, raw=False):
         url = 'https://apps.openai.com/api/conversation'
-        headers = {**self.session.headers, **self.basic_headers,
-                   'Accept': 'text/event-stream', 'Content-Type': 'application/json'}
+        headers = {**self.session.headers, **self.basic_headers, 'Accept': 'text/event-stream'}
 
         async with aiohttp.ClientSession(trust_env=False) as session:
             async with session.post(url, json=data, headers=headers, timeout=600, proxy=self.proxy,

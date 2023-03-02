@@ -34,7 +34,7 @@ class ChatBot:
         app = Flask(__name__, static_url_path='',
                     static_folder=join(resource_path, 'static'),
                     template_folder=join(resource_path, 'templates'))
-        app.wsgi_app = ProxyFix(app.wsgi_app)
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_port=1)
         app.after_request(self.__after_request)
 
         CORS(app, resources={r'/api/*': {'supports_credentials': True, 'expose_headers': [
