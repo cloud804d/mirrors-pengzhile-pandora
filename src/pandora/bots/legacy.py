@@ -317,10 +317,11 @@ class ChatBot:
             if not result['message']:
                 raise Exception('miss message property.')
 
+            text = None
             message = result['message']
-            text = message['content']['parts'][0][p:]
-
-            p += len(text)
+            if 'assistant' == message['author']['role']:
+                text = message['content']['parts'][0][p:]
+                p += len(text)
 
             self.state.conversation_id = result['conversation_id']
             self.state.chatgpt_prompt.prompt = message['content']['parts'][0]
