@@ -65,8 +65,8 @@
 * **JSON字段：**
     * `prompt` 提问的内容。
     * `model` 对话使用的模型，通常整个会话中保持不变。
-    * `last_user_message_id` 上一条用户发送消息的ID。
-    * `last_parent_message_id` 上一条用户发送消息的父消息ID。
+    * `message_id` 上一条用户发送消息的ID。
+    * `parent_message_id` 上一条用户发送消息的父消息ID。
     * `conversation_id` 会话ID，在这个接口不可不传。
     * `stream` 是否使用流的方式输出内容，默认为：`True`
 * **接口描述：** 让`ChatGPT`重新生成回复。

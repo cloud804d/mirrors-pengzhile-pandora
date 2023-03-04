@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import asyncio
 import re
 import uuid
 
 from rich.prompt import Prompt, Confirm
 
 from .. import __version__
-from ..openai.api import ChatGPT
 from ..openai.utils import Console
 
 
@@ -35,7 +33,7 @@ class State:
 
 
 class ChatBot:
-    def __init__(self, chatgpt: ChatGPT):
+    def __init__(self, chatgpt):
         self.chatgpt = chatgpt
         self.state = None
 
@@ -285,9 +283,9 @@ class ChatBot:
         else:
             self.state.user_prompt = ChatPrompt(prompt, parent_id=self.state.chatgpt_prompt.message_id)
 
-        generator = self.chatgpt.talk(prompt, self.state.model_slug, self.state.user_prompt.message_id,
-                                      self.state.user_prompt.parent_id, self.state.conversation_id)
-        asyncio.run(self.__print_reply(generator))
+        status, _, generator = self.chatgpt.talk(prompt, self.state.model_slug, self.state.user_prompt.message_id,
+                                                 self.state.user_prompt.parent_id, self.state.conversation_id)
+        self.__print_reply(status, generator)
 
         self.state.user_prompts.append(self.state.user_prompt)
 
@@ -302,15 +300,19 @@ class ChatBot:
             Console.error('#### Conversation has not been created.')
             return
 
-        generator = self.chatgpt.regenerate_reply(state.user_prompt.prompt, state.model_slug, state.conversation_id,
-                                                  state.user_prompt.message_id, state.user_prompt.parent_id)
+        status, _, generator = self.chatgpt.regenerate_reply(state.user_prompt.prompt, state.model_slug,
+                                                             state.conversation_id, state.user_prompt.message_id,
+                                                             state.user_prompt.parent_id)
         print()
         Console.success_b('ChatGPT:')
-        asyncio.run(self.__print_reply(generator))
+        self.__print_reply(status, generator)
 
-    async def __print_reply(self, generator):
+    def __print_reply(self, status, generator):
+        if 200 != status:
+            raise Exception(status, next(generator))
+
         p = 0
-        async for result in await generator:
+        for result in generator:
             if result['error']:
                 raise Exception(result['error'])
 

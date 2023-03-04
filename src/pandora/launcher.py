@@ -14,6 +14,7 @@ from .bots.server import ChatBot as ChatBotServer
 from .openai.api import ChatGPT
 from .openai.auth import Auth0
 from .openai.utils import Console
+from .turbo.chat import TurboGPT
 
 if 'nt' == os.name:
     import pyreadline as readline
@@ -115,6 +116,12 @@ def main():
         const='127.0.0.1:8008',
     )
     parser.add_argument(
+        '-a',
+        '--api',
+        help='Use gpt-3.5-turbo chat api. Note: OpenAI will bill you.',
+        action='store_true',
+    )
+    parser.add_argument(
         '-v',
         '--verbose',
         help='Show exception traceback.',
@@ -138,7 +145,10 @@ def main():
         if args.server or Confirm.ask('Do you want to save your access token for the next login?', default=True):
             save_access_token(access_token)
 
-    chatgpt = ChatGPT(access_token, args.proxy)
+    if args.api:
+        chatgpt = TurboGPT(access_token, args.proxy)
+    else:
+        chatgpt = ChatGPT(access_token, args.proxy)
 
     if args.server:
         return ChatBotServer(chatgpt, args.verbose).run(args.server)

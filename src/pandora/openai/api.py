@@ -1,25 +1,95 @@
 # -*- coding: utf-8 -*-
 
+import asyncio
 import json
+import queue as block_queue
+import threading
 from ssl import create_default_context
 
 import aiohttp
 import requests
 from certifi import where
 
+from .. import __version__
 
-class ChatGPT:
+
+class API:
+    def __init__(self, proxy, cafile):
+        self.proxy = proxy
+        self.ssl_context = create_default_context(cafile=cafile)
+
+    @staticmethod
+    def wrap_stream_out(generator, status):
+        if status != 200:
+            for line in generator:
+                yield json.dumps(line)
+
+            return
+
+        for line in generator:
+            yield b'data: ' + json.dumps(line).encode('utf-8') + b'\n\n'
+
+        yield b'data: [DONE]\n\n'
+
+    async def __process_sse(self, resp):
+        yield resp.status
+        yield resp.headers
+
+        if resp.status != 200:
+            yield await self.__process_sse_except(resp)
+            return
+
+        async for line in resp.content:
+            utf8_line = line.decode('utf-8')
+            if 'data: [DONE]' == utf8_line[0:12]:
+                break
+
+            if 'data: {' == utf8_line[0:7]:
+                yield json.loads(utf8_line[6:])
+
+    @staticmethod
+    async def __process_sse_except(resp):
+        result = b''
+        async for line in resp.content:
+            result += line
+
+        return json.loads(result.decode('utf-8'))
+
+    @staticmethod
+    def __generate_wrap(queue):
+        while True:
+            item = queue.get()
+            if item is None:
+                break
+
+            yield item
+
+    async def _do_request_sse(self, url, headers, data, queue):
+        async with aiohttp.ClientSession(trust_env=False) as session:
+            async with session.post(url, json=data, headers=headers, timeout=600, proxy=self.proxy,
+                                    ssl=self.ssl_context) as resp:
+                async for line in self.__process_sse(resp):
+                    queue.put(line)
+
+                queue.put(None)
+
+    def _request_sse(self, url, headers, data):
+        queue = block_queue.Queue()
+        threading.Thread(target=asyncio.run, args=(self._do_request_sse(url, headers, data, queue),)).start()
+
+        return queue.get(), queue.get(), self.__generate_wrap(queue)
+
+
+class ChatGPT(API):
     def __init__(self, access_token, proxy=None):
         self.access_token = access_token
         self.session = requests.Session()
         self.session.trust_env = False
         self.session.verify = where()
-        self.proxy = proxy
         self.session.proxies = {
-            'http': self.proxy,
-            'https': self.proxy,
-        } if self.proxy else None
-        self.ssl_context = create_default_context(cafile=self.session.verify)
+            'http': proxy,
+            'https': proxy,
+        } if proxy else None
 
         self.user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) ' \
                           'Chrome/109.0.0.0 Safari/537.36'
@@ -30,6 +100,8 @@ class ChatGPT:
             'Origin': 'https://home.apps.openai.com',
             'Referer': 'https://home.apps.openai.com/',
         }
+
+        super().__init__(proxy, self.session.verify)
 
     def list_models(self, raw=False):
         url = 'https://apps.openai.com/api/models'
@@ -125,7 +197,7 @@ class ChatGPT:
 
         return self.__update_conversation(conversation_id, data, raw)
 
-    async def talk(self, prompt, model, message_id, parent_message_id, conversation_id=None, raw=False):
+    def talk(self, prompt, model, message_id, parent_message_id, conversation_id=None, stream=True):
         data = {
             'action': 'next',
             'messages': [
@@ -148,15 +220,14 @@ class ChatGPT:
         if conversation_id:
             data['conversation_id'] = conversation_id
 
-        return self.__request_conversation_content(data, raw)
+        return self.__request_conversation(data)
 
-    async def regenerate_reply(self, prompt, model, conversation_id, last_user_message_id, last_parent_message_id,
-                               raw=False):
+    def regenerate_reply(self, prompt, model, conversation_id, message_id, parent_message_id, stream=True):
         data = {
             'action': 'variant',
             'messages': [
                 {
-                    'id': last_user_message_id,
+                    'id': message_id,
                     'role': 'user',
                     'author': {
                         'role': 'user',
@@ -169,32 +240,16 @@ class ChatGPT:
             ],
             'model': model,
             'conversation_id': conversation_id,
-            'parent_message_id': last_parent_message_id,
+            'parent_message_id': parent_message_id,
         }
 
-        return self.__request_conversation_content(data, raw)
+        return self.__request_conversation(data)
 
-    async def __request_conversation_content(self, data, raw=False):
+    def __request_conversation(self, data):
         url = 'https://apps.openai.com/api/conversation'
         headers = {**self.session.headers, **self.basic_headers, 'Accept': 'text/event-stream'}
 
-        async with aiohttp.ClientSession(trust_env=False) as session:
-            async with session.post(url, json=data, headers=headers, timeout=600, proxy=self.proxy,
-                                    ssl=self.ssl_context) as resp:
-                if resp.status != 200:
-                    raise Exception('request conversation failed: ' + str(resp.status))
-
-                async for line in resp.content:
-                    if raw:
-                        yield line
-                        continue
-
-                    utf8_line = line.decode()
-                    if 'data: [DONE]' == utf8_line[0:12]:
-                        break
-
-                    if 'data: {' == utf8_line[0:7]:
-                        yield json.loads(utf8_line[6:])
+        return self._request_sse(url, headers, data)
 
     def __update_conversation(self, conversation_id, data, raw=False):
         url = 'https://apps.openai.com/api/conversation/' + conversation_id
@@ -218,3 +273,48 @@ class ChatGPT:
             return str(resp.json()['detail'])
         except:
             return resp.text
+
+
+class ChatCompletion(API):
+    def __init__(self, api_key, proxy=None):
+        self.api_key = api_key
+        self.session = requests.Session()
+        self.session.trust_env = False
+        self.session.verify = where()
+        self.session.proxies = {
+            'http': proxy,
+            'https': proxy,
+        } if proxy else None
+
+        self.user_agent = 'pandora/{}'.format(__version__)
+        self.basic_headers = {
+            'Authorization': 'Bearer ' + self.api_key,
+            'User-Agent': self.user_agent,
+            'Content-Type': 'application/json',
+        }
+
+        super().__init__(proxy, self.session.verify)
+
+    def request(self, model, messages, stream=True, **kwargs):
+        data = {
+            'model': model,
+            'messages': messages,
+            **kwargs,
+            'stream': stream,
+        }
+
+        return self.__request_conversation(data, stream)
+
+    def __request_conversation(self, data, stream):
+        url = 'https://api.openai.com/v1/chat/completions'
+        headers = {**self.basic_headers, 'Accept': 'text/event-stream'}
+
+        if stream:
+            return self._request_sse(url, headers, data)
+
+        resp = self.session.post(url=url, headers=self.basic_headers, json=data, allow_redirects=False, timeout=600)
+
+        def __generate_wrap():
+            yield resp.json()
+
+        return resp.status_code, resp.headers, __generate_wrap()

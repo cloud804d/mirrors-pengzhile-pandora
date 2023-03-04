@@ -9,8 +9,6 @@
 [![PyPi workflow](https://github.com/pengzhile/pandora/actions/workflows/python-publish.yml/badge.svg)](https://github.com/pengzhile/pandora/actions/workflows/python-publish.yml)
 [![Docker workflow](https://github.com/pengzhile/pandora/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/pengzhile/pandora/actions/workflows/docker-publish.yml)
 
-[English](https://github.com/pengzhile/pandora/blob/master/doc/README.en.md)
-
 ### `潘多拉`，一个命令行的`ChatGPT`。
 
 ### 实现了网页版`ChatGPT`的主要操作。能过`Cloudflare`，理论上速度还可以。
@@ -76,6 +74,7 @@
 * `-p` 或 `--proxy` 指定代理，格式：`protocol://user:pass@ip:port`。
 * `-t` 或 `--token_file` 指定一个存放`Access Token`的文件，使用`Access Token`登录。
 * `-s` 或 `--server` 以`http`服务方式启动，格式：`ip:port`。
+* `-a` 或 `--api` 使用`gpt-3.5-turbo`API请求，**你可能需要向`OpenAI`支付费用**。
 * `-v` 或 `--verbose` 显示调试信息，且出错时打印异常堆栈信息，供查错使用。
 
 ## Docker环境变量
@@ -83,6 +82,7 @@
 * `PANDORA_ACCESS_TOKEN` 指定`Access Token`字符串。
 * `PANDORA_PROXY` 指定代理，格式：`protocol://user:pass@ip:port`。
 * `PANDORA_SERVER` 以`http`服务方式启动，格式：`ip:port`。
+* `PANDORA_API` 使用`gpt-3.5-turbo`API请求，**你可能需要向`OpenAI`支付费用**。
 * `PANDORA_VERBOSE` 显示调试信息，且出错时打印异常堆栈信息，供查错使用。
 * 使用Docker方式，设置环境变量即可，无视上述`程序参数`。
 

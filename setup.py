@@ -17,7 +17,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url="https://github.com/pengzhile/pandora",
-    packages=['pandora', 'pandora.openai', 'pandora.bots'],
+    packages=['pandora', 'pandora.openai', 'pandora.bots', 'pandora.turbo'],
     package_dir={'pandora': 'src/pandora'},
     include_package_data=True,
     install_requires=[
@@ -28,9 +28,10 @@ setup(
         'rich == 13.3.1',
         'appdirs == 1.4.4',
         'werkzeug == 2.2.3',
-        'flask[async] == 2.2.3',
+        'flask == 2.2.3',
         'flask-cors == 3.0.10',
         'waitress == 2.1.2',
+        'tiktoken == 0.3.0',
     ],
     entry_points={
         "console_scripts": [

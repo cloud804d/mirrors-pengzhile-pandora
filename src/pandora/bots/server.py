@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import asyncio
 import logging
 from os.path import join, abspath, dirname
 
@@ -12,14 +11,14 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.serving import WSGIRequestHandler
 
 from .. import __version__
-from ..openai.api import ChatGPT
+from ..openai.api import API
 
 
 class ChatBot:
     __default_ip = '127.0.0.1'
     __default_port = 8008
 
-    def __init__(self, chatgpt: ChatGPT, debug=False):
+    def __init__(self, chatgpt, debug=False):
         self.chatgpt = chatgpt
         self.debug = debug
         self.log_level = logging.DEBUG if debug else logging.INFO
@@ -103,8 +102,8 @@ class ChatBot:
         return self.__proxy_result(self.chatgpt.list_models(True))
 
     def list_conversations(self):
-        offset = request.args.get('offset', 1)
-        limit = request.args.get('limit', 20)
+        offset = request.args.get('offset', '1')
+        limit = request.args.get('limit', '20')
 
         return self.__proxy_result(self.chatgpt.list_conversations(offset, limit, True))
 
@@ -129,7 +128,7 @@ class ChatBot:
 
         return self.__proxy_result(self.chatgpt.gen_conversation_title(conversation_id, model, message_id, True))
 
-    async def talk(self):
+    def talk(self):
         payload = request.json
         prompt = payload['prompt']
         model = payload['model']
@@ -138,53 +137,32 @@ class ChatBot:
         conversation_id = payload.get('conversation_id')
         stream = payload.get('stream', True)
 
-        async def __talk():
-            generator = self.chatgpt.talk(prompt, model, message_id, parent_message_id, conversation_id, stream)
-            async for line in await generator:
-                yield line
+        return self.__process_stream(
+            *self.chatgpt.talk(prompt, model, message_id, parent_message_id, conversation_id, stream), stream)
 
-        if stream:
-            return Response(self.__to_sync(__talk()), mimetype='text/event-stream')
-
-        last_json = None
-        async for json in __talk():
-            last_json = json
-
-        return jsonify(last_json)
-
-    async def regenerate(self):
+    def regenerate(self):
         payload = request.json
         prompt = payload['prompt']
         model = payload['model']
-        last_user_message_id = payload['last_user_message_id']
-        last_parent_message_id = payload['last_parent_message_id']
+        message_id = payload['message_id']
+        parent_message_id = payload['parent_message_id']
         conversation_id = payload['conversation_id']
         stream = payload.get('stream', True)
 
-        async def __generate():
-            generator = self.chatgpt.regenerate_reply(prompt, model, conversation_id, last_user_message_id,
-                                                      last_parent_message_id, stream)
-            async for line in await generator:
-                yield line
-
-        if stream:
-            return Response(self.__to_sync(__generate()), mimetype='text/event-stream')
-
-        last_json = None
-        async for json in __generate():
-            last_json = json
-
-        return jsonify(last_json)
+        return self.__process_stream(
+            *self.chatgpt.regenerate_reply(prompt, model, conversation_id, message_id, parent_message_id, stream),
+            stream)
 
     @staticmethod
-    def __to_sync(generator):
-        loop = asyncio.new_event_loop()
+    def __process_stream(status, headers, generator, stream):
+        if stream:
+            return Response(API.wrap_stream_out(generator, status), mimetype=headers['Content-Type'], status=status)
 
-        while True:
-            try:
-                yield loop.run_until_complete(generator.__anext__())
-            except StopAsyncIteration:
-                break
+        last_json = None
+        for json in generator:
+            last_json = json
+
+        return make_response(last_json, status)
 
     @staticmethod
     def __proxy_result(remote_resp):

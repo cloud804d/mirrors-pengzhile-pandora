@@ -4,4 +4,4 @@ WORKDIR /opt/app
 ADD . .
 RUN pip install .
 
-ENTRYPOINT ["bin/startup.sh"]
+ENTRYPOINT ["/opt/app/bin/startup.sh"]
