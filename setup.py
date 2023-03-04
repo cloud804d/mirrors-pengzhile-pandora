@@ -10,7 +10,7 @@ with open('README.md', 'r', encoding='utf-8') as f:
 setup(
     name='Pandora-ChatGPT',
     version=__version__,
-    python_requires='>=3.7',
+    python_requires='>=3.9',
     author='Neo Peng',
     author_email='pengzhile@gmail.com',
     description='A command-line interface to ChatGPT',
