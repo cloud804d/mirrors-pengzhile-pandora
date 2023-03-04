@@ -2,7 +2,7 @@ certifi
 aiohttp==3.8.4
 pyreadline==2.1
 requests[socks]==2.28.2
-rich==13.3.1
+rich==13.3.2
 appdirs==1.4.4
 werkzeug==2.2.3
 flask==2.2.3
