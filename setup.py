@@ -10,7 +10,7 @@ with open('README.md', 'r', encoding='utf-8') as f:
 setup(
     name='Pandora-ChatGPT',
     version=__version__,
-    python_requires='>=3.9',
+    python_requires='>=3.7',
     author='Neo Peng',
     author_email='pengzhile@gmail.com',
     description='A command-line interface to ChatGPT',
@@ -31,7 +31,7 @@ setup(
         'flask == 2.2.3',
         'flask-cors == 3.0.10',
         'waitress == 2.1.2',
-        'tiktoken == 0.3.0',
+        'pandora-tiktoken == 0.3.1',
     ],
     entry_points={
         "console_scripts": [

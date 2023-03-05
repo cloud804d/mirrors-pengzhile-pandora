@@ -1,6 +1,6 @@
 # Pandora
 
-![Python version](https://img.shields.io/badge/python-%3E%3D3.9-green)
+![Python version](https://img.shields.io/badge/python-%3E%3D3.7-green)
 [![Issues](https://img.shields.io/github/issues-raw/pengzhile/pandora)](https://github.com/pengzhile/pandora/issues)
 [![Commits](https://img.shields.io/github/last-commit/pengzhile/pandora/master)](https://github.com/pengzhile/pandora/commits/master)
 [![PyPi](https://img.shields.io/pypi/v/pandora-chatgpt.svg)](https://pypi.python.org/pypi/pandora-chatgpt)
@@ -35,7 +35,7 @@
 
 ## 如何运行
 
-* Python版本目测起码要`3.9`
+* Python版本目测起码要`3.7`
 
 * pip安装运行
 

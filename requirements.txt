@@ -8,4 +8,4 @@ werkzeug==2.2.3
 flask==2.2.3
 flask-cors==3.0.10
 waitress==2.1.2
-tiktoken==0.3.0
+pandora-tiktoken==0.3.1
