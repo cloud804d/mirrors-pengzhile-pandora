@@ -4,4 +4,4 @@ WORKDIR /opt/app
 ADD . .
 RUN pip install --upgrade pip && pip install .
 
-ENTRYPOINT ["/opt/appbin/startup.sh"]
+ENTRYPOINT ["/opt/app/bin/startup.sh"]
