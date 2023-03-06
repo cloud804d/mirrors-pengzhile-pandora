@@ -117,6 +117,11 @@
 * `/version` 打印`Pandora`的版本信息。
 * `/exit` 退出`潘多拉`。
 
+## 高阶设置
+
+* 本部分内容不理解的朋友，**请勿擅动！**
+* 环境变量 `OPENAI_API_PREFIX` 可以替换OpenAI Api的前缀`https://api.openai.com`。
+
 ## 其他说明
 
 * 项目是站在其他巨人的肩膀上，感谢！

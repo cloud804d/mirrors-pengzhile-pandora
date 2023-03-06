@@ -4,6 +4,7 @@ import asyncio
 import json
 import queue as block_queue
 import threading
+from os import environ
 from ssl import create_default_context
 
 import aiohttp
@@ -306,7 +307,8 @@ class ChatCompletion(API):
         return self.__request_conversation(data, stream)
 
     def __request_conversation(self, data, stream):
-        url = 'https://api.openai.com/v1/chat/completions'
+        api_prefix = environ.get('OPENAI_API_PREFIX')
+        url = '{}/v1/chat/completions'.format(api_prefix if api_prefix else 'https://api.openai.com')
         headers = {**self.basic_headers, 'Accept': 'text/event-stream'}
 
         if stream:
