@@ -5,12 +5,12 @@ import os
 import sys
 import traceback
 
-from appdirs import user_config_dir
 from rich.prompt import Prompt, Confirm
 
 from . import __version__
 from .bots.legacy import ChatBot as ChatBotLegacy
 from .bots.server import ChatBot as ChatBotServer
+from .config import USER_CONFIG_DIR
 from .openai.api import ChatGPT
 from .openai.auth import Auth0
 from .openai.utils import Console
@@ -33,11 +33,10 @@ def read_access_token(token_file):
 
 
 def save_access_token(access_token):
-    config_dir = user_config_dir('Pandora-ChatGPT')
-    token_file = os.path.join(config_dir, 'access_token.dat')
+    token_file = os.path.join(USER_CONFIG_DIR, 'access_token.dat')
 
-    if not os.path.exists(config_dir):
-        os.makedirs(config_dir)
+    if not os.path.exists(USER_CONFIG_DIR):
+        os.makedirs(USER_CONFIG_DIR)
 
     with open(token_file, 'w') as f:
         f.write(access_token)
@@ -49,7 +48,7 @@ def save_access_token(access_token):
 
 
 def confirm_access_token(token_file=None, silence=False):
-    app_token_file = os.path.join(user_config_dir('Pandora-ChatGPT'), 'access_token.dat')
+    app_token_file = os.path.join(USER_CONFIG_DIR, 'access_token.dat')
 
     app_token_file_exists = os.path.isfile(app_token_file)
     if app_token_file_exists and __show_verbose:
