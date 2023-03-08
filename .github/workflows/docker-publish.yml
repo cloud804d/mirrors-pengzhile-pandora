@@ -12,7 +12,7 @@ permissions:
 
 env:
   IMAGE_NAME: pandora
-  PLATFORMS: linux/386,linux/amd64,linux/arm64
+  PLATFORMS: linux/amd64,linux/arm64
 
 jobs:
   get-tags:
