@@ -227,7 +227,7 @@ class ChatBot:
 
         while True:
             node = result['mapping'][current_node_id]
-            if not node['parent']:
+            if not node.get('parent'):
                 break
 
             nodes.insert(0, node)

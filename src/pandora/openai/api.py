@@ -10,6 +10,7 @@ from ssl import create_default_context
 import aiohttp
 import requests
 from certifi import where
+from requests import Response
 
 from .. import __version__
 
@@ -124,11 +125,13 @@ class ChatGPT(API):
         url = 'https://apps.openai.com/api/conversations?offset={}&limit={}'.format(offset, limit)
         resp = self.session.get(url=url, headers=self.basic_headers, allow_redirects=False, timeout=100)
 
-        if raw:
-            return resp
+        empty = {'items': [], 'total': 0, 'limit': limit, 'offset': offset}
 
         if resp.status_code != 200:
-            raise Exception('list conversations failed: ' + self.__get_error(resp))
+            return self.__wrap_response(empty) if raw else empty
+
+        if raw:
+            return resp
 
         return resp.json()
 
@@ -274,6 +277,15 @@ class ChatGPT(API):
             return str(resp.json()['detail'])
         except:
             return resp.text
+
+    @staticmethod
+    def __wrap_response(data, status=200):
+        resp = Response()
+        resp.status_code = status
+        resp._content = json.dumps(data).encode('utf-8')
+        resp.headers['Content-Type'] = 'application/json'
+
+        return resp
 
 
 class ChatCompletion(API):
