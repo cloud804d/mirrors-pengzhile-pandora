@@ -126,10 +126,11 @@ class ChatGPT(API):
         return result['models']
 
     def list_conversations(self, offset, limit, raw=False):
+        force = True
         url = 'https://apps.openai.com/api/conversations?offset={}&limit={}'.format(offset, limit)
         resp = self.session.get(url=url, headers=self.basic_headers, **self.req_kwargs)
 
-        if resp.status_code != 200 or '"items":{}' in resp.text.replace(' ', ''):
+        if resp.status_code != 200 or force:
             my_list = ConversationOfficial.wrap_conversation_list(offset, limit)
             return self.__wrap_response(my_list) if raw else my_list
 
