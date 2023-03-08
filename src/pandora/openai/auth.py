@@ -14,11 +14,16 @@ class Auth0:
         self.session_token = None
         self.email = email
         self.password = password
-        self.proxy = proxy
         self.use_cache = use_cache
         self.session = requests.Session()
-        self.session.trust_env = False
-        self.session.verify = where()
+        self.req_kwargs = {
+            'proxies': {
+                'http': proxy,
+                'https': proxy,
+            } if proxy else None,
+            'verify': where(),
+            'timeout': 100,
+        }
         self.access_token = None
         self.expires = None
         self.user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) ' \
@@ -36,12 +41,6 @@ class Auth0:
         if not self.__check_email(self.email) or not self.password:
             raise Exception('invalid email or password.')
 
-        if self.proxy:
-            self.session.proxies = {
-                'http': self.proxy,
-                'https': self.proxy,
-            }
-
         return self.__part_two()
 
     def __part_two(self) -> str:
@@ -50,7 +49,7 @@ class Auth0:
             'User-Agent': self.user_agent,
             'Referer': 'https://home.apps.openai.com/auth/login',
         }
-        resp = self.session.get(url=url, headers=headers, allow_redirects=False, timeout=100)
+        resp = self.session.get(url=url, headers=headers, allow_redirects=False, **self.req_kwargs)
 
         if resp.status_code == 200:
             csrf_token = resp.json()['csrfToken']
@@ -70,7 +69,7 @@ class Auth0:
             'csrfToken': token,
             'json': 'true',
         }
-        resp = self.session.post(url=url, headers=headers, data=data, allow_redirects=False, timeout=100)
+        resp = self.session.post(url=url, headers=headers, data=data, allow_redirects=False, **self.req_kwargs)
 
         if resp.status_code == 200:
             url = resp.json()['url']
@@ -85,7 +84,7 @@ class Auth0:
             'User-Agent': self.user_agent,
             'Referer': 'https://home.apps.openai.com/',
         }
-        resp = self.session.get(url=url, headers=headers, allow_redirects=True, timeout=100)
+        resp = self.session.get(url=url, headers=headers, allow_redirects=True, **self.req_kwargs)
 
         if resp.status_code == 200:
             try:
@@ -113,7 +112,7 @@ class Auth0:
             'webauthn-platform-available': 'true',
             'action': 'default',
         }
-        resp = self.session.post(url, headers=headers, data=data, allow_redirects=False, timeout=100)
+        resp = self.session.post(url, headers=headers, data=data, allow_redirects=False, **self.req_kwargs)
 
         if resp.status_code == 302:
             return self.__part_six(state=state)
@@ -133,7 +132,7 @@ class Auth0:
             'password': self.password,
             'action': 'default',
         }
-        resp = self.session.post(url, headers=headers, data=data, allow_redirects=True, timeout=100)
+        resp = self.session.post(url, headers=headers, data=data, allow_redirects=True, **self.req_kwargs)
 
         if resp.status_code == 200:
             return self.get_access_token()
@@ -148,7 +147,7 @@ class Auth0:
             'User-Agent': self.user_agent,
             'Referer': 'https://home.apps.openai.com/chat',
         }
-        resp = self.session.get(url=url, headers=headers, allow_redirects=False, timeout=100)
+        resp = self.session.get(url=url, headers=headers, allow_redirects=False, **self.req_kwargs)
 
         if resp.status_code == 200:
             json = resp.json()

@@ -6,7 +6,7 @@ from datetime import datetime as dt
 
 class Prompt:
     def __init__(self, prompt_id=None, role=None, content=None, parent=None):
-        self.prompt_id = prompt_id if prompt_id else str(uuid.uuid4())
+        self.prompt_id = prompt_id or str(uuid.uuid4())
         self.parent_id = None
         self.role = role
         self.content = content

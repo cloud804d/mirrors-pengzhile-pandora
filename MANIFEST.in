@@ -1,1 +1,3 @@
+include src/pandora/py.typed
 recursive-include src/pandora/flask *
+recursive-include src/pandora/migrations/scripts *

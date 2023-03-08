@@ -1,11 +1,15 @@
 certifi
-aiohttp==3.8.4
-pyreadline==2.1
-requests[socks]==2.28.2
-rich==13.3.2
-appdirs==1.4.4
-werkzeug==2.2.3
-flask==2.2.3
-flask-cors==3.0.10
-waitress==2.1.2
-pandora-tiktoken==0.3.1
+aiohttp~=3.8.4
+pyreadline3 ~= 3.4.0; platform_system == 'Windows'
+requests[socks]~=2.28.2
+rich~=13.3.2
+appdirs~=1.4.4
+werkzeug~=2.2.3
+flask~=2.2.3
+flask-cors~=3.0.10
+waitress~=2.1.2
+pandora-tiktoken~=0.3.1
+sqlalchemy~=2.0.4
+yoyo-migrations~=8.2.0
+loguru~=0.6.0
+sentry-sdk~=1.16.0

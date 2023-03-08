@@ -13,6 +13,7 @@ from certifi import where
 from requests import Response
 
 from .. import __version__
+from ..migrations.models import ConversationOfficial
 
 
 class API:
@@ -67,7 +68,7 @@ class API:
             yield item
 
     async def _do_request_sse(self, url, headers, data, queue):
-        async with aiohttp.ClientSession(trust_env=False) as session:
+        async with aiohttp.ClientSession() as session:
             async with session.post(url, json=data, headers=headers, timeout=600, proxy=self.proxy,
                                     ssl=self.ssl_context) as resp:
                 async for line in self.__process_sse(resp):
@@ -86,12 +87,15 @@ class ChatGPT(API):
     def __init__(self, access_token, proxy=None):
         self.access_token = access_token
         self.session = requests.Session()
-        self.session.trust_env = False
-        self.session.verify = where()
-        self.session.proxies = {
-            'http': proxy,
-            'https': proxy,
-        } if proxy else None
+        self.req_kwargs = {
+            'proxies': {
+                'http': proxy,
+                'https': proxy,
+            } if proxy else None,
+            'verify': where(),
+            'timeout': 100,
+            'allow_redirects': False,
+        }
 
         self.user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) ' \
                           'Chrome/109.0.0.0 Safari/537.36'
@@ -103,11 +107,11 @@ class ChatGPT(API):
             'Referer': 'https://home.apps.openai.com/',
         }
 
-        super().__init__(proxy, self.session.verify)
+        super().__init__(proxy, self.req_kwargs['verify'])
 
     def list_models(self, raw=False):
         url = 'https://apps.openai.com/api/models'
-        resp = self.session.get(url=url, headers=self.basic_headers, allow_redirects=False, timeout=100)
+        resp = self.session.get(url=url, headers=self.basic_headers, **self.req_kwargs)
 
         if raw:
             return resp
@@ -123,12 +127,11 @@ class ChatGPT(API):
 
     def list_conversations(self, offset, limit, raw=False):
         url = 'https://apps.openai.com/api/conversations?offset={}&limit={}'.format(offset, limit)
-        resp = self.session.get(url=url, headers=self.basic_headers, allow_redirects=False, timeout=100)
-
-        empty = {'items': [], 'total': 0, 'limit': limit, 'offset': offset}
+        resp = self.session.get(url=url, headers=self.basic_headers, **self.req_kwargs)
 
         if resp.status_code != 200:
-            return self.__wrap_response(empty) if raw else empty
+            my_list = ConversationOfficial.wrap_conversation_list(offset, limit)
+            return self.__wrap_response(my_list) if raw else my_list
 
         if raw:
             return resp
@@ -137,7 +140,7 @@ class ChatGPT(API):
 
     def get_conversation(self, conversation_id, raw=False):
         url = 'https://apps.openai.com/api/conversation/' + conversation_id
-        resp = self.session.get(url=url, headers=self.basic_headers, allow_redirects=False, timeout=100)
+        resp = self.session.get(url=url, headers=self.basic_headers, **self.req_kwargs)
 
         if raw:
             return resp
@@ -148,12 +151,14 @@ class ChatGPT(API):
         return resp.json()
 
     def clear_conversations(self, raw=False):
+        ConversationOfficial.clear()
+
         data = {
             'is_visible': False,
         }
 
         url = 'https://apps.openai.com/api/conversations'
-        resp = self.session.patch(url=url, headers=self.basic_headers, json=data, allow_redirects=False, timeout=100)
+        resp = self.session.patch(url=url, headers=self.basic_headers, json=data, **self.req_kwargs)
 
         if raw:
             return resp
@@ -168,6 +173,8 @@ class ChatGPT(API):
         return result['success']
 
     def del_conversation(self, conversation_id, raw=False):
+        ConversationOfficial.delete(conversation_id)
+
         data = {
             'is_visible': False,
         }
@@ -175,26 +182,34 @@ class ChatGPT(API):
         return self.__update_conversation(conversation_id, data, raw)
 
     def gen_conversation_title(self, conversation_id, model, message_id, raw=False):
+        ConversationOfficial.new_conversation(conversation_id)
+
         url = 'https://apps.openai.com/api/conversation/gen_title/' + conversation_id
         data = {
             'model': model,
             'message_id': message_id,
         }
-        resp = self.session.post(url=url, headers=self.basic_headers, json=data, allow_redirects=False, timeout=100)
+        resp = self.session.post(url=url, headers=self.basic_headers, json=data, **self.req_kwargs)
+
+        result = resp.json()
+        if resp.status_code == 200:
+            if 'title' in result:
+                ConversationOfficial.new_conversation(conversation_id, result['title'])
 
         if raw:
-            return resp
+            return self.__wrap_response(result, resp.status_code)
 
         if resp.status_code != 200:
             raise Exception('gen title failed: ' + self.__get_error(resp))
 
-        result = resp.json()
         if 'title' not in result:
             raise Exception('gen title failed: ' + resp.text)
 
         return result['title']
 
     def set_conversation_title(self, conversation_id, title, raw=False):
+        ConversationOfficial.new_conversation(conversation_id, title)
+
         data = {
             'title': title,
         }
@@ -257,7 +272,7 @@ class ChatGPT(API):
 
     def __update_conversation(self, conversation_id, data, raw=False):
         url = 'https://apps.openai.com/api/conversation/' + conversation_id
-        resp = self.session.patch(url=url, headers=self.basic_headers, json=data, allow_redirects=False, timeout=100)
+        resp = self.session.patch(url=url, headers=self.basic_headers, json=data, **self.req_kwargs)
 
         if raw:
             return resp
@@ -292,12 +307,15 @@ class ChatCompletion(API):
     def __init__(self, api_key, proxy=None):
         self.api_key = api_key
         self.session = requests.Session()
-        self.session.trust_env = False
-        self.session.verify = where()
-        self.session.proxies = {
-            'http': proxy,
-            'https': proxy,
-        } if proxy else None
+        self.req_kwargs = {
+            'proxies': {
+                'http': proxy,
+                'https': proxy,
+            } if proxy else None,
+            'verify': where(),
+            'timeout': 600,
+            'allow_redirects': False,
+        }
 
         self.user_agent = 'pandora/{}'.format(__version__)
         self.basic_headers = {
@@ -306,7 +324,7 @@ class ChatCompletion(API):
             'Content-Type': 'application/json',
         }
 
-        super().__init__(proxy, self.session.verify)
+        super().__init__(proxy, self.req_kwargs['verify'])
 
     def request(self, model, messages, stream=True, **kwargs):
         data = {
@@ -325,7 +343,7 @@ class ChatCompletion(API):
         if stream:
             return self._request_sse(url, headers, data)
 
-        resp = self.session.post(url=url, headers=self.basic_headers, json=data, allow_redirects=False, timeout=600)
+        resp = self.session.post(url=url, headers=self.basic_headers, json=data, **self.req_kwargs)
 
         def __generate_wrap():
             yield resp.json()

@@ -12,8 +12,8 @@ from ..openai.utils import Console
 class ChatPrompt:
     def __init__(self, prompt: str = None, parent_id=None, message_id=None):
         self.prompt = prompt
-        self.parent_id = parent_id if parent_id else self.gen_message_id()
-        self.message_id = message_id if message_id else self.gen_message_id()
+        self.parent_id = parent_id or self.gen_message_id()
+        self.message_id = message_id or self.gen_message_id()
 
     @staticmethod
     def gen_message_id():
@@ -68,6 +68,7 @@ class ChatBot:
 
             if not line:
                 break
+
             if '/' == line[0]:
                 return line
 
@@ -354,7 +355,7 @@ class ChatBot:
             choices.append(number)
             choices.append('t' + number)
             choices.append('d' + number)
-            Console.info('  {}.\t{}'.format(number, item['title']))
+            Console.info('  {}.\t{}'.format(number, item['title'].replace('\n', ' ')))
 
         if not last_page:
             choices.append('n')

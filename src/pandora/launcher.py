@@ -2,22 +2,24 @@
 
 import argparse
 import os
-import sys
-import traceback
 
+from loguru import logger
 from rich.prompt import Prompt, Confirm
 
 from . import __version__
 from .bots.legacy import ChatBot as ChatBotLegacy
 from .bots.server import ChatBot as ChatBotServer
-from .config import USER_CONFIG_DIR
+from .exts import sentry
+from .exts.config import USER_CONFIG_DIR
+from .exts.hooks import hook_except_handle
+from .migrations import migrate
 from .openai.api import ChatGPT
 from .openai.auth import Auth0
 from .openai.utils import Console
 from .turbo.chat import TurboGPT
 
 if 'nt' == os.name:
-    import pyreadline as readline
+    import pyreadline3 as readline
 else:
     import readline
 
@@ -121,6 +123,11 @@ def main():
         action='store_true',
     )
     parser.add_argument(
+        '--sentry',
+        help='Enable sentry to send error reports when errors occur.',
+        action='store_true',
+    )
+    parser.add_argument(
         '-v',
         '--verbose',
         help='Show exception traceback.',
@@ -129,8 +136,13 @@ def main():
     args, _ = parser.parse_known_args()
     __show_verbose = args.verbose
 
-    Console.debug_b(''', Mode: {}
-        '''.format('server' if args.server else 'cli'))
+    Console.debug_b(''', Mode: {}, Engine: {}
+        '''.format('server' if args.server else 'cli', 'turbo' if args.api else 'free'))
+
+    if args.sentry:
+        sentry.init(args.proxy)
+
+    migrate.do_migrate()
 
     access_token, need_save = confirm_access_token(args.token_file, args.server)
     if not access_token:
@@ -150,18 +162,20 @@ def main():
         chatgpt = ChatGPT(access_token, args.proxy)
 
     if args.server:
-        return ChatBotServer(chatgpt, args.verbose).run(args.server)
+        return ChatBotServer(chatgpt, args.verbose, args.sentry).run(args.server)
 
     ChatBotLegacy(chatgpt).run()
 
 
 def run():
+    hook_except_handle()
+
     try:
         main()
-    except KeyboardInterrupt:
-        Console.info('Bye...')
-        sys.exit(0)
     except Exception as e:
         Console.error_bh('### Error occurred: ' + str(e))
+
         if __show_verbose:
-            Console.print(traceback.format_exc())
+            logger.exception('Exception occurred.')
+
+        sentry.capture(e)

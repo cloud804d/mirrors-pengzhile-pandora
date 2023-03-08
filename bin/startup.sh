@@ -21,6 +21,10 @@ if [ -n "${PANDORA_API}" ]; then
   PANDORA_ARGS="${PANDORA_ARGS} -a"
 fi
 
+if [ -n "${PANDORA_SENTRY}" ]; then
+  PANDORA_ARGS="${PANDORA_ARGS} --sentry"
+fi
+
 if [ -n "${PANDORA_VERBOSE}" ]; then
   PANDORA_ARGS="${PANDORA_ARGS} -v"
 fi

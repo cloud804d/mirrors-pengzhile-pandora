@@ -11,6 +11,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.serving import WSGIRequestHandler
 
 from .. import __version__
+from ..exts.hooks import hook_logging
 from ..openai.api import API
 
 
@@ -18,12 +19,13 @@ class ChatBot:
     __default_ip = '127.0.0.1'
     __default_port = 8008
 
-    def __init__(self, chatgpt, debug=False):
+    def __init__(self, chatgpt, debug=False, sentry=False):
         self.chatgpt = chatgpt
         self.debug = debug
-        self.log_level = logging.DEBUG if debug else logging.INFO
+        self.sentry = sentry
+        self.log_level = logging.DEBUG if debug else logging.WARN
 
-        logging.basicConfig(level=self.log_level, format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s')
+        hook_logging(level=self.log_level, format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s')
         self.logger = logging.getLogger('waitress')
 
     def run(self, bind_str):
@@ -92,11 +94,14 @@ class ChatBot:
             'message': str(e.original_exception if self.debug and hasattr(e, 'original_exception') else e.name)
         }), 500)
 
-    @staticmethod
-    def chat(conversation_id=None):
+    def chat(self, conversation_id=None):
         query = {'chatId': [conversation_id]} if conversation_id else {}
 
-        return render_template('chat.html', pandora_base=request.url_root.strip('/'), query=query)
+        return render_template('chat.html',
+                               pandora_base=request.url_root.strip('/'),
+                               pandora_sentry=self.sentry,
+                               query=query
+                               )
 
     def list_models(self):
         return self.__proxy_result(self.chatgpt.list_models(True))
