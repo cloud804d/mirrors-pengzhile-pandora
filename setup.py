@@ -18,7 +18,6 @@ setup(
     author_email='pengzhile@gmail.com',
     keywords='OpenAI ChatGPT ChatGPT-Plus gpt-3.5-turbo gpt-3.5-turbo-0301',
     description='A command-line interface to ChatGPT',
-    license='GPLv2',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/pengzhile/pandora',
