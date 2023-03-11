@@ -103,14 +103,12 @@ class ChatGPT(API):
             'Authorization': 'Bearer ' + self.access_token,
             'User-Agent': self.user_agent,
             'Content-Type': 'application/json',
-            'Origin': 'https://home.apps.openai.com',
-            'Referer': 'https://home.apps.openai.com/',
         }
 
         super().__init__(proxy, self.req_kwargs['verify'])
 
     def list_models(self, raw=False):
-        url = 'https://apps.openai.com/api/models'
+        url = 'https://chat.gateway.do/api/models'
         resp = self.session.get(url=url, headers=self.basic_headers, **self.req_kwargs)
 
         if raw:
@@ -126,21 +124,19 @@ class ChatGPT(API):
         return result['models']
 
     def list_conversations(self, offset, limit, raw=False):
-        force = True
-        url = 'https://apps.openai.com/api/conversations?offset={}&limit={}'.format(offset, limit)
+        url = 'https://chat.gateway.do/api/conversations?offset={}&limit={}'.format(offset, limit)
         resp = self.session.get(url=url, headers=self.basic_headers, **self.req_kwargs)
-
-        if resp.status_code != 200 or force:
-            my_list = ConversationOfficial.wrap_conversation_list(offset, limit)
-            return self.__wrap_response(my_list) if raw else my_list
 
         if raw:
             return resp
 
+        if resp.status_code != 200:
+            raise Exception('list conversations failed: ' + self.__get_error(resp))
+
         return resp.json()
 
     def get_conversation(self, conversation_id, raw=False):
-        url = 'https://apps.openai.com/api/conversation/' + conversation_id
+        url = 'https://chat.gateway.do/api/conversation/' + conversation_id
         resp = self.session.get(url=url, headers=self.basic_headers, **self.req_kwargs)
 
         if raw:
@@ -152,13 +148,11 @@ class ChatGPT(API):
         return resp.json()
 
     def clear_conversations(self, raw=False):
-        ConversationOfficial.clear()
-
         data = {
             'is_visible': False,
         }
 
-        url = 'https://apps.openai.com/api/conversations'
+        url = 'https://chat.gateway.do/api/conversations'
         resp = self.session.patch(url=url, headers=self.basic_headers, json=data, **self.req_kwargs)
 
         if raw:
@@ -174,8 +168,6 @@ class ChatGPT(API):
         return result['success']
 
     def del_conversation(self, conversation_id, raw=False):
-        ConversationOfficial.delete(conversation_id)
-
         data = {
             'is_visible': False,
         }
@@ -183,34 +175,26 @@ class ChatGPT(API):
         return self.__update_conversation(conversation_id, data, raw)
 
     def gen_conversation_title(self, conversation_id, model, message_id, raw=False):
-        ConversationOfficial.new_conversation(conversation_id)
-
-        url = 'https://apps.openai.com/api/conversation/gen_title/' + conversation_id
+        url = 'https://chat.gateway.do/api/conversation/gen_title/' + conversation_id
         data = {
             'model': model,
             'message_id': message_id,
         }
         resp = self.session.post(url=url, headers=self.basic_headers, json=data, **self.req_kwargs)
 
-        result = resp.json()
-        if resp.status_code == 200:
-            if 'title' in result:
-                ConversationOfficial.new_conversation(conversation_id, result['title'])
-
         if raw:
-            return self.__wrap_response(result, resp.status_code)
+            return resp
 
         if resp.status_code != 200:
             raise Exception('gen title failed: ' + self.__get_error(resp))
 
+        result = resp.json()
         if 'title' not in result:
             raise Exception('gen title failed: ' + resp.text)
 
         return result['title']
 
     def set_conversation_title(self, conversation_id, title, raw=False):
-        ConversationOfficial.new_conversation(conversation_id, title)
-
         data = {
             'title': title,
         }
@@ -266,13 +250,13 @@ class ChatGPT(API):
         return self.__request_conversation(data)
 
     def __request_conversation(self, data):
-        url = 'https://apps.openai.com/api/conversation'
+        url = 'https://chat.gateway.do/api/conversation'
         headers = {**self.session.headers, **self.basic_headers, 'Accept': 'text/event-stream'}
 
         return self._request_sse(url, headers, data)
 
     def __update_conversation(self, conversation_id, data, raw=False):
-        url = 'https://apps.openai.com/api/conversation/' + conversation_id
+        url = 'https://chat.gateway.do/api/conversation/' + conversation_id
         resp = self.session.patch(url=url, headers=self.basic_headers, json=data, **self.req_kwargs)
 
         if raw:
@@ -293,15 +277,6 @@ class ChatGPT(API):
             return str(resp.json()['detail'])
         except:
             return resp.text
-
-    @staticmethod
-    def __wrap_response(data, status=200):
-        resp = Response()
-        resp.status_code = status
-        resp._content = json.dumps(data).encode('utf-8')
-        resp.headers['Content-Type'] = 'application/json'
-
-        return resp
 
 
 class ChatCompletion(API):
