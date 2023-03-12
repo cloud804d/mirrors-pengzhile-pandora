@@ -44,10 +44,10 @@ class Auth0:
         return self.__part_two()
 
     def __part_two(self) -> str:
-        url = 'https://home.apps.openai.com/api/auth/csrf'
+        url = 'https://explorer.api.openai.com/api/auth/csrf'
         headers = {
             'User-Agent': self.user_agent,
-            'Referer': 'https://home.apps.openai.com/auth/login',
+            'Referer': 'https://explorer.api.openai.com/',
         }
         resp = self.session.get(url=url, headers=headers, allow_redirects=False, **self.req_kwargs)
 
@@ -58,14 +58,14 @@ class Auth0:
             raise Exception('Error logging in.')
 
     def __part_three(self, token: str) -> str:
-        url = 'https://home.apps.openai.com/api/auth/signin/auth0?prompt=login'
+        url = 'https://explorer.api.openai.com/api/auth/signin/auth0?'
         headers = {
             'User-Agent': self.user_agent,
-            'Origin': 'https://home.apps.openai.com',
-            'Referer': 'https://home.apps.openai.com/auth/login',
+            'Origin': 'https://explorer.api.openai.com',
+            'Referer': 'https://explorer.api.openai.com/',
         }
         data = {
-            'callbackUrl': '/chat',
+            'callbackUrl': '/',
             'csrfToken': token,
             'json': 'true',
         }
@@ -82,7 +82,7 @@ class Auth0:
     def __part_four(self, url: str) -> str:
         headers = {
             'User-Agent': self.user_agent,
-            'Referer': 'https://home.apps.openai.com/',
+            'Referer': 'https://explorer.api.openai.com/',
         }
         resp = self.session.get(url=url, headers=headers, allow_redirects=True, **self.req_kwargs)
 
@@ -142,10 +142,10 @@ class Auth0:
             raise Exception('Error login.')
 
     def get_access_token(self) -> str:
-        url = 'https://home.apps.openai.com/api/auth/session'
+        url = 'https://explorer.api.openai.com/api/auth/session'
         headers = {
             'User-Agent': self.user_agent,
-            'Referer': 'https://home.apps.openai.com/chat',
+            'Referer': 'https://explorer.api.openai.com/',
         }
         resp = self.session.get(url=url, headers=headers, allow_redirects=False, **self.req_kwargs)
 

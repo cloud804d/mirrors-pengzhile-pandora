@@ -10,10 +10,8 @@ from ssl import create_default_context
 import aiohttp
 import requests
 from certifi import where
-from requests import Response
 
 from .. import __version__
-from ..migrations.models import ConversationOfficial
 
 
 class API:
