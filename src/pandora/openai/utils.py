@@ -32,7 +32,7 @@ class Console:
 
     @staticmethod
     def info(text: str, highlight=False, bold=False, end='\n'):
-        Console.__console.print(text, style='info_b' if bold else 'info', highlight=highlight, end=end)
+        Console.__console.print(text, style='info_b' if bold else 'info', highlight=highlight, end=end, markup=False)
 
     @staticmethod
     def info_b(text: str, highlight=False, end='\n'):
@@ -48,7 +48,7 @@ class Console:
 
     @staticmethod
     def debug(text: str, highlight=False, bold=False, end='\n'):
-        Console.__console.print(text, style='debug_b' if bold else 'debug', highlight=highlight, end=end)
+        Console.__console.print(text, style='debug_b' if bold else 'debug', highlight=highlight, end=end, markup=False)
 
     @staticmethod
     def debug_b(text: str, highlight=False, end='\n'):
@@ -64,7 +64,7 @@ class Console:
 
     @staticmethod
     def error(text: str, highlight=False, bold=False, end='\n'):
-        Console.__console.print(text, style='error_b' if bold else 'error', highlight=highlight, end=end)
+        Console.__console.print(text, style='error_b' if bold else 'error', highlight=highlight, end=end, markup=False)
 
     @staticmethod
     def error_b(text: str, highlight=False, end='\n'):
@@ -80,7 +80,8 @@ class Console:
 
     @staticmethod
     def success(text: str, highlight=False, bold=False, end='\n'):
-        Console.__console.print(text, style='success_b' if bold else 'success', highlight=highlight, end=end)
+        Console.__console.print(text, style='success_b' if bold else 'success', highlight=highlight, end=end,
+                                markup=False)
 
     @staticmethod
     def success_b(text: str, highlight=False, end='\n'):
@@ -96,7 +97,7 @@ class Console:
 
     @staticmethod
     def warn(text: str, highlight=False, bold=False, end='\n'):
-        Console.__console.print(text, style='warn_b' if bold else 'warn', highlight=highlight, end=end)
+        Console.__console.print(text, style='warn_b' if bold else 'warn', highlight=highlight, end=end, markup=False)
 
     @staticmethod
     def warn_b(text: str, highlight=False, end='\n'):
