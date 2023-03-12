@@ -81,11 +81,21 @@ def confirm_access_token(token_file=None, silence=False):
 def main():
     global __show_verbose
 
+    Console.debug_b('''
+   ▄▀▀▄▀▀▀▄  ▄▀▀█▄   ▄▀▀▄ ▀▄  ▄▀▀█▄▄   ▄▀▀▀▀▄   ▄▀▀▄▀▀▀▄  ▄▀▀█▄  
+  █   █   █ ▐ ▄▀ ▀▄ █  █ █ █ █ ▄▀   █ █      █ █   █   █ ▐ ▄▀ ▀▄ 
+  ▐  █▀▀▀▀    █▄▄▄█ ▐  █  ▀█ ▐ █    █ █      █ ▐  █▀▀█▀    █▄▄▄█ 
+     █       ▄▀   █   █   █    █    █ ▀▄    ▄▀  ▄▀    █   ▄▀   █ 
+   ▄▀       █   ▄▀  ▄▀   █    ▄▀▄▄▄▄▀   ▀▀▀▀   █     █   █   ▄▀  
+  █         ▐   ▐   █    ▐   █     ▐           ▐     ▐   ▐   ▐   
+  ▐                 ▐        ▐                                   
+       ''')
+
     Console.debug_b(
         '''
-        Pandora - A command-line interface to ChatGPT
-        Github: https://github.com/pengzhile/pandora
-        Version: {}'''.format(__version__), end=''
+          Pandora - A command-line interface to ChatGPT
+          Github: https://github.com/pengzhile/pandora
+          Version: {}'''.format(__version__), end=''
     )
 
     parser = argparse.ArgumentParser()
