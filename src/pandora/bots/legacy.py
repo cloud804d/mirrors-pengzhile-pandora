@@ -258,7 +258,7 @@ class ChatBot:
                     Console.success_b('ChatGPT:')
                 Console.success(message['content']['parts'][0])
 
-                merge = message['end_turn'] is None
+                merge = 'end_turn' in message and message['end_turn'] is None
             else:
                 continue
 
