@@ -63,9 +63,12 @@ class API:
                     break
 
                 yield item
-            except BaseException:
+            except BaseException as e:
                 event.set()
                 thread.join()
+
+                if isinstance(e, GeneratorExit):
+                    raise e
 
     async def _do_request_sse(self, url, headers, data, queue, event):
         async with httpx.AsyncClient(verify=self.ca_bundle, proxies=self.proxy) as client:
