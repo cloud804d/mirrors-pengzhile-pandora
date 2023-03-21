@@ -9,9 +9,17 @@
 [![PyPi workflow](https://github.com/pengzhile/pandora/actions/workflows/python-publish.yml/badge.svg)](https://github.com/pengzhile/pandora/actions/workflows/python-publish.yml)
 [![Docker workflow](https://github.com/pengzhile/pandora/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/pengzhile/pandora/actions/workflows/docker-publish.yml)
 
-### `潘多拉`，一个命令行的`ChatGPT`。
+### `潘多拉`，一个不只是命令行的`ChatGPT`。
 
 ### 实现了网页版`ChatGPT`的主要操作。能过`Cloudflare`，理论上速度还可以。
+
+## 为什么要用
+
+### 1. 高峰期能绕过官方限制，继续使用。
+### 2. 应答速度直逼`PLUS`，白嫖用户的福音。
+### 3. 官方故障的时候，它可能还是能跑。
+### 4. 多模式：网页/命令行/API，私有化部署。
+### 5. 不会像官方那样无故断线、报错。
 
 ## 界面截图
 
