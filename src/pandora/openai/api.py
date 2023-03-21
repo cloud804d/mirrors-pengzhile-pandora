@@ -5,9 +5,8 @@ import json
 import queue as block_queue
 import threading
 from os import getenv
-from ssl import create_default_context
 
-import aiohttp
+import httpx
 import requests
 from certifi import where
 
@@ -15,9 +14,9 @@ from .. import __version__
 
 
 class API:
-    def __init__(self, proxy, cafile):
+    def __init__(self, proxy, ca_bundle):
         self.proxy = proxy
-        self.ssl_context = create_default_context(cafile=cafile)
+        self.ca_bundle = ca_bundle
 
     @staticmethod
     def wrap_stream_out(generator, status):
@@ -33,15 +32,14 @@ class API:
         yield b'data: [DONE]\n\n'
 
     async def __process_sse(self, resp):
-        yield resp.status
+        yield resp.status_code
         yield resp.headers
 
-        if resp.status != 200:
+        if resp.status_code != 200:
             yield await self.__process_sse_except(resp)
             return
 
-        async for line in resp.content:
-            utf8_line = line.decode('utf-8')
+        async for utf8_line in resp.aiter_lines():
             if 'data: [DONE]' == utf8_line[0:12]:
                 break
 
@@ -51,34 +49,42 @@ class API:
     @staticmethod
     async def __process_sse_except(resp):
         result = b''
-        async for line in resp.content:
+        async for line in resp.aiter_bytes():
             result += line
 
         return json.loads(result.decode('utf-8'))
 
     @staticmethod
-    def __generate_wrap(queue):
+    def __generate_wrap(queue, thread, event):
         while True:
-            item = queue.get()
-            if item is None:
-                break
+            try:
+                item = queue.get()
+                if item is None:
+                    break
 
-            yield item
+                yield item
+            except BaseException:
+                event.set()
+                thread.join()
 
-    async def _do_request_sse(self, url, headers, data, queue):
-        async with aiohttp.ClientSession() as session:
-            async with session.post(url, json=data, headers=headers, timeout=600, proxy=self.proxy,
-                                    ssl=self.ssl_context) as resp:
+    async def _do_request_sse(self, url, headers, data, queue, event):
+        async with httpx.AsyncClient(verify=self.ca_bundle, proxies=self.proxy) as client:
+            async with client.stream('POST', url, json=data, headers=headers, timeout=600) as resp:
                 async for line in self.__process_sse(resp):
                     queue.put(line)
+
+                    if event.is_set():
+                        await client.aclose()
+                        break
 
                 queue.put(None)
 
     def _request_sse(self, url, headers, data):
-        queue = block_queue.Queue()
-        threading.Thread(target=asyncio.run, args=(self._do_request_sse(url, headers, data, queue),)).start()
+        queue, e = block_queue.Queue(), threading.Event()
+        t = threading.Thread(target=asyncio.run, args=(self._do_request_sse(url, headers, data, queue, e),))
+        t.start()
 
-        return queue.get(), queue.get(), self.__generate_wrap(queue)
+        return queue.get(), queue.get(), self.__generate_wrap(queue, t, e)
 
 
 class ChatGPT(API):
