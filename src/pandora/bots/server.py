@@ -61,6 +61,11 @@ class ChatBot:
         app.route('/api/conversation/gen_title/<conversation_id>', methods=['POST'])(self.gen_conversation_title)
         app.route('/api/conversation/talk', methods=['POST'])(self.talk)
         app.route('/api/conversation/regenerate', methods=['POST'])(self.regenerate)
+        app.route('/api/conversation/goon', methods=['POST'])(self.goon)
+
+        app.route('/api/auth/session')(self.session)
+        app.route('/api/accounts/check')(self.check)
+        app.route('/_next/data/olf4sv64FWIcQ_zCGl90t/chat.json')(self.chat_info)
 
         app.route('/')(self.chat)
         app.route('/chat')(self.chat)
@@ -106,6 +111,73 @@ class ChatBot:
                                query=query
                                )
 
+    @staticmethod
+    def session():
+        ret = {
+            'user': {
+                'id': 'user-000000000000000000000000',
+                'name': 'admin@openai.com',
+                'email': 'admin@openai.com',
+                'image': None,
+                'picture': None,
+                'groups': []
+            },
+            'expires': '2089-08-08T23:59:59.999Z',
+            'accessToken': 'secret',
+        }
+
+        return jsonify(ret)
+
+    @staticmethod
+    def chat_info():
+        ret = {
+            'pageProps': {
+                'user': {
+                    'id': 'user-000000000000000000000000',
+                    'name': 'admin@openai.com',
+                    'email': 'admin@openai.com',
+                    'image': None,
+                    'picture': None,
+                    'groups': []
+                },
+                'serviceStatus': {},
+                'userCountry': 'US',
+                'geoOk': True,
+                'serviceAnnouncement': {
+                    'paid': {},
+                    'public': {}
+                },
+                'isUserInCanPayGroup': True
+            },
+            '__N_SSP': True
+        }
+
+        return jsonify(ret)
+
+    @staticmethod
+    def check():
+        ret = {
+            'account_plan': {
+                'is_paid_subscription_active': True,
+                'subscription_plan': 'chatgptplusplan',
+                'account_user_role': 'account-owner',
+                'was_paid_customer': True,
+                'has_customer_object': True,
+                'subscription_expires_at_timestamp': 3774355199
+            },
+            'user_country': 'US',
+            'features': [
+                'model_switcher',
+                'dfw_message_feedback',
+                'dfw_inline_message_regen_comparison',
+                'model_preview',
+                'system_message',
+                'can_continue',
+            ],
+        }
+
+        return jsonify(ret)
+
     def list_models(self):
         return self.__proxy_result(self.chatgpt.list_models(True))
 
@@ -147,6 +219,16 @@ class ChatBot:
 
         return self.__process_stream(
             *self.chatgpt.talk(prompt, model, message_id, parent_message_id, conversation_id, stream), stream)
+
+    def goon(self):
+        payload = request.json
+        model = payload['model']
+        parent_message_id = payload['parent_message_id']
+        conversation_id = payload.get('conversation_id')
+        stream = payload.get('stream', True)
+
+        return self.__process_stream(
+            *self.chatgpt.goon(model, parent_message_id, conversation_id, stream), stream)
 
     def regenerate(self):
         payload = request.json

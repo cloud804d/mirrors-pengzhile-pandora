@@ -212,6 +212,9 @@ class TurboGPT:
 
         return status, headers, __out_generator()
 
+    def goon(self, model, parent_message_id, conversation_id, stream=True):
+        return self.regenerate_reply(None, model, conversation_id, parent_message_id, None, stream)
+
     def regenerate_reply(self, prompt, model, conversation_id, message_id, parent_message_id, stream=True):
         if not conversation_id:
             return self.__out_error_stream('Miss conversation_id', 400)

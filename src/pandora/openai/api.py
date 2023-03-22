@@ -233,6 +233,16 @@ class ChatGPT(API):
 
         return self.__request_conversation(data)
 
+    def goon(self, model, parent_message_id, conversation_id, stream=True):
+        data = {
+            'action': 'continue',
+            'conversation_id': conversation_id,
+            'model': model,
+            'parent_message_id': parent_message_id,
+        }
+
+        return self.__request_conversation(data)
+
     def regenerate_reply(self, prompt, model, conversation_id, message_id, parent_message_id, stream=True):
         data = {
             'action': 'variant',

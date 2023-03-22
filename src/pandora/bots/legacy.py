@@ -94,6 +94,8 @@ class ChatBot:
             self.__talk_loop()
         elif '/regen' == command or '/regenerate' == command:
             self.__regenerate_reply(self.state)
+        elif '/goon' == command or '/continue' == command:
+            self.__continue(self.state)
         elif '/edit' == command or '/modify' == command:
             self.__edit_choice()
         elif '/token' == command:
@@ -113,6 +115,7 @@ class ChatBot:
         print('/select\t\tChoice a different conversation.')
         print('/reload\t\tReload the current conversation.')
         print('/regen\t\tRegenerate response.')
+        print('/continue\t\tContinue generating.')
         print('/edit\t\tEdit one of your previous prompt.')
         print('/new\t\tStart a new conversation.')
         print('/del\t\tDelete the current conversation.')
@@ -304,6 +307,17 @@ class ChatBot:
         status, _, generator = self.chatgpt.regenerate_reply(state.user_prompt.prompt, state.model_slug,
                                                              state.conversation_id, state.user_prompt.message_id,
                                                              state.user_prompt.parent_id)
+        print()
+        Console.success_b('ChatGPT:')
+        self.__print_reply(status, generator)
+
+    def __continue(self, state):
+        if not state.conversation_id:
+            Console.error('#### Conversation has not been created.')
+            return
+
+        status, _, generator = self.chatgpt.goon(state.model_slug, state.chatgpt_prompt.message_id,
+                                                 state.conversation_id)
         print()
         Console.success_b('ChatGPT:')
         self.__print_reply(status, generator)

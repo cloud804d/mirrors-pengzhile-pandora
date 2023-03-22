@@ -70,3 +70,14 @@
     * `conversation_id` 会话ID，在这个接口不可不传。
     * `stream` 是否使用流的方式输出内容，默认为：`True`
 * **接口描述：** 让`ChatGPT`重新生成回复。
+
+### `/api/conversation/goon`
+
+* **HTTP方法：** `POST`
+* **JSON字段：**
+    * `model` 对话使用的模型，通常整个会话中保持不变。
+    * `parent_message_id` 父消息ID，上一次`ChatGPT`应答的消息ID。
+    * `conversation_id` 会话ID。
+    * `stream` 是否使用流的方式输出内容，默认为：`True`
+* **接口描述：** 让`ChatGPT`讲之前的恢复继续下去。
+ 
