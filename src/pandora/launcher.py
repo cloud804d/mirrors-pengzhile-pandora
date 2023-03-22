@@ -13,6 +13,7 @@ from .bots.server import ChatBot as ChatBotServer
 from .exts import sentry
 from .exts.config import USER_CONFIG_DIR
 from .exts.hooks import hook_except_handle
+from .exts.token import check_access_token_out
 from .openai.api import ChatGPT
 from .openai.auth import Auth0
 from .openai.utils import Console
@@ -70,7 +71,12 @@ def confirm_access_token(token_file=None, silence=False):
         confirm = 'y' if silence else Prompt.ask('A saved access token has been detected. Do you want to use it?',
                                                  choices=['y', 'n', 'del'], default='y')
         if 'y' == confirm:
-            return read_access_token(app_token_file), False
+            access_token = read_access_token(app_token_file)
+            if not check_access_token_out(access_token):
+                os.remove(app_token_file)
+                return None, True
+
+            return access_token, False
         elif 'del' == confirm:
             os.remove(app_token_file)
 
@@ -79,16 +85,6 @@ def confirm_access_token(token_file=None, silence=False):
 
 def main():
     global __show_verbose
-
-    Console.debug_b('''
-   ▄▀▀▄▀▀▀▄  ▄▀▀█▄   ▄▀▀▄ ▀▄  ▄▀▀█▄▄   ▄▀▀▀▀▄   ▄▀▀▄▀▀▀▄  ▄▀▀█▄  
-  █   █   █ ▐ ▄▀ ▀▄ █  █ █ █ █ ▄▀   █ █      █ █   █   █ ▐ ▄▀ ▀▄ 
-  ▐  █▀▀▀▀    █▄▄▄█ ▐  █  ▀█ ▐ █    █ █      █ ▐  █▀▀█▀    █▄▄▄█ 
-     █       ▄▀   █   █   █    █    █ ▀▄    ▄▀  ▄▀    █   ▄▀   █ 
-   ▄▀       █   ▄▀  ▄▀   █    ▄▀▄▄▄▄▀   ▀▀▀▀   █     █   █   ▄▀  
-  █         ▐   ▐   █    ▐   █     ▐           ▐     ▐   ▐   ▐   
-  ▐                 ▐        ▐                                   
-       ''')
 
     Console.debug_b(
         '''
@@ -158,7 +154,7 @@ def main():
 
             do_migrate()
         except (ImportError, ModuleNotFoundError):
-            Console.error_bh('You need `pip install Pandora-ChatGPT[api]` to support API mode.')
+            Console.error_bh('### You need `pip install Pandora-ChatGPT[api]` to support API mode.')
             return
 
     access_token, need_save = confirm_access_token(args.token_file, args.server)
@@ -168,6 +164,9 @@ def main():
         password = getenv('OPENAI_PASSWORD') or Prompt.ask('  Password', password=True)
         Console.warn('### Do login, please wait...')
         access_token = Auth0(email, password, args.proxy).auth()
+
+    if not check_access_token_out(access_token):
+        return
 
     if need_save:
         if args.server or Confirm.ask('Do you want to save your access token for the next login?', default=True):
