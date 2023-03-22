@@ -13,11 +13,9 @@ from .bots.server import ChatBot as ChatBotServer
 from .exts import sentry
 from .exts.config import USER_CONFIG_DIR
 from .exts.hooks import hook_except_handle
-from .migrations import migrate
 from .openai.api import ChatGPT
 from .openai.auth import Auth0
 from .openai.utils import Console
-from .turbo.chat import TurboGPT
 
 if 'nt' == os.name:
     import pyreadline3 as readline
@@ -153,7 +151,15 @@ def main():
     if args.sentry:
         sentry.init(args.proxy)
 
-    migrate.do_migrate()
+    if args.api:
+        try:
+            from .openai.token import gpt_num_tokens
+            from .migrations.migrate import do_migrate
+
+            do_migrate()
+        except (ImportError, ModuleNotFoundError):
+            Console.error_bh('You need `pip install Pandora-ChatGPT[api]` to support API mode.')
+            return
 
     access_token, need_save = confirm_access_token(args.token_file, args.server)
     if not access_token:
@@ -168,6 +174,8 @@ def main():
             save_access_token(access_token)
 
     if args.api:
+        from .turbo.chat import TurboGPT
+
         chatgpt = TurboGPT(access_token, args.proxy)
     else:
         chatgpt = ChatGPT(access_token, args.proxy)

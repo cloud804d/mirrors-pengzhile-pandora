@@ -5,6 +5,6 @@ MAINTAINER "Neo Peng <pengzhile@gmail.com>"
 VOLUME /data
 WORKDIR /opt/app
 ADD . .
-RUN pip install --upgrade pip && pip install .
+RUN pip install --upgrade pip && pip install .[api]
 
 ENTRYPOINT ["bin/startup.sh"]

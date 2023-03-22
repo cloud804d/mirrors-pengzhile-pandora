@@ -10,6 +10,9 @@ with open('README.md', 'r', encoding='utf-8') as f:
 with open('requirements.txt', 'r', encoding='utf-8') as f:
     requirements = f.read().split('\n')
 
+with open('requirements_api.txt', 'r', encoding='utf-8') as f:
+    requirements_api = f.read().split('\n')
+
 setup(
     name='Pandora-ChatGPT',
     version=__version__,
@@ -25,6 +28,9 @@ setup(
     package_dir={'pandora': 'src/pandora'},
     include_package_data=True,
     install_requires=requirements,
+    extras_require={
+        'api': requirements_api,
+    },
     entry_points={
         'console_scripts': [
             'pandora = pandora.launcher:run',
@@ -62,7 +68,6 @@ setup(
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
-        'Programming Language :: Python :: 3.12',
 
         'Topic :: Communications :: Chat',
         'Topic :: Internet :: WWW/HTTP',

@@ -48,9 +48,15 @@
 * pip安装运行
 
   ```shell
-  pip install Pandora-ChatGPT
+  pip install pandora-chatgpt
   pandora
   ```
+  * 如果你想支持`gpt-3.5-turbo`模式：
+
+    ```shell
+    pip install pandora-chatgpt[api]
+    pandora
+    ```
 
 * 编译运行
 
@@ -58,6 +64,13 @@
   pip install .
   pandora
   ```
+  
+  * 如果你想支持`gpt-3.5-turbo`模式：
+
+    ```shell
+    pip install .[api]
+    pandora
+    ```
 
 * Docker Hub运行
 
