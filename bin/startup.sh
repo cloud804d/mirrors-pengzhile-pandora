@@ -1,6 +1,7 @@
 #!/bin/bash
 
 PANDORA_ARGS=""
+PANDORA_COMMAND="pandora"
 USER_CONFIG_DIR="/data"
 
 if [ -n "${PANDORA_PROXY}" ]; then
@@ -29,7 +30,11 @@ if [ -n "${PANDORA_VERBOSE}" ]; then
   PANDORA_ARGS="${PANDORA_ARGS} -v"
 fi
 
+if [ -n "${PANDORA_CLOUD}" ]; then
+  PANDORA_COMMAND="pandora-cloud"
+fi
+
 export USER_CONFIG_DIR
 
 # shellcheck disable=SC2086
-$(command -v pandora) ${PANDORA_ARGS}
+$(command -v ${PANDORA_COMMAND}) ${PANDORA_ARGS}

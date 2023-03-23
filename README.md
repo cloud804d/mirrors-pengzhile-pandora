@@ -57,6 +57,12 @@
     pip install pandora-chatgpt[api]
     pandora
     ```
+  * 如果你想启用`cloud`模式：
+
+    ```shell
+    pip install pandora-chatgpt[cloud]
+    pandora-cloud
+    ```
 
 * 编译运行
 
@@ -70,6 +76,13 @@
     ```shell
     pip install .[api]
     pandora
+    ```
+  
+  * 如果你想启用`cloud`模式：
+
+    ```shell
+    pip install .[cloud]
+    pandora-cloud
     ```
 
 * Docker Hub运行
@@ -146,11 +159,18 @@
 * 本部分内容不理解的朋友，**请勿擅动！**
 * 环境变量 `OPENAI_API_PREFIX` 可以替换OpenAI Api的前缀`https://api.openai.com`。
 * 如果你想持久存储`Docker`中`Pandora`产生的数据，你可以挂载宿主机目录至`/data`。
-* 如果你在国内使用`pip`安装缓慢，可以考虑切换至清华的源：```pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple```
+* 如果你在国内使用`pip`安装缓慢，可以考虑切换至腾讯的源：```pip config set global.index-url https://mirrors.cloud.tencent.com/pypi/simple```
 * 默认使用`sqlite3`存储会话数据，如果你希望更换至`mysql`，可以这么做：
   * 执行```pip install PyMySQL```安装驱动。
   * 设置环境变量：`DATABASE_URI`为类似`mysql+pymysql://user:pass@localhost/dbname`的连接字符串。
 * 环境变量指定`OPENAI_EMAIL`可以替代登录输入用户名，`OPENAI_PASSWORD`则可以替代输入密码。
+
+## Cloud模式
+
+* 搭建一个跟官方很像的`ChatGPT`服务，不能说很像，只能说一样。
+* 该模式使用`pandora-cloud`启动，前提是你如前面所说安装好了。
+* Docker环境变量：`PANDORA_CLOUD` 启动`cloud`模式。
+* 该模式参数含义与普通模式相同，可`--help`查看。
 
 ## 其他说明
 
