@@ -54,13 +54,13 @@
   * 如果你想支持`gpt-3.5-turbo`模式：
 
     ```shell
-    pip install pandora-chatgpt[api]
+    pip install 'pandora-chatgpt[api]'
     pandora
     ```
   * 如果你想启用`cloud`模式：
 
     ```shell
-    pip install pandora-chatgpt[cloud]
+    pip install 'pandora-chatgpt[cloud]'
     pandora-cloud
     ```
 
@@ -74,14 +74,14 @@
   * 如果你想支持`gpt-3.5-turbo`模式：
 
     ```shell
-    pip install .[api]
+    pip install '.[api]'
     pandora
     ```
   
   * 如果你想启用`cloud`模式：
 
     ```shell
-    pip install .[cloud]
+    pip install '.[cloud]'
     pandora-cloud
     ```
 
