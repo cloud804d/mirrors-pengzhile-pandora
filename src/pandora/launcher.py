@@ -160,6 +160,7 @@ def main():
     access_token, need_save = confirm_access_token(args.token_file, args.server)
     if not access_token:
         Console.info_b('Please enter your email and password to log in ChatGPT!')
+        Console.warn('We login via https://chat.gateway.do, but it doesn\'t retain your data.')
         email = getenv('OPENAI_EMAIL') or Prompt.ask('  Email')
         password = getenv('OPENAI_PASSWORD') or Prompt.ask('  Password', password=True)
         Console.warn('### Do login, please wait...')

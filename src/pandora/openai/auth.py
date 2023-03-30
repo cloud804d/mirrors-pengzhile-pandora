@@ -3,7 +3,6 @@
 import datetime
 import re
 from datetime import datetime as dt
-from urllib.parse import urlparse, parse_qs
 
 import requests
 from certifi import where
@@ -41,113 +40,18 @@ class Auth0:
         if not self.__check_email(self.email) or not self.password:
             raise Exception('invalid email or password.')
 
-        return self.__part_two()
-
-    def __part_two(self) -> str:
-        url = 'https://explorer.api.openai.com/api/auth/csrf'
-        headers = {
-            'User-Agent': self.user_agent,
-            'Referer': 'https://explorer.api.openai.com/',
-        }
-        resp = self.session.get(url=url, headers=headers, allow_redirects=False, **self.req_kwargs)
-
-        if resp.status_code == 200:
-            csrf_token = resp.json()['csrfToken']
-            return self.__part_three(token=csrf_token)
-        else:
-            raise Exception('Error logging in.')
-
-    def __part_three(self, token: str) -> str:
-        url = 'https://explorer.api.openai.com/api/auth/signin/auth0?'
-        headers = {
-            'User-Agent': self.user_agent,
-            'Origin': 'https://explorer.api.openai.com',
-            'Referer': 'https://explorer.api.openai.com/',
-        }
-        data = {
-            'callbackUrl': '/',
-            'csrfToken': token,
-            'json': 'true',
-        }
-        resp = self.session.post(url=url, headers=headers, data=data, allow_redirects=False, **self.req_kwargs)
-
-        if resp.status_code == 200:
-            url = resp.json()['url']
-            if not url.startswith('https://auth0.openai.com/authorize?'):
-                raise Exception('You have been rate limited.')
-            return self.__part_four(url=url)
-        else:
-            raise Exception('Error get login url.')
-
-    def __part_four(self, url: str) -> str:
-        headers = {
-            'User-Agent': self.user_agent,
-            'Referer': 'https://explorer.api.openai.com/',
-        }
-        resp = self.session.get(url=url, headers=headers, allow_redirects=True, **self.req_kwargs)
-
-        if resp.status_code == 200:
-            try:
-                url_params = parse_qs(urlparse(resp.url).query)
-                state = url_params['state'][0]
-                return self.__part_five(state)
-            except IndexError as exc:
-                raise Exception('Rate limit hit.') from exc
-        else:
-            raise Exception('Error request login url.')
-
-    def __part_five(self, state: str) -> str:
-        url = 'https://auth0.openai.com/u/login/identifier?state=' + state
-        headers = {
-            'User-Agent': self.user_agent,
-            'Referer': url,
-            'Origin': 'https://auth0.openai.com',
-        }
-        data = {
-            'state': state,
-            'username': self.email,
-            'js-available': 'true',
-            'webauthn-available': 'true',
-            'is-brave': 'false',
-            'webauthn-platform-available': 'true',
-            'action': 'default',
-        }
-        resp = self.session.post(url, headers=headers, data=data, allow_redirects=False, **self.req_kwargs)
-
-        if resp.status_code == 302:
-            return self.__part_six(state=state)
-        else:
-            raise Exception('Error check email.')
-
-    def __part_six(self, state: str) -> str:
-        url = 'https://auth0.openai.com/u/login/password?state=' + state
-        headers = {
-            'User-Agent': self.user_agent,
-            'Referer': url,
-            'Origin': 'https://auth0.openai.com',
-        }
-        data = {
-            'state': state,
-            'username': self.email,
-            'password': self.password,
-            'action': 'default',
-        }
-        resp = self.session.post(url, headers=headers, data=data, allow_redirects=True, **self.req_kwargs)
-
-        if resp.status_code == 200:
-            return self.get_access_token()
-        if resp.status_code == 400:
-            raise Exception('Wrong email or password.')
-        else:
-            raise Exception('Error login.')
+        return self.get_access_token()
 
     def get_access_token(self) -> str:
-        url = 'https://explorer.api.openai.com/api/auth/session'
+        url = 'https://chat.gateway.do/api/auth/login'
         headers = {
             'User-Agent': self.user_agent,
-            'Referer': 'https://explorer.api.openai.com/',
         }
-        resp = self.session.get(url=url, headers=headers, allow_redirects=False, **self.req_kwargs)
+        data = {
+            'username': self.email,
+            'password': self.password,
+        }
+        resp = self.session.post(url=url, headers=headers, data=data, allow_redirects=False, **self.req_kwargs)
 
         if resp.status_code == 200:
             json = resp.json()
