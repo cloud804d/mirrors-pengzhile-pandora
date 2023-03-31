@@ -15,7 +15,10 @@ __public_key = b'-----BEGIN PUBLIC KEY-----\n' \
                b'-----END PUBLIC KEY-----'
 
 
-def check_access_token(access_token):
+def check_access_token(access_token, api=False):
+    if api and access_token.startswith('sk-'):
+        return True
+
     payload = (decode(access_token, key=__public_key, algorithms='RS256', audience=[
         "https://api.openai.com/v1",
         "https://openai.openai.auth0app.com/userinfo"
@@ -31,9 +34,9 @@ def check_access_token(access_token):
     return payload
 
 
-def check_access_token_out(access_token):
+def check_access_token_out(access_token, api=False):
     try:
-        return check_access_token(access_token)
+        return check_access_token(access_token, api)
     except Exception as e:
         Console.error('### Invalid access token: {}'.format(str(e)))
         return False
