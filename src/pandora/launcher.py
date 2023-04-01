@@ -88,9 +88,10 @@ def main():
 
     Console.debug_b(
         '''
-          Pandora - A command-line interface to ChatGPT
-          Github: https://github.com/pengzhile/pandora
-          Version: {}'''.format(__version__), end=''
+            Pandora - A command-line interface to ChatGPT
+            Github: https://github.com/pengzhile/pandora
+            Get access token: https://chat.gateway.do/auth
+            Version: {}'''.format(__version__), end=''
     )
 
     parser = argparse.ArgumentParser()
