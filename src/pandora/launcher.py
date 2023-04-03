@@ -129,6 +129,12 @@ def main():
         action='store_true',
     )
     parser.add_argument(
+        '-l',
+        '--local',
+        help='Login locally. Pay attention to the risk control of the login ip!',
+        action='store_true',
+    )
+    parser.add_argument(
         '--sentry',
         help='Enable sentry to send error reports when errors occur.',
         action='store_true',
@@ -161,10 +167,12 @@ def main():
     access_token, need_save = confirm_access_token(args.token_file, args.server, args.api)
     if not access_token:
         Console.info_b('Please enter your email and password to log in ChatGPT!')
+        if not args.local:
+            Console.warn('We login via https://chat.gateway.do, but it doesn\'t retain your data.')
         email = getenv('OPENAI_EMAIL') or Prompt.ask('  Email')
         password = getenv('OPENAI_PASSWORD') or Prompt.ask('  Password', password=True)
         Console.warn('### Do login, please wait...')
-        access_token = Auth0(email, password, args.proxy).auth()
+        access_token = Auth0(email, password, args.proxy).auth(args.local)
 
     if not check_access_token_out(access_token, args.api):
         return

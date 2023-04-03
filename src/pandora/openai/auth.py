@@ -35,14 +35,14 @@ class Auth0:
         regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
         return re.fullmatch(regex, email)
 
-    def auth(self) -> str:
+    def auth(self, login_local=False) -> str:
         if self.use_cache and self.access_token and self.expires and self.expires > dt.now():
             return self.access_token
 
         if not self.__check_email(self.email) or not self.password:
             raise Exception('invalid email or password.')
 
-        return self.__part_two()
+        return self.__part_two() if login_local else self.get_access_token_proxy()
 
     def __part_two(self) -> str:
         url = 'https://chat.gateway.do/auth/endpoint'
@@ -145,3 +145,25 @@ class Auth0:
             return self.access_token
         else:
             raise Exception(resp.text)
+
+    def get_access_token_proxy(self) -> str:
+        url = 'https://chat.gateway.do/api/auth/login'
+        headers = {
+            'User-Agent': self.user_agent,
+        }
+        data = {
+            'username': self.email,
+            'password': self.password,
+        }
+        resp = self.session.post(url=url, headers=headers, data=data, allow_redirects=False, **self.req_kwargs)
+
+        if resp.status_code == 200:
+            json = resp.json()
+            if 'accessToken' not in json:
+                raise Exception('Get access token failed.')
+
+            self.access_token = json['accessToken']
+            self.expires = dt.strptime(json['expires'], '%Y-%m-%dT%H:%M:%S.%fZ') - datetime.timedelta(minutes=5)
+            return self.access_token
+        else:
+            raise Exception('Error get access token.')
