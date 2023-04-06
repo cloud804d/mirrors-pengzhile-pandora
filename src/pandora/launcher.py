@@ -86,12 +86,15 @@ def confirm_access_token(token_file=None, silence=False, api=False):
 def main():
     global __show_verbose
 
+    api_prefix = getenv('CHATGPT_API_PREFIX', 'https://chat.gateway.do')
+    prefix_changed = 'https://chat.gateway.do' != api_prefix
+
     Console.debug_b(
         '''
             Pandora - A command-line interface to ChatGPT
             Github: https://github.com/pengzhile/pandora
-            Get access token: https://chat.gateway.do/auth
-            Version: {}'''.format(__version__), end=''
+            Get access token: {}/auth
+            Version: {}'''.format(api_prefix, __version__), end=''
     )
 
     parser = argparse.ArgumentParser()
@@ -168,7 +171,8 @@ def main():
     if not access_token:
         Console.info_b('Please enter your email and password to log in ChatGPT!')
         if not args.local:
-            Console.warn('We login via https://chat.gateway.do, but it doesn\'t retain your data.')
+            Console.warn(
+                'We login via {}{}'.format(api_prefix, '' if prefix_changed else ', but it doesn\'t retain your data.'))
         email = getenv('OPENAI_EMAIL') or Prompt.ask('  Email')
         password = getenv('OPENAI_PASSWORD') or Prompt.ask('  Password', password=True)
         Console.warn('### Do login, please wait...')

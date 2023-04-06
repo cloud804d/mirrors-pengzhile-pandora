@@ -3,6 +3,7 @@
 import datetime
 import re
 from datetime import datetime as dt
+from os import getenv
 from urllib.parse import urlparse, parse_qs
 
 import requests
@@ -29,6 +30,7 @@ class Auth0:
         self.expires = None
         self.user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) ' \
                           'Chrome/109.0.0.0 Safari/537.36'
+        self.api_prefix = getenv('CHATGPT_API_PREFIX', 'https://chat.gateway.do')
 
     @staticmethod
     def __check_email(email: str):
@@ -45,7 +47,7 @@ class Auth0:
         return self.__part_two() if login_local else self.get_access_token_proxy()
 
     def __part_two(self) -> str:
-        url = 'https://chat.gateway.do/auth/endpoint'
+        url = '{}/auth/endpoint'.format(self.api_prefix)
         headers = {
             'User-Agent': self.user_agent,
         }
@@ -125,7 +127,7 @@ class Auth0:
             raise Exception('Error login.')
 
     def get_access_token(self, state1: str, callback_url: str) -> str:
-        url = 'https://chat.gateway.do/auth/token'
+        url = '{}/auth/token'.format(self.api_prefix)
         headers = {
             'User-Agent': self.user_agent,
         }
@@ -147,7 +149,7 @@ class Auth0:
             raise Exception(resp.text)
 
     def get_access_token_proxy(self) -> str:
-        url = 'https://chat.gateway.do/api/auth/login'
+        url = '{}/api/auth/login'.format(self.api_prefix)
         headers = {
             'User-Agent': self.user_agent,
         }
