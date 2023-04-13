@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+from datetime import timedelta
 from os.path import join, abspath, dirname
 
 from flask import Flask, jsonify, make_response, request, Response, render_template
@@ -103,17 +104,28 @@ class ChatBot:
         }), 500)
 
     @staticmethod
+    def __set_cookie(resp, token_key, max_age):
+        resp.set_cookie('token-key', token_key, max_age=max_age, path='/', domain=None, httponly=True, samesite='Lax')
+
+    @staticmethod
     def __get_token_key():
-        return request.headers.get('X-Use-Token', None)
+        return request.headers.get('X-Use-Token', request.cookies.get('token-key'))
 
     def chat(self, conversation_id=None):
         query = {'chatId': [conversation_id]} if conversation_id else {}
 
-        return render_template('chat.html',
-                               pandora_base=request.url_root.strip('/'),
-                               pandora_sentry=self.sentry,
-                               query=query
-                               )
+        token_key = request.args.get('token')
+        rendered = render_template('chat.html',
+                                   pandora_base=request.url_root.strip('/'),
+                                   pandora_sentry=self.sentry,
+                                   query=query
+                                   )
+        resp = make_response(rendered)
+
+        if token_key:
+            self.__set_cookie(resp, token_key, timedelta(days=30))
+
+        return resp
 
     @staticmethod
     def session():
