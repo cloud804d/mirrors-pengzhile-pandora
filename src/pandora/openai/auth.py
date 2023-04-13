@@ -89,7 +89,7 @@ class Auth0:
             'js-available': 'true',
             'webauthn-available': 'true',
             'is-brave': 'false',
-            'webauthn-platform-available': 'true',
+            'webauthn-platform-available': 'false',
             'action': 'default',
         }
         resp = self.session.post(url, headers=headers, data=data, allow_redirects=False, **self.req_kwargs)

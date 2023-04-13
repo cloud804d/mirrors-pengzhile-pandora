@@ -1,5 +1,7 @@
 # Pandora HTTP API
 
+### 特殊说明：如果有多个`Access Token`，可以使用`X-Use-Token: token_name` 头指定使用哪个。
+
 ### `/api/models`
 
 * **HTTP方法：** `GET`

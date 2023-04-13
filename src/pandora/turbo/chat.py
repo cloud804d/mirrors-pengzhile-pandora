@@ -2,6 +2,7 @@
 
 import json
 from datetime import datetime as dt
+from os import getenv
 
 from requests import Response
 
@@ -11,16 +12,37 @@ from ..openai.token import gpt_num_tokens
 
 
 class TurboGPT:
-    SYSTEM_PROMPT = 'You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as ' \
-                    'possible.\nKnowledge cutoff: 2021-09-01\nCurrent date: {}'.format(dt.now().strftime('%Y-%m-%d'))
+    DEFAULT_SYSTEM_PROMPT = 'You are ChatGPT, a large language model trained by OpenAI. ' \
+                            'Answer as concisely as possible.\nKnowledge cutoff: 2021-09-01\n' \
+                            'Current date: {}'.format(dt.now().strftime('%Y-%m-%d'))
     TITLE_PROMPT = 'Generate a brief title for our conversation.'
     MAX_TOKENS = 4096
 
-    def __init__(self, api_key, proxy=None):
-        self.api = ChatCompletion(api_key, proxy)
-        self.conversations = Conversations()
+    def __init__(self, api_keys: dict, proxy=None):
+        self.api_keys = api_keys
+        self.api_keys_key_list = list(api_keys)
+        self.default_api_keys_key = self.api_keys_key_list[0]
 
-    def list_models(self, raw=False):
+        self.api = ChatCompletion(proxy)
+        self.conversations_map = {}
+        self.system_prompt = getenv('API_SYSTEM_PROMPT', self.DEFAULT_SYSTEM_PROMPT)
+
+    def __get_conversations(self, api_keys_key=None):
+        if api_keys_key is None:
+            api_keys_key = self.default_api_keys_key
+
+        if api_keys_key not in self.conversations_map:
+            self.conversations_map[api_keys_key] = Conversations()
+
+        return self.conversations_map[api_keys_key]
+
+    def get_access_token(self, token_key=None):
+        return self.api_keys[token_key or self.default_api_keys_key]
+
+    def list_token_keys(self):
+        return self.api_keys_key_list
+
+    def list_models(self, raw=False, token=None):
         models = {
             'models': [{
                 'slug': 'gpt-3.5-turbo',
@@ -36,10 +58,10 @@ class TurboGPT:
 
         return models['models']
 
-    def list_conversations(self, offset, limit, raw=False):
+    def list_conversations(self, offset, limit, raw=False, token=None):
         offset = int(offset)
         limit = int(limit)
-        total, items = self.conversations.list(offset, limit)
+        total, items = self.__get_conversations(token).list(offset, limit)
 
         stripped = []
         for item in items:
@@ -56,10 +78,10 @@ class TurboGPT:
 
         return result
 
-    def get_conversation(self, conversation_id, raw=False):
+    def get_conversation(self, conversation_id, raw=False, token=None):
         def __shadow():
             try:
-                conversation = self.conversations.guard_get(conversation_id)
+                conversation = self.__get_conversations(token).guard_get(conversation_id)
             except Exception as e:
                 return self.__out_error(str(e), 404)
 
@@ -75,9 +97,9 @@ class TurboGPT:
 
         return resp.json()
 
-    def clear_conversations(self, raw=False):
+    def clear_conversations(self, raw=False, token=None):
         def __shadow():
-            self.conversations.clear()
+            self.__get_conversations(token).clear()
 
             result = {
                 'success': True
@@ -92,14 +114,16 @@ class TurboGPT:
 
         return resp.json()['success']
 
-    def del_conversation(self, conversation_id, raw=False):
+    def del_conversation(self, conversation_id, raw=False, token=None):
         def __shadow():
+            conversations = self.__get_conversations(token)
+
             try:
-                conversation = self.conversations.guard_get(conversation_id)
+                conversation = conversations.guard_get(conversation_id)
             except Exception as e:
                 return self.__out_error(str(e), 404)
 
-            self.conversations.delete(conversation)
+            conversations.delete(conversation)
 
             result = {
                 'success': True
@@ -117,9 +141,9 @@ class TurboGPT:
 
         return resp.json()['success']
 
-    def gen_conversation_title(self, conversation_id, model, message_id, raw=False):
+    def gen_conversation_title(self, conversation_id, model, message_id, raw=False, token=None):
         def __shadow():
-            conversation = self.conversations.get(conversation_id)
+            conversation = self.__get_conversations(token).get(conversation_id)
             if not conversation:
                 return self.__out_error('Conversation not found', 404)
 
@@ -132,7 +156,7 @@ class TurboGPT:
             messages = conversation.get_messages_directly(message_id)
             messages.append({'role': 'user', 'content': self.TITLE_PROMPT})
 
-            status, header, generator = self.api.request(model, messages, False)
+            status, header, generator = self.api.request(self.get_access_token(token), model, messages, False)
             last_ok, last = self.__get_completion(status, next(generator))
 
             if not last_ok:
@@ -156,10 +180,10 @@ class TurboGPT:
 
         return resp.json()['title']
 
-    def set_conversation_title(self, conversation_id, title, raw=False):
+    def set_conversation_title(self, conversation_id, title, raw=False, token=None):
         def __shadow():
             try:
-                conversation = self.conversations.guard_get(conversation_id)
+                conversation = self.__get_conversations(token).guard_get(conversation_id)
             except Exception as e:
                 return self.__out_error(str(e), 404)
 
@@ -181,24 +205,25 @@ class TurboGPT:
 
         return resp.json()['success']
 
-    def talk(self, content, model, message_id, parent_message_id, conversation_id=None, stream=True):
+    def talk(self, content, model, message_id, parent_message_id, conversation_id=None, stream=True, token=None):
         system_prompt = None
         if conversation_id:
-            conversation = self.conversations.get(conversation_id)
+            conversation = self.__get_conversations(token).get(conversation_id)
             if not conversation:
                 return self.__out_error_stream('Conversation not found', 404)
 
             parent = conversation.get_prompt(parent_message_id)
         else:
-            conversation = self.conversations.new()
+            conversation = self.__get_conversations(token).new()
             parent = conversation.add_prompt(Prompt(parent_message_id))
-            parent = system_prompt = conversation.add_prompt(SystemPrompt(self.SYSTEM_PROMPT, parent))
+            parent = system_prompt = conversation.add_prompt(SystemPrompt(self.system_prompt, parent))
 
         conversation.add_prompt(UserPrompt(message_id, content, parent))
 
         user_prompt, gpt_prompt, messages = conversation.get_messages(message_id, model)
         try:
-            status, headers, generator = self.api.request(model, self.__reduce_messages(messages, model), stream)
+            status, headers, generator = self.api.request(self.get_access_token(token), model,
+                                                          self.__reduce_messages(messages, model), stream)
         except Exception as e:
             return self.__out_error_stream(str(e))
 
@@ -212,20 +237,21 @@ class TurboGPT:
 
         return status, headers, __out_generator()
 
-    def goon(self, model, parent_message_id, conversation_id, stream=True):
-        return self.regenerate_reply(None, model, conversation_id, parent_message_id, None, stream)
+    def goon(self, model, parent_message_id, conversation_id, stream=True, token=None):
+        return self.regenerate_reply(None, model, conversation_id, parent_message_id, None, stream, token)
 
-    def regenerate_reply(self, prompt, model, conversation_id, message_id, parent_message_id, stream=True):
+    def regenerate_reply(self, prompt, model, conversation_id, message_id, parent_message_id, stream=True, token=None):
         if not conversation_id:
             return self.__out_error_stream('Miss conversation_id', 400)
 
-        conversation = self.conversations.get(conversation_id)
+        conversation = self.__get_conversations(token).get(conversation_id)
         if not conversation:
             return self.__out_error_stream('Conversation not found', 404)
 
         user_prompt, gpt_prompt, messages = conversation.get_messages(message_id, model)
         try:
-            status, headers, generator = self.api.request(model, self.__reduce_messages(messages, model), stream)
+            status, headers, generator = self.api.request(self.get_access_token(token), model,
+                                                          self.__reduce_messages(messages, model), stream)
         except Exception as e:
             return self.__out_error_stream(str(e))
 

@@ -110,12 +110,14 @@
 * `-s` 或 `--server` 以`http`服务方式启动，格式：`ip:port`。
 * `-a` 或 `--api` 使用`gpt-3.5-turbo`API请求，**你可能需要向`OpenAI`支付费用**。
 * `-l` 或 `--local` 使用本地环境登录，**你可能需要一个合适的代理IP以避免账号被风控！**
+* `--tokens_file` 指定一个存放多`Access Token`的文件，内容为`{"key": "token"}`的形式。
 * `--sentry` 启用`sentry`框架来发送错误报告供作者查错，敏感信息**不会被发送**。
 * `-v` 或 `--verbose` 显示调试信息，且出错时打印异常堆栈信息，供查错使用。
 
 ## Docker环境变量
 
 * `PANDORA_ACCESS_TOKEN` 指定`Access Token`字符串。
+* `PANDORA_TOKENS_FILE` 指定一个存放多`Access Token`的文件路径。
 * `PANDORA_PROXY` 指定代理，格式：`protocol://user:pass@ip:port`。
 * `PANDORA_SERVER` 以`http`服务方式启动，格式：`ip:port`。
 * `PANDORA_API` 使用`gpt-3.5-turbo`API请求，**你可能需要向`OpenAI`支付费用**。
@@ -166,6 +168,7 @@
   * 执行```pip install PyMySQL```安装驱动。
   * 设置环境变量：`DATABASE_URI`为类似`mysql+pymysql://user:pass@localhost/dbname`的连接字符串。
 * 环境变量指定`OPENAI_EMAIL`可以替代登录输入用户名，`OPENAI_PASSWORD`则可以替代输入密码。
+* 环境变量`API_SYSTEM_PROMPT`可以替换`api`模式下的系统`prompt`。
 
 ## Cloud模式
 
@@ -180,6 +183,7 @@
 * 你需要一个`Cloudflare`账号，如果没有，可以[注册](https://dash.cloudflare.com/sign-up)一个。
 * 登录后，点击`Workers`，然后点击`Create a Worker`，填入服务名称后点击`创建服务`。
 * 点开你刚才创建的服务，点击`快速编辑`按钮，贴入下面的代码，然后点击`保存并部署`。
+
   ```javascript
   export default {
     async fetch(request, env) {
@@ -189,6 +193,7 @@
     }
   }
   ```
+
 * 点击`触发器`选项卡，可以添加自定义访问域名。
 * 参考`高阶设置`中的环境变量使用你的服务地址进行替换。
 * 这里有一个示例代理地址：`https://chat1.gateway.do`。

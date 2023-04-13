@@ -102,6 +102,10 @@ class ChatBot:
             'message': str(e.original_exception if self.debug and hasattr(e, 'original_exception') else e.name)
         }), 500)
 
+    @staticmethod
+    def __get_token_key():
+        return request.headers.get('X-Use-Token', None)
+
     def chat(self, conversation_id=None):
         query = {'chatId': [conversation_id]} if conversation_id else {}
 
@@ -179,34 +183,36 @@ class ChatBot:
         return jsonify(ret)
 
     def list_models(self):
-        return self.__proxy_result(self.chatgpt.list_models(True))
+        return self.__proxy_result(self.chatgpt.list_models(True, self.__get_token_key()))
 
     def list_conversations(self):
         offset = request.args.get('offset', '1')
         limit = request.args.get('limit', '20')
 
-        return self.__proxy_result(self.chatgpt.list_conversations(offset, limit, True))
+        return self.__proxy_result(self.chatgpt.list_conversations(offset, limit, True, self.__get_token_key()))
 
     def get_conversation(self, conversation_id):
-        return self.__proxy_result(self.chatgpt.get_conversation(conversation_id, True))
+        return self.__proxy_result(self.chatgpt.get_conversation(conversation_id, True, self.__get_token_key()))
 
     def del_conversation(self, conversation_id):
-        return self.__proxy_result(self.chatgpt.del_conversation(conversation_id, True))
+        return self.__proxy_result(self.chatgpt.del_conversation(conversation_id, True, self.__get_token_key()))
 
     def clear_conversations(self):
-        return self.__proxy_result(self.chatgpt.clear_conversations(True))
+        return self.__proxy_result(self.chatgpt.clear_conversations(True, self.__get_token_key()))
 
     def set_conversation_title(self, conversation_id):
         title = request.json['title']
 
-        return self.__proxy_result(self.chatgpt.set_conversation_title(conversation_id, title, True))
+        return self.__proxy_result(
+            self.chatgpt.set_conversation_title(conversation_id, title, True, self.__get_token_key()))
 
     def gen_conversation_title(self, conversation_id):
         payload = request.json
         model = payload['model']
         message_id = payload['message_id']
 
-        return self.__proxy_result(self.chatgpt.gen_conversation_title(conversation_id, model, message_id, True))
+        return self.__proxy_result(
+            self.chatgpt.gen_conversation_title(conversation_id, model, message_id, True, self.__get_token_key()))
 
     def talk(self):
         payload = request.json
@@ -218,7 +224,8 @@ class ChatBot:
         stream = payload.get('stream', True)
 
         return self.__process_stream(
-            *self.chatgpt.talk(prompt, model, message_id, parent_message_id, conversation_id, stream), stream)
+            *self.chatgpt.talk(prompt, model, message_id, parent_message_id, conversation_id, stream,
+                               self.__get_token_key()), stream)
 
     def goon(self):
         payload = request.json
@@ -228,7 +235,7 @@ class ChatBot:
         stream = payload.get('stream', True)
 
         return self.__process_stream(
-            *self.chatgpt.goon(model, parent_message_id, conversation_id, stream), stream)
+            *self.chatgpt.goon(model, parent_message_id, conversation_id, stream, self.__get_token_key()), stream)
 
     def regenerate(self):
         payload = request.json
@@ -240,8 +247,8 @@ class ChatBot:
         stream = payload.get('stream', True)
 
         return self.__process_stream(
-            *self.chatgpt.regenerate_reply(prompt, model, conversation_id, message_id, parent_message_id, stream),
-            stream)
+            *self.chatgpt.regenerate_reply(prompt, model, conversation_id, message_id, parent_message_id, stream,
+                                           self.__get_token_key()), stream)
 
     @staticmethod
     def __process_stream(status, headers, generator, stream):

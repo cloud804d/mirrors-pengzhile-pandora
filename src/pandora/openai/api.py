@@ -91,8 +91,10 @@ class API:
 
 
 class ChatGPT(API):
-    def __init__(self, access_token, proxy=None):
-        self.access_token = access_token
+    def __init__(self, access_tokens: dict, proxy=None):
+        self.access_tokens = access_tokens
+        self.access_token_key_list = list(access_tokens)
+        self.default_token_key = self.access_token_key_list[0]
         self.session = requests.Session()
         self.req_kwargs = {
             'proxies': {
@@ -106,19 +108,27 @@ class ChatGPT(API):
 
         self.user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) ' \
                           'Pandora/{} Safari/537.36'.format(__version__)
-        self.basic_headers = {
-            'Authorization': 'Bearer ' + self.access_token,
-            'User-Agent': self.user_agent,
-            'Content-Type': 'application/json',
-        }
 
         self.api_prefix = getenv('CHATGPT_API_PREFIX', 'https://chat.gateway.do')
 
         super().__init__(proxy, self.req_kwargs['verify'])
 
-    def list_models(self, raw=False):
+    def __get_headers(self, token_key=None):
+        return {
+            'Authorization': 'Bearer ' + self.get_access_token(token_key),
+            'User-Agent': self.user_agent,
+            'Content-Type': 'application/json',
+        }
+
+    def get_access_token(self, token_key=None):
+        return self.access_tokens[token_key or self.default_token_key]
+
+    def list_token_keys(self):
+        return self.access_token_key_list
+
+    def list_models(self, raw=False, token=None):
         url = '{}/api/models'.format(self.api_prefix)
-        resp = self.session.get(url=url, headers=self.basic_headers, **self.req_kwargs)
+        resp = self.session.get(url=url, headers=self.__get_headers(token), **self.req_kwargs)
 
         if raw:
             return resp
@@ -132,9 +142,9 @@ class ChatGPT(API):
 
         return result['models']
 
-    def list_conversations(self, offset, limit, raw=False):
+    def list_conversations(self, offset, limit, raw=False, token=None):
         url = '{}/api/conversations?offset={}&limit={}'.format(self.api_prefix, offset, limit)
-        resp = self.session.get(url=url, headers=self.basic_headers, **self.req_kwargs)
+        resp = self.session.get(url=url, headers=self.__get_headers(token), **self.req_kwargs)
 
         if raw:
             return resp
@@ -144,9 +154,9 @@ class ChatGPT(API):
 
         return resp.json()
 
-    def get_conversation(self, conversation_id, raw=False):
+    def get_conversation(self, conversation_id, raw=False, token=None):
         url = '{}/api/conversation/{}'.format(self.api_prefix, conversation_id)
-        resp = self.session.get(url=url, headers=self.basic_headers, **self.req_kwargs)
+        resp = self.session.get(url=url, headers=self.__get_headers(token), **self.req_kwargs)
 
         if raw:
             return resp
@@ -156,13 +166,13 @@ class ChatGPT(API):
 
         return resp.json()
 
-    def clear_conversations(self, raw=False):
+    def clear_conversations(self, raw=False, token=None):
         data = {
             'is_visible': False,
         }
 
         url = '{}/api/conversations'.format(self.api_prefix)
-        resp = self.session.patch(url=url, headers=self.basic_headers, json=data, **self.req_kwargs)
+        resp = self.session.patch(url=url, headers=self.__get_headers(token), json=data, **self.req_kwargs)
 
         if raw:
             return resp
@@ -176,20 +186,20 @@ class ChatGPT(API):
 
         return result['success']
 
-    def del_conversation(self, conversation_id, raw=False):
+    def del_conversation(self, conversation_id, raw=False, token=None):
         data = {
             'is_visible': False,
         }
 
-        return self.__update_conversation(conversation_id, data, raw)
+        return self.__update_conversation(conversation_id, data, raw, token)
 
-    def gen_conversation_title(self, conversation_id, model, message_id, raw=False):
+    def gen_conversation_title(self, conversation_id, model, message_id, raw=False, token=None):
         url = '{}/api/conversation/gen_title/{}'.format(self.api_prefix, conversation_id)
         data = {
             'model': model,
             'message_id': message_id,
         }
-        resp = self.session.post(url=url, headers=self.basic_headers, json=data, **self.req_kwargs)
+        resp = self.session.post(url=url, headers=self.__get_headers(token), json=data, **self.req_kwargs)
 
         if raw:
             return resp
@@ -203,14 +213,14 @@ class ChatGPT(API):
 
         return result['title']
 
-    def set_conversation_title(self, conversation_id, title, raw=False):
+    def set_conversation_title(self, conversation_id, title, raw=False, token=None):
         data = {
             'title': title,
         }
 
-        return self.__update_conversation(conversation_id, data, raw)
+        return self.__update_conversation(conversation_id, data, raw, token)
 
-    def talk(self, prompt, model, message_id, parent_message_id, conversation_id=None, stream=True):
+    def talk(self, prompt, model, message_id, parent_message_id, conversation_id=None, stream=True, token=None):
         data = {
             'action': 'next',
             'messages': [
@@ -233,9 +243,9 @@ class ChatGPT(API):
         if conversation_id:
             data['conversation_id'] = conversation_id
 
-        return self.__request_conversation(data)
+        return self.__request_conversation(data, token)
 
-    def goon(self, model, parent_message_id, conversation_id, stream=True):
+    def goon(self, model, parent_message_id, conversation_id, stream=True, token=None):
         data = {
             'action': 'continue',
             'conversation_id': conversation_id,
@@ -243,9 +253,9 @@ class ChatGPT(API):
             'parent_message_id': parent_message_id,
         }
 
-        return self.__request_conversation(data)
+        return self.__request_conversation(data, token)
 
-    def regenerate_reply(self, prompt, model, conversation_id, message_id, parent_message_id, stream=True):
+    def regenerate_reply(self, prompt, model, conversation_id, message_id, parent_message_id, stream=True, token=None):
         data = {
             'action': 'variant',
             'messages': [
@@ -266,17 +276,17 @@ class ChatGPT(API):
             'parent_message_id': parent_message_id,
         }
 
-        return self.__request_conversation(data)
+        return self.__request_conversation(data, token)
 
-    def __request_conversation(self, data):
+    def __request_conversation(self, data, token=None):
         url = '{}/api/conversation'.format(self.api_prefix)
-        headers = {**self.session.headers, **self.basic_headers, 'Accept': 'text/event-stream'}
+        headers = {**self.session.headers, **self.__get_headers(token), 'Accept': 'text/event-stream'}
 
         return self._request_sse(url, headers, data)
 
-    def __update_conversation(self, conversation_id, data, raw=False):
+    def __update_conversation(self, conversation_id, data, raw=False, token=None):
         url = '{}/api/conversation/{}'.format(self.api_prefix, conversation_id)
-        resp = self.session.patch(url=url, headers=self.basic_headers, json=data, **self.req_kwargs)
+        resp = self.session.patch(url=url, headers=self.__get_headers(token), json=data, **self.req_kwargs)
 
         if raw:
             return resp
@@ -299,8 +309,7 @@ class ChatGPT(API):
 
 
 class ChatCompletion(API):
-    def __init__(self, api_key, proxy=None):
-        self.api_key = api_key
+    def __init__(self, proxy=None):
         self.session = requests.Session()
         self.req_kwargs = {
             'proxies': {
@@ -313,15 +322,17 @@ class ChatCompletion(API):
         }
 
         self.user_agent = 'pandora/{}'.format(__version__)
-        self.basic_headers = {
-            'Authorization': 'Bearer ' + self.api_key,
+
+        super().__init__(proxy, self.req_kwargs['verify'])
+
+    def __get_headers(self, api_key):
+        return {
+            'Authorization': 'Bearer ' + api_key,
             'User-Agent': self.user_agent,
             'Content-Type': 'application/json',
         }
 
-        super().__init__(proxy, self.req_kwargs['verify'])
-
-    def request(self, model, messages, stream=True, **kwargs):
+    def request(self, api_key, model, messages, stream=True, **kwargs):
         data = {
             'model': model,
             'messages': messages,
@@ -329,16 +340,16 @@ class ChatCompletion(API):
             'stream': stream,
         }
 
-        return self.__request_conversation(data, stream)
+        return self.__request_conversation(api_key, data, stream)
 
-    def __request_conversation(self, data, stream):
+    def __request_conversation(self, api_key, data, stream):
         url = '{}/v1/chat/completions'.format(getenv('OPENAI_API_PREFIX', 'https://api.openai.com'))
-        headers = {**self.basic_headers, 'Accept': 'text/event-stream'}
 
         if stream:
+            headers = {**self.__get_headers(api_key), 'Accept': 'text/event-stream'}
             return self._request_sse(url, headers, data)
 
-        resp = self.session.post(url=url, headers=self.basic_headers, json=data, **self.req_kwargs)
+        resp = self.session.post(url=url, headers=self.__get_headers(api_key), json=data, **self.req_kwargs)
 
         def __generate_wrap():
             yield resp.json()
