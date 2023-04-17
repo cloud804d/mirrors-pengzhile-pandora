@@ -109,7 +109,6 @@
 * `-t` 或 `--token_file` 指定一个存放`Access Token`的文件，使用`Access Token`登录。
 * `-s` 或 `--server` 以`http`服务方式启动，格式：`ip:port`。
 * `-a` 或 `--api` 使用`gpt-3.5-turbo`API请求，**你可能需要向`OpenAI`支付费用**。
-* `-l` 或 `--local` 使用本地环境登录，**你可能需要一个合适的代理IP以避免账号被风控！**
 * `--tokens_file` 指定一个存放多`Access Token`的文件，内容为`{"key": "token"}`的形式。
 * `--sentry` 启用`sentry`框架来发送错误报告供作者查错，敏感信息**不会被发送**。
 * `-v` 或 `--verbose` 显示调试信息，且出错时打印异常堆栈信息，供查错使用。
@@ -121,7 +120,6 @@
 * `PANDORA_PROXY` 指定代理，格式：`protocol://user:pass@ip:port`。
 * `PANDORA_SERVER` 以`http`服务方式启动，格式：`ip:port`。
 * `PANDORA_API` 使用`gpt-3.5-turbo`API请求，**你可能需要向`OpenAI`支付费用**。
-* `PANDORA_LOGIN_LOCAL` 使用本地环境登录，**你可能需要一个合适的代理IP以避免账号被风控！**
 * `PANDORA_SENTRY` 启用`sentry`框架来发送错误报告供作者查错，敏感信息**不会被发送**。
 * `PANDORA_VERBOSE` 显示调试信息，且出错时打印异常堆栈信息，供查错使用。
 * 使用Docker方式，设置环境变量即可，无视上述`程序参数`。
