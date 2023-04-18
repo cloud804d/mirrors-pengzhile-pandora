@@ -127,7 +127,7 @@
 ## 关于 Access Token
 
 * 使用`Access Token`方式登录，可以无代理直连。
-* [这个服务](https://chat.gateway.do/auth) 可以帮你安全有效拿到`Access Token`，无论是否第三方登录。
+* [这个服务](https://ai.fakeopen.com/auth) 可以帮你安全有效拿到`Access Token`，无论是否第三方登录。
 * 其中`accessToken`字段的那一长串内容即是`Access Token`。
 * `Access Token`可以复制保存，其有效期目前为`1个月`。
 * 不要泄露你的`Access Token`，使用它可以操纵你的账号。
@@ -159,7 +159,7 @@
 
 * 本部分内容不理解的朋友，**请勿擅动！**
 * 环境变量 `OPENAI_API_PREFIX` 可以替换OpenAI Api的前缀`https://api.openai.com`。
-* 环境变量 `CHATGPT_API_PREFIX` 可以替换ChatGPT Api的前缀`https://chat.gateway.do`。
+* 环境变量 `CHATGPT_API_PREFIX` 可以替换ChatGPT Api的前缀`https://ai.fakeopen.com`。
 * 如果你想持久存储`Docker`中`Pandora`产生的数据，你可以挂载宿主机目录至`/data`。
 * 如果你在国内使用`pip`安装缓慢，可以考虑切换至腾讯的源：```pip config set global.index-url https://mirrors.cloud.tencent.com/pypi/simple```
 * 镜像同步版本可能不及时，如果出现这种情况建议切换至官方源：```pip config set global.index-url https://pypi.org/simple```
@@ -178,7 +178,7 @@
 
 ## 使用Cloudflare Workers代理
 
-* 如果你感觉默认的`https://chat.gateway.do`在你那里可能被墙了，可以使用如下方法自行代理。
+* 如果你感觉默认的`https://ai.fakeopen.com`在你那里可能被墙了，可以使用如下方法自行代理。
 * 你需要一个`Cloudflare`账号，如果没有，可以[注册](https://dash.cloudflare.com/sign-up)一个。
 * 登录后，点击`Workers`，然后点击`Create a Worker`，填入服务名称后点击`创建服务`。
 * 点开你刚才创建的服务，点击`快速编辑`按钮，贴入下面的代码，然后点击`保存并部署`。
@@ -187,7 +187,7 @@
   export default {
     async fetch(request, env) {
       const url = new URL(request.url);
-      url.host = 'chat.gateway.do';
+      url.host = 'ai.fakeopen.com';
       return fetch(new Request(url, request))
     }
   }
@@ -195,7 +195,6 @@
 
 * 点击`触发器`选项卡，可以添加自定义访问域名。
 * 参考`高阶设置`中的环境变量使用你的服务地址进行替换。
-* 这里有一个示例代理地址：`https://chat1.gateway.do`。
 
 ## 其他说明
 

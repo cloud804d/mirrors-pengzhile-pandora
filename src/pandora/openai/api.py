@@ -109,7 +109,7 @@ class ChatGPT(API):
         self.user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) ' \
                           'Pandora/{} Safari/537.36'.format(__version__)
 
-        self.api_prefix = getenv('CHATGPT_API_PREFIX', 'https://chat.gateway.do')
+        self.api_prefix = getenv('CHATGPT_API_PREFIX', 'https://ai.fakeopen.com')
 
         super().__init__(proxy, self.req_kwargs['verify'])
 

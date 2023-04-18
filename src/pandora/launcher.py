@@ -108,7 +108,7 @@ def parse_access_tokens(tokens_file, api=False):
 def main():
     global __show_verbose
 
-    api_prefix = getenv('CHATGPT_API_PREFIX', 'https://chat.gateway.do')
+    api_prefix = getenv('CHATGPT_API_PREFIX', 'https://ai.fakeopen.com')
 
     Console.debug_b(
         '''
