@@ -3,6 +3,7 @@
 import re
 import uuid
 
+import pyperclip
 from rich.prompt import Prompt, Confirm
 
 from .. import __version__
@@ -105,6 +106,10 @@ class ChatBot:
             self.__print_access_token()
         elif '/cls' == command or '/clear' == command:
             self.__clear_screen()
+        elif '/copy' == command or '/cp' == command:
+            self.__copy_text()
+        elif '/copy_code' == command or "/cp_code" == command:
+            self.__copy_code()
         elif '/ver' == command or '/version' == command:
             self.__print_version()
         else:
@@ -123,6 +128,8 @@ class ChatBot:
         print('/new\t\tStart a new conversation.')
         print('/del\t\tDelete the current conversation.')
         print('/token\t\tPrint your access token.')
+        print('/copy\t\tCopy the last response to clipboard.')
+        print('/copy_code\t\tCopy code from last response.')
         print('/clear\t\tClear your screen.')
         print('/version\tPrint the version of Pandora.')
         print('/exit\t\tExit Pandora.')
@@ -467,3 +474,21 @@ class ChatBot:
                 return self.__choice_model()
 
             return models[int(choice) - 1]
+
+    def __copy_text(self):
+        pyperclip.copy(self.state.chatgpt_prompt.prompt)
+        Console.info("已将上一次返回结果复制到剪切板。")
+        pass
+
+    def __copy_code(self):
+        text = self.state.chatgpt_prompt.prompt
+        pattern = re.compile(r'```.*\s([\s\S]*?)\s```')
+        result = re.findall(pattern, text)
+        if len(result) == 0:
+            Console.info("未找到代码。")
+            return
+        else:
+            code = '\n=======================================================\n'.join(result)
+            pyperclip.copy(code)
+            Console.info("已将上一次生成的代码复制到剪切板。")
+        pass
