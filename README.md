@@ -1,17 +1,56 @@
+
+
 # Pandora
+
+潘多拉 (Pandora)，一个不只是命令行的 ChatGPT。
+
+潘多拉实现了网页版 ChatGPT 的主要操作。后端优化，绕过 Cloudflare，速度喜人。
+
+<!-- PROJECT SHIELDS -->
 
 ![Python version](https://img.shields.io/badge/python-%3E%3D3.7-green)
 [![Issues](https://img.shields.io/github/issues-raw/pengzhile/pandora)](https://github.com/pengzhile/pandora/issues)
 [![Commits](https://img.shields.io/github/last-commit/pengzhile/pandora/master)](https://github.com/pengzhile/pandora/commits/master)
 [![PyPi](https://img.shields.io/pypi/v/pandora-chatgpt.svg)](https://pypi.python.org/pypi/pandora-chatgpt)
 [![Downloads](https://static.pepy.tech/badge/pandora-chatgpt)](https://pypi.python.org/pypi/pandora-chatgpt)
-
 [![PyPi workflow](https://github.com/pengzhile/pandora/actions/workflows/python-publish.yml/badge.svg)](https://github.com/pengzhile/pandora/actions/workflows/python-publish.yml)
 [![Docker workflow](https://github.com/pengzhile/pandora/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/pengzhile/pandora/actions/workflows/docker-publish.yml)
 
-### `潘多拉`，一个不只是命令行的`ChatGPT`。
+<!-- PROJECT LOGO -->
+<br />
 
-### 实现了网页版`ChatGPT`的主要操作。能过`Cloudflare`，理论上速度还可以。
+<p align="center">
+
+  <h3 align="center">潘多拉 Pandora</h3>
+  <p align="center">
+    一个不只是命令行的 "ChatGPT"
+    <br />
+    <a href="https://github.com/pengzhile/pandora/README_eng.md"><strong>README in English »</strong></a>
+    <br />
+    <br />
+    <a href="https://chat.zhile.io/login">查看Demo</a>
+    ·
+    <a href="https://github.com/pengzhile/pandora/issues">报告Bug</a>
+    ·
+    <a href="https://github.com/pengzhile/pandora/issues">提出新特性</a>
+  </p>
+
+</p>
+
+## 目录
+
+- [为什么要用](#为什么要用)
+- [界面截图](#界面截图)
+- [如何运行](#如何运行)
+- [程序参数](#程序参数)
+- [Docker环境变量](#docker环境变量)
+- [关于 Access Token](#关于-access-token)
+- [HTTP服务文档](#http服务文档)
+- [操作命令](#操作命令)
+- [高阶设置](#高阶设置)
+- [Cloud模式](#cloud模式)
+- [使用Cloudflare Workers代理](#使用cloudflare-workers代理)
+- [其他说明](#其他说明)
 
 ## 为什么要用
 
