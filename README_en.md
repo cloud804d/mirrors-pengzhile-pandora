@@ -25,7 +25,7 @@ It implements almost everything as ChatGPT official website. Besides, it's unima
   <p align="center">
 Pandora, talking with ChatGPT in command lines, and with more surprises.
     <br />
-    <a href="https://github.com/pengzhile/pandora/README.md"><strong>README in 中文 »</strong></a>
+    <a href="https://github.com/pengzhile/pandora/blob/master/README.md"><strong>README in 中文 »</strong></a>
     <br />
     <br />
     <a href="https://chat.zhile.io/login">Demo View</a>
