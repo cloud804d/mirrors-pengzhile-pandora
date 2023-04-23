@@ -29,7 +29,7 @@
     <a href="https://github.com/pengzhile/pandora/blob/master/README_en.md"><strong>README in English »</strong></a>
     <br />
     <br />
-    <a href="https://chat.zhile.io/login">查看Demo</a>
+    <a href="https://chat.zhile.io">查看Demo</a>
     ·
     <a href="https://github.com/pengzhile/pandora/issues">报告Bug</a>
     ·

@@ -29,7 +29,7 @@ Pandora, talking with ChatGPT in command lines, and with more surprises.
     <a href="https://github.com/pengzhile/pandora/blob/master/README.md"><strong>README in 中文 »</strong></a>
     <br />
     <br />
-    <a href="https://chat.zhile.io/login">Demo View</a>
+    <a href="https://chat.zhile.io">Demo View</a>
     ·
     <a href="https://github.com/pengzhile/pandora/issues">Bug Report</a>
     ·
