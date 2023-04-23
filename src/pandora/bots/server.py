@@ -251,11 +251,15 @@ class ChatBot:
 
     def regenerate(self):
         payload = request.json
+
+        conversation_id = payload.get('conversation_id')
+        if not conversation_id:
+            return self.talk()
+
         prompt = payload['prompt']
         model = payload['model']
         message_id = payload['message_id']
         parent_message_id = payload['parent_message_id']
-        conversation_id = payload['conversation_id']
         stream = payload.get('stream', True)
 
         return self.__process_stream(
