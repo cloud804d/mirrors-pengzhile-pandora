@@ -22,33 +22,33 @@
 ## ChatGPT使用时可能会遇到：
 
 ### 1. Please stand by, while we are checking your browser... 
-### &nbsp;&nbsp;&nbsp;动不动来一下，有时候还不动或者出人机验证。
+### &nbsp;&nbsp;&nbsp;动不动来一下，有时候还不动或者出人机验证。痛！
 ![t0](https://github.com/pengzhile/pandora/raw/master/doc/images/t0.png)
 
 ### 2. Access denied. You do not have access to chat.openai.com. 
-### &nbsp;&nbsp;&nbsp;经典问题，只能到处找可用VPN，费时费力，更费钱。
+### &nbsp;&nbsp;&nbsp;经典问题，只能到处找可用VPN，费时费力，更费钱。痛！
 ![t1](https://github.com/pengzhile/pandora/raw/master/doc/images/t1.png)
 
 ### 3. ChatGPT is at capacity right now 
-### &nbsp;&nbsp;&nbsp;系统负载高，白嫖用户不给用。
+### &nbsp;&nbsp;&nbsp;系统负载高，白嫖用户不给用。痛！
 ![t2](https://github.com/pengzhile/pandora/raw/master/doc/images/t2.png)
 
 ### 4. This content may violate our <u>content policy</u>. 
-### &nbsp;&nbsp;&nbsp;道德审查，多触发几次可能就封号了。
+### &nbsp;&nbsp;&nbsp;道德审查，多触发几次可能就封号了。痛！！！
 ![t3](https://github.com/pengzhile/pandora/raw/master/doc/images/t3.png)
 
 ### 5. Something went wrong. 
-### &nbsp;&nbsp;&nbsp;吃着火锅唱着歌，突然就出故障了。
+### &nbsp;&nbsp;&nbsp;吃着火锅唱着歌，突然就出故障了。痛！
 ![t4](https://github.com/pengzhile/pandora/raw/master/doc/images/t4.png)
 
-### 6. 输出代码时中断，但是却没有一个 `Continue generating` 按钮。
+### 6. 输出代码时中断，但是却没有一个 `Continue generating` 按钮。痛！
 ![t5](https://github.com/pengzhile/pandora/raw/master/doc/images/t5.png) <br>
 ![t6](https://github.com/pengzhile/pandora/raw/master/doc/images/t6.png)
 
-### 7. 蹦字慢吞吞，卡顿不流畅，不知道的甚至想换电脑。
-### 8. 想把 `ChatGPT` 接到其他系统，结果只能接个差强人意的 `gpt-3.5-turbo`。
+### 7. 蹦字慢吞吞，卡顿不流畅，不知道的甚至想换电脑。痛！
+### 8. 想把 `ChatGPT` 接到其他系统，结果只能接个差强人意的 `gpt-3.5-turbo`。痛！
 
-### <font color=green>以上痛点，`Pandora` 一次全部解决。</font>
+### 太痛了！！！<font color=green>以上痛点，`Pandora` 一次全部解决。</font>
 
 ## 界面截图
 
