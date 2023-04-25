@@ -41,6 +41,13 @@ def main():
         default='127.0.0.1:8018',
     )
     parser.add_argument(
+        '--threads',
+        help='Define the number of server workers, default: 4',
+        required=False,
+        type=int,
+        default=4,
+    )
+    parser.add_argument(
         '--sentry',
         help='Enable sentry to send error reports when errors occur.',
         action='store_true',
@@ -60,7 +67,7 @@ def main():
     try:
         from pandora_cloud.server import ChatBot as CloudServer
 
-        return CloudServer(args.proxy, args.verbose, args.sentry, True).run(args.server)
+        return CloudServer(args.proxy, args.verbose, args.sentry, True).run(args.server, args.threads)
     except (ImportError, ModuleNotFoundError):
         Console.error_bh('### You need `pip install Pandora-ChatGPT[cloud]` to support cloud mode.')
 

@@ -97,6 +97,7 @@
 * `-s` 或 `--server` 以`http`服务方式启动，格式：`ip:port`。
 * `-a` 或 `--api` 使用`gpt-3.5-turbo`API请求，**你可能需要向`OpenAI`支付费用**。
 * `--tokens_file` 指定一个存放多`Access Token`的文件，内容为`{"key": "token"}`的形式。
+* `--threads` 指定服务启动的线程数，默认为 `8`，Cloud模式为 `4`。
 * `--sentry` 启用`sentry`框架来发送错误报告供作者查错，敏感信息**不会被发送**。
 * `-v` 或 `--verbose` 显示调试信息，且出错时打印异常堆栈信息，供查错使用。
 

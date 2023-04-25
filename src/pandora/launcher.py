@@ -154,6 +154,13 @@ def main():
         const='127.0.0.1:8008',
     )
     parser.add_argument(
+        '--threads',
+        help='Define the number of server workers, default: 8',
+        required=False,
+        type=int,
+        default=8,
+    )
+    parser.add_argument(
         '-a',
         '--api',
         help='Use gpt-3.5-turbo chat api. Note: OpenAI will bill you.',
@@ -217,7 +224,7 @@ def main():
         chatgpt = ChatGPT(access_tokens, args.proxy)
 
     if args.server:
-        return ChatBotServer(chatgpt, args.verbose, args.sentry).run(args.server)
+        return ChatBotServer(chatgpt, args.verbose, args.sentry).run(args.server, args.threads)
 
     ChatBotLegacy(chatgpt).run()
 

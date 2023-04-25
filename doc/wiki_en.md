@@ -96,6 +96,7 @@ Pandora, talking with ChatGPT in command lines, and with more surprises.
 * `-s` or `--server` starts the HTTP server, by which you could open a web page and interact with it in a fancy UI. the value should be`ip:port`.
 * `-a` or `--api` use `gpt-3.5-turbo` API in backend. **NOTICE: you will be charged if this option is in use.** 
 * `--tokens_file` indicating a file storing multiple `Access Token`s. The file content should be like`{"key": "token"}`.
+* `--threads` specify the number of server workers, default is `8`, and for cloud mode, it is `4`.
 * `--sentry` sending error messages to author for improving Pandora. **Sensitive information won't be leaked.**
 * `-v` or `--verbose` for verbose debugging messages.
 
