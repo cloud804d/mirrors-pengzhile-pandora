@@ -1,6 +1,6 @@
 # Pandora
 
-潘多拉 (Pandora)，一个不只是命令行的 ChatGPT。
+潘多拉 (Pandora)，一个让你呼吸顺畅的 ChatGPT。
 
 潘多拉实现了网页版 ChatGPT 的主要操作。后端优化，绕过 Cloudflare，速度喜人。
 
