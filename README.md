@@ -17,6 +17,7 @@
 
 ## 体验地址
 * 点击 <a href="https://chat.zhile.io" target="_blank" title="Pandora Cloud体验地址">https://chat.zhile.io</a>
+* 登录获取 `Access Token` 需要梯子。不过对IP无讲究，国家支持就行。
 * 这个页面上还包含一个共享账号的链接，**没有账号**的可以点进去体验一下。
  
 ## ChatGPT使用时可能会遇到：
