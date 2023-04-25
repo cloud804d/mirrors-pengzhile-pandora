@@ -18,6 +18,7 @@
 ## 体验地址
 * 点击 <a href="https://chat.zhile.io" target="_blank" title="Pandora Cloud体验地址">https://chat.zhile.io</a>
 * 登录获取 `Access Token` 需要梯子。不过对IP无讲究，国家支持就行。
+* `Access Token` 有效期 `14` 天，期间访问**不需要梯子**。这意味着你在手机上也可随意使用。
 * 这个页面上还包含一个共享账号的链接，**没有账号**的可以点进去体验一下。
  
 ## ChatGPT使用时可能会遇到：
@@ -27,7 +28,7 @@
 ![t0](https://github.com/pengzhile/pandora/raw/master/doc/images/t0.png)
 
 ### 2. Access denied. You do not have access to chat.openai.com. 
-### &nbsp;&nbsp;&nbsp;经典问题，只能到处找可用VPN，费时费力，更费钱。痛！
+### &nbsp;&nbsp;&nbsp;经典问题，只能到处找可用VPN，费时费力，更费钱。移动端访问更难。痛！
 ![t1](https://github.com/pengzhile/pandora/raw/master/doc/images/t1.png)
 
 ### 3. ChatGPT is at capacity right now 
