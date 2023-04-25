@@ -1,32 +1,11 @@
-
-
-# Pandora
-
-Pandora, talking with ChatGPT in command lines, and with more surprises.
-
-It implements almost everything as ChatGPT official website. Besides, it's unimaginably fast because of mysterious optimizations.
-
-<!-- PROJECT SHIELDS -->
-
-![Python version](https://img.shields.io/badge/python-%3E%3D3.7-green)
-[![Issues](https://img.shields.io/github/issues-raw/pengzhile/pandora)](https://github.com/pengzhile/pandora/issues)
-[![Commits](https://img.shields.io/github/last-commit/pengzhile/pandora/master)](https://github.com/pengzhile/pandora/commits/master)
-[![PyPi](https://img.shields.io/pypi/v/pandora-chatgpt.svg)](https://pypi.python.org/pypi/pandora-chatgpt)
-[![Downloads](https://static.pepy.tech/badge/pandora-chatgpt)](https://pypi.python.org/pypi/pandora-chatgpt)
-[![PyPi workflow](https://github.com/pengzhile/pandora/actions/workflows/python-publish.yml/badge.svg)](https://github.com/pengzhile/pandora/actions/workflows/python-publish.yml)
-[![Docker workflow](https://github.com/pengzhile/pandora/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/pengzhile/pandora/actions/workflows/docker-publish.yml)
-[![Discord](https://img.shields.io/discord/1098772912242163795?label=Discord)](https://discord.gg/QBkd9JAaWa)
-
-<!-- PROJECT LOGO -->
 <br />
 
 <p align="center">
-
   <h3 align="center">Pandora</h3>
   <p align="center">
 Pandora, talking with ChatGPT in command lines, and with more surprises.
     <br />
-    <a href="https://github.com/pengzhile/pandora/blob/master/README.md"><strong>README in 中文 »</strong></a>
+    <a href="https://github.com/pengzhile/pandora/blob/master/doc/README.md"><strong>Wiki in 中文 »</strong></a>
     <br />
     <br />
     <a href="https://chat.zhile.io">Demo View</a>
@@ -35,13 +14,10 @@ Pandora, talking with ChatGPT in command lines, and with more surprises.
     ·
     <a href="https://github.com/pengzhile/pandora/issues">Feature Request</a>
   </p>
-
 </p>
 
 ## Table of Contents
 
-- [Why using Pandora](#why-using-pandora)
-- [Screenshots](#screenshots)
 - [Make it run](#make-it-run)
 - [Start parameters](#start-parameters)
 - [Docker](#docker)
@@ -49,35 +25,6 @@ Pandora, talking with ChatGPT in command lines, and with more surprises.
 - [HTTP RESTful API](#http-restful-api)
 - [Commands](#commands)
 - [Cloud mode](#cloud-mode)
-- [Misc](#misc)
-
-## Why using Pandora
-
-1. bypassing some official rate limits during peak hours.
-2. responsing as fast as PLUS, but it's free.
-3. surviving in sometime while the official site is down.
-4. running in web, command line or RESTful API mode, as you wish.
-5. avoiding disconnecting or error messages while the official site suffers.
-
-## Screenshots
-
-  <details>
-
-  <summary>
-
-  ![alt Screenshot5](https://github.com/pengzhile/pandora/raw/master/doc/images/s05.png)
-  ![alt Screenshot10](https://github.com/pengzhile/pandora/raw/master/doc/images/s10.jpeg)
-
-  </summary>
-
-  ![alt Screenshot1](https://github.com/pengzhile/pandora/raw/master/doc/images/s01.png)
-  ![alt Screenshot2](https://github.com/pengzhile/pandora/raw/master/doc/images/s02.png)
-  ![alt Screenshot3](https://github.com/pengzhile/pandora/raw/master/doc/images/s03.png)
-  ![alt Screenshot4](https://github.com/pengzhile/pandora/raw/master/doc/images/s04.png)
-  ![alt Screenshot6](https://github.com/pengzhile/pandora/raw/master/doc/images/s06.png)
-  ![alt Screenshot11](https://github.com/pengzhile/pandora/raw/master/doc/images/s11.jpeg)
-
-  </details>
 
 ## Make it run
 
@@ -203,20 +150,3 @@ These docker environment variables will override start parameters.
 * you need to use `pandora-cloud` instead of `pandora` to start Pandora.
 * enabling `PANDORA_CLOUD`  if you are using Docker to start Pandora.
 * Other parameters are same as these guys in normal mode.
-
-## Misc
-
-* The Pandora, it is by standing upon the shoulders of giants.
-* If you submit an issue regarding errors or bugs, I will fix them.
-* **Star**, pls, Dad.
-* PHP is the best programming language in the world.
-
-## Contributors
-
-> Thx for these adorable people.
-
-[![Star History Chart](https://contrib.rocks/image?repo=pengzhile/pandora)](https://github.com/pengzhile/pandora/graphs/contributors)
-
-## Star History
-
-![Star History Chart](https://api.star-history.com/svg?repos=pengzhile/pandora&type=Date)
