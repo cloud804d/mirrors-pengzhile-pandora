@@ -72,7 +72,7 @@
 
 ## 如何搭建运行
 
-* 访问 [doc/wiki.md](https://github.com/pengzhile/pandora/raw/master/doc/wiki.md) 获得详细指导。
+* 访问 [doc/wiki.md](https://github.com/pengzhile/pandora/blob/master/doc/wiki.md) 获得详细指导。
 
 ## 其他说明
 

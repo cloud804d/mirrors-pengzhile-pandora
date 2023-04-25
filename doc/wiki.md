@@ -5,7 +5,7 @@
   <p align="center">
     一个不只是命令行的 "ChatGPT"
     <br />
-    <a href="https://github.com/pengzhile/pandora/raw/master/doc/README_en.md"><strong>Wiki in English »</strong></a>
+    <a href="https://github.com/pengzhile/pandora/blob/master/doc/wiki_en.md"><strong>Wiki in English »</strong></a>
     <br />
     <br />
     <a href="https://chat.zhile.io">查看Demo</a>
