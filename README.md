@@ -17,7 +17,6 @@
 
 ## 体验地址
 * 点击 <a href="https://chat.zhile.io" target="_blank" title="Pandora Cloud体验地址">https://chat.zhile.io</a>
-* `普通非三方登录`的账号可以直接登录，全程无需梯子。 不放心或三方登录的用户点击 `Go get it` 按下列步骤进行。
 * 点击 `Go get it` 获取 `Access Token` 需要梯子。不过对IP无讲究，国家支持就行。
 * `Access Token` 有效期 `14` 天，期间访问**不需要梯子**。这意味着你在手机上也可随意使用。
 * 这个页面上还包含一个共享账号的链接，**没有账号**的可以点进去体验一下。
