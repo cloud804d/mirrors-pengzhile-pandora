@@ -16,7 +16,11 @@ class TurboGPT:
                             'Answer as concisely as possible.\nKnowledge cutoff: 2021-09-01\n' \
                             'Current date: {}'.format(dt.now().strftime('%Y-%m-%d'))
     TITLE_PROMPT = 'Generate a brief title for our conversation.'
-    MAX_TOKENS = 4096
+    MAX_TOKENS = {
+        'gpt-3.5-turbo': 4096,
+        'gpt-4': 8192,
+        'gpt-4-32k': 32768,
+    }
 
     def __init__(self, api_keys: dict, proxy=None):
         self.api_keys = api_keys
@@ -44,13 +48,29 @@ class TurboGPT:
 
     def list_models(self, raw=False, token=None):
         models = {
-            'models': [{
-                'slug': 'gpt-3.5-turbo',
-                'max_tokens': 4096,
-                'title': 'Default',
-                'description': 'Turbo is the api model that powers ChatGPT',
-                'tags': []
-            }]
+            'models': [
+                {
+                    'slug': 'gpt-3.5-turbo',
+                    'max_tokens': self.MAX_TOKENS['gpt-3.5-turbo'],
+                    'title': 'GPT-3.5',
+                    'description': 'Turbo is the api model that powers ChatGPT',
+                    'tags': []
+                },
+                {
+                    'slug': 'gpt-4',
+                    'max_tokens': self.MAX_TOKENS['gpt-4'],
+                    'title': 'GPT-4',
+                    'description': 'More capable than any GPT-3.5, able to do complex tasks, and optimized for chat',
+                    'tags': []
+                },
+                {
+                    'slug': 'gpt-4-32k',
+                    'max_tokens': self.MAX_TOKENS['gpt-4-32k'],
+                    'title': 'GPT-4 32K',
+                    'description': 'Same capabilities as the base gpt-4 mode but with 4x the context length',
+                    'tags': []
+                }
+            ]
         }
 
         if raw:
@@ -262,7 +282,7 @@ class TurboGPT:
         return status, headers, __out_generator()
 
     def __reduce_messages(self, messages, model):
-        while gpt_num_tokens(messages, model) > self.MAX_TOKENS - 200:
+        while gpt_num_tokens(messages) > self.MAX_TOKENS[model] - 200:
             if len(messages) < 2:
                 raise Exception('prompt too long')
 
