@@ -30,6 +30,7 @@
 
 ### 2. Access denied. You do not have access to chat.openai.com. 
 ### &nbsp;&nbsp;&nbsp;经典问题，只能到处找可用VPN，费时费力，更费钱。移动端访问更难。痛！
+![t1.1](https://github.com/pengzhile/pandora/raw/master/doc/images/t1.1.png)
 ![t1](https://github.com/pengzhile/pandora/raw/master/doc/images/t1.png)
 
 ### 3. ChatGPT is at capacity right now 
