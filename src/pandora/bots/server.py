@@ -198,7 +198,7 @@ class ChatBot:
         return self.__proxy_result(self.chatgpt.list_models(True, self.__get_token_key()))
 
     def list_conversations(self):
-        offset = request.args.get('offset', '1')
+        offset = request.args.get('offset', '0')
         limit = request.args.get('limit', '20')
 
         return self.__proxy_result(self.chatgpt.list_conversations(offset, limit, True, self.__get_token_key()))
