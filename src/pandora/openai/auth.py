@@ -8,7 +8,6 @@ from urllib.parse import urlparse, parse_qs
 
 import requests
 from certifi import where
-from requests.exceptions import SSLError
 
 
 class Auth0:
@@ -47,11 +46,15 @@ class Auth0:
         return self.__part_two() if login_local else self.get_access_token_proxy()
 
     def __part_two(self) -> str:
-        url = '{}/auth/endpoint'.format(self.api_prefix)
+        url = '{}/auth/endpoint1'.format(self.api_prefix)
         headers = {
             'User-Agent': self.user_agent,
         }
-        resp = self.session.get(url, headers=headers, allow_redirects=False, **self.req_kwargs)
+        data = {
+            'g-recaptcha-response': 'Pandora is so cool!',
+        }
+
+        resp = self.session.post(url, headers=headers, data=data, allow_redirects=False, **self.req_kwargs)
 
         if resp.status_code == 200:
             json = resp.json()
@@ -62,7 +65,7 @@ class Auth0:
     def __part_three(self, state1: str, url: str) -> str:
         headers = {
             'User-Agent': self.user_agent,
-            'Referer': 'https://explorer.api.openai.com/',
+            'Referer': 'https://chat.openai.com/',
         }
         resp = self.session.get(url, headers=headers, allow_redirects=True, **self.req_kwargs)
 
@@ -113,21 +116,38 @@ class Auth0:
             'action': 'default',
         }
 
-        try:
-            resp = self.session.post(url, headers=headers, data=data, allow_redirects=True, **self.req_kwargs)
-        except SSLError as e:
-            if not hasattr(e.request, 'url') or not e.request.url:
-                raise Exception('Error login')
+        resp = self.session.post(url, headers=headers, data=data, allow_redirects=False, **self.req_kwargs)
+        if resp.status_code == 302:
+            location = resp.headers['Location']
+            if not location.startswith('/authorize/resume?'):
+                raise Exception('Login failed.')
 
-            return self.get_access_token(state1, e.request.url)
+            return self.__part_six(state1, location, url)
 
         if resp.status_code == 400:
             raise Exception('Wrong email or password.')
         else:
             raise Exception('Error login.')
 
+    def __part_six(self, state1: str, location: str, ref: str) -> str:
+        url = 'https://auth0.openai.com' + location
+        headers = {
+            'User-Agent': self.user_agent,
+            'Referer': ref,
+        }
+
+        resp = self.session.get(url, headers=headers, allow_redirects=False, **self.req_kwargs)
+        if resp.status_code == 302:
+            location = resp.headers['Location']
+            if not location.startswith('https://chat.openai.com/api/auth/callback/auth0?'):
+                raise Exception('Login callback failed.')
+
+            return self.get_access_token(state1, resp.headers['Location'])
+
+        raise Exception('Error login.')
+
     def get_access_token(self, state1: str, callback_url: str) -> str:
-        url = '{}/auth/token'.format(self.api_prefix)
+        url = '{}/auth/token1'.format(self.api_prefix)
         headers = {
             'User-Agent': self.user_agent,
         }
