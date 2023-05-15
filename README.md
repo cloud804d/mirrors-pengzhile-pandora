@@ -61,7 +61,7 @@
   <summary>
 
   ![alt Screenshot5](https://github.com/pengzhile/pandora/raw/master/doc/images/s05.png)<br>
-  ![alt Screenshot10](https://github.com/pengzhile/pandora/raw/master/doc/images/s10.jpeg)
+  ![alt Screenshot10](https://github.com/pengzhile/pandora/raw/master/doc/images/s12.jpeg)
 
   </summary>
 
