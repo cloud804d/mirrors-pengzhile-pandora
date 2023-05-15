@@ -20,6 +20,8 @@ fi
 
 if [ -n "${PANDORA_SERVER}" ]; then
   PANDORA_ARGS="${PANDORA_ARGS} -s ${PANDORA_SERVER}"
+else
+  PANDORA_ARGS="${PANDORA_ARGS} -s 0.0.0.0"
 fi
 
 if [ -n "${PANDORA_API}" ]; then
