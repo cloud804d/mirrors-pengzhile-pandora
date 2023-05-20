@@ -55,7 +55,7 @@
 * **JSON字段：**
     * `prompt` 提问的内容。
     * `model` 对话使用的模型，通常整个会话中保持不变。
-    * `message_id` 消息ID，首次通常使用`str(uuid.uuid4())`来生成一个。
+    * `message_id` 消息ID，通常使用`str(uuid.uuid4())`来生成一个。
     * `parent_message_id` 父消息ID，首次同样需要生成。之后获取上一条回复的消息ID即可。
     * `conversation_id` 首次对话可不传。`ChatGPT`回复时可获取。
     * `stream` 是否使用流的方式输出内容，默认为：`True`
