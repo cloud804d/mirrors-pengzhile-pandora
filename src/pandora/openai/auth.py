@@ -170,8 +170,7 @@ class Auth0:
                 raise Exception('Get access token failed, maybe you need a proxy.')
 
             self.access_token = json['access_token']
-            expires_at = dt.utcnow() + datetime.timedelta(seconds=json['expires_in']) - datetime.timedelta(minutes=5)
-            self.expires = expires_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+            self.expires = dt.utcnow() + datetime.timedelta(seconds=json['expires_in']) - datetime.timedelta(minutes=5)
             return self.access_token
         else:
             raise Exception(resp.text)
