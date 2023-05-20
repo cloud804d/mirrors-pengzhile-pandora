@@ -204,8 +204,9 @@ def main():
             Console.info_b('Please enter your email and password to log in ChatGPT!')
             email = getenv('OPENAI_EMAIL') or Prompt.ask('  Email')
             password = getenv('OPENAI_PASSWORD') or Prompt.ask('  Password', password=True)
+            mfa = getenv('OPENAI_MFA_CODE') or Prompt.ask('  MFA Code(Optional if not set)')
             Console.warn('### Do login, please wait...')
-            access_token = Auth0(email, password, args.proxy).auth(True)
+            access_token = Auth0(email, password, args.proxy, mfa=mfa).auth(True)
 
         if not check_access_token_out(access_token, args.api):
             return

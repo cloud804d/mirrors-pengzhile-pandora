@@ -127,7 +127,7 @@ These docker environment variables will override start parameters.
 * `Access Token` has a expiration time as `14 days`, you could save it and keep using within this period.
 * leaking your `Access Token` will lead to loss of your account.
 
-## HTTP RESTful API
+## HTTP RESTFUL API
 
 * if you start Pandora with `-s`/`--server`/`PANDORA_SERVER`, you could access a web UI with `http://ip:port`.
 * you could switch access token by passing a different one with `http://ip:port/?token=xxx`.

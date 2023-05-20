@@ -11,11 +11,12 @@ from certifi import where
 
 
 class Auth0:
-    def __init__(self, email: str, password: str, proxy: str = None, use_cache: bool = True):
+    def __init__(self, email: str, password: str, proxy: str = None, use_cache: bool = True, mfa: str = None):
         self.session_token = None
         self.email = email
         self.password = password
         self.use_cache = use_cache
+        self.mfa = mfa
         self.session = requests.Session()
         self.req_kwargs = {
             'proxies': {
@@ -133,12 +134,43 @@ class Auth0:
         resp = self.session.get(url, headers=headers, allow_redirects=False, **self.req_kwargs)
         if resp.status_code == 302:
             location = resp.headers['Location']
+            if location.startswith('/u/mfa-otp-challenge?'):
+                if not self.mfa:
+                    raise Exception('MFA required.')
+                return self.__part_seven(code_verifier, location)
+
             if not location.startswith('com.openai.chat://auth0.openai.com/ios/com.openai.chat/callback?'):
                 raise Exception('Login callback failed.')
 
             return self.get_access_token(code_verifier, resp.headers['Location'])
 
         raise Exception('Error login.')
+
+    def __part_seven(self, code_verifier: str, location: str) -> str:
+        url = 'https://auth0.openai.com' + location
+        data = {
+            'state': parse_qs(urlparse(url).query)['state'][0],
+            'code': self.mfa,
+            'action': 'default',
+        }
+        headers = {
+            'User-Agent': self.user_agent,
+            'Referer': url,
+            'Origin': 'https://auth0.openai.com',
+        }
+
+        resp = self.session.post(url, headers=headers, data=data, allow_redirects=False, **self.req_kwargs)
+        if resp.status_code == 302:
+            location = resp.headers['Location']
+            if not location.startswith('/authorize/resume?'):
+                raise Exception('MFA failed.')
+
+            return self.__part_six(code_verifier, location, url)
+
+        if resp.status_code == 400:
+            raise Exception('Wrong MFA code.')
+        else:
+            raise Exception('Error login.')
 
     def get_access_token(self, code_verifier: str, callback_url: str) -> str:
         url_params = parse_qs(urlparse(callback_url).query)

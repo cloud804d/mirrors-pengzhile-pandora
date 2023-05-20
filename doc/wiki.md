@@ -164,7 +164,7 @@
 * 默认使用`sqlite3`存储会话数据，如果你希望更换至`mysql`，可以这么做：
   * 执行```pip install PyMySQL```安装驱动。
   * 设置环境变量：`DATABASE_URI`为类似`mysql+pymysql://user:pass@localhost/dbname`的连接字符串。
-* 环境变量指定`OPENAI_EMAIL`可以替代登录输入用户名，`OPENAI_PASSWORD`则可以替代输入密码。
+* 环境变量指定`OPENAI_EMAIL`可以替代登录输入用户名，`OPENAI_PASSWORD`则可以替代输入密码, `OPENAI_MFA_CODE`则可以替代输入二次验证。
 * 环境变量`API_SYSTEM_PROMPT`可以替换`api`模式下的系统`prompt`。
 
 ## Cloud模式
