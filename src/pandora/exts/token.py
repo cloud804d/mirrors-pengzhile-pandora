@@ -31,6 +31,9 @@ def check_access_token(access_token, api=False):
     if 'model.read' not in scope or 'model.request' not in scope:
         raise Exception('invalid scope')
 
+    if 'https://api.openai.com/auth' not in payload or 'https://api.openai.com/profile' not in payload:
+        raise Exception('belonging to an unregistered user.')
+
     return payload
 
 
