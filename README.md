@@ -45,7 +45,7 @@
 ### &nbsp;&nbsp;&nbsp;吃着火锅唱着歌，突然就出故障了。痛！
 ![t4](https://github.com/pengzhile/pandora/raw/master/doc/images/t4.png)
 
-### 6. 手机和电脑的模型不同用，顾这个就顾不到那个，痛！
+### 6. 手机和电脑的模型不通用，顾这个就顾不到那个，痛！
 ![t7](https://github.com/pengzhile/pandora/raw/master/doc/images/t7.png)
 
 ### 7. 蹦字慢吞吞，卡顿不流畅，不知道的甚至想换电脑。痛！
