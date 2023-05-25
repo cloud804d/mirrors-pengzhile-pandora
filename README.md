@@ -29,10 +29,9 @@
 ### &nbsp;&nbsp;&nbsp;动不动来一下，有时候还不动或者出人机验证。痛！
 ![t0](https://github.com/pengzhile/pandora/raw/master/doc/images/t0.png)
 
-### 2. Access denied. You do not have access to chat.openai.com. 
+### 2. Access denied. Sorry, you have been blocked
 ### &nbsp;&nbsp;&nbsp;经典问题，只能到处找可用VPN，费时费力，更费钱。移动端访问更难。痛！
 ![t1.1](https://github.com/pengzhile/pandora/raw/master/doc/images/t1.1.png)
-![t1](https://github.com/pengzhile/pandora/raw/master/doc/images/t1.png)
 
 ### 3. ChatGPT is at capacity right now 
 ### &nbsp;&nbsp;&nbsp;系统负载高，白嫖用户不给用。痛！
@@ -46,9 +45,8 @@
 ### &nbsp;&nbsp;&nbsp;吃着火锅唱着歌，突然就出故障了。痛！
 ![t4](https://github.com/pengzhile/pandora/raw/master/doc/images/t4.png)
 
-### 6. 输出代码时中断，但是却没有一个 `Continue generating` 按钮。痛！
-![t5](https://github.com/pengzhile/pandora/raw/master/doc/images/t5.png) <br>
-![t6](https://github.com/pengzhile/pandora/raw/master/doc/images/t6.png)
+### 6. 手机和电脑的模型不同用，顾这个就顾不到那个，痛！
+![t7](https://github.com/pengzhile/pandora/raw/master/doc/images/t7.png)
 
 ### 7. 蹦字慢吞吞，卡顿不流畅，不知道的甚至想换电脑。痛！
 ### 8. 想把 `ChatGPT` 接到其他系统，结果只能接个差强人意的 `gpt-3.5-turbo`。痛！
