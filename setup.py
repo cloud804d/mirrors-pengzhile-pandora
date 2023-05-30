@@ -30,7 +30,7 @@ setup(
     install_requires=requirements,
     extras_require={
         'api': requirements_api,
-        'cloud': ['pandora-cloud~=0.4.0'],
+        'cloud': ['pandora-cloud~=0.4.1'],
     },
     entry_points={
         'console_scripts': [
