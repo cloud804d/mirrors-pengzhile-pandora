@@ -91,6 +91,8 @@ Pandora, talking with ChatGPT in command lines, and with more surprises.
   docker build -t pandora .
   docker run -it --rm pandora
   ```
+  
+* Serverless deploy：[pandora-cloud-serverless](https://github.com/pengzhile/pandora-cloud-serverless)
 
 * login with your credentials
 

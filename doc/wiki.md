@@ -93,6 +93,8 @@
   docker build -t pandora .
   docker run -it --rm pandora
   ```
+  
+* Serverless部署见项目：[pandora-cloud-serverless](https://github.com/pengzhile/pandora-cloud-serverless)
 
 * 输入用户名密码登录即可，登录密码理论上不显示出来，莫慌。
 * 简单而粗暴，不失优雅。
