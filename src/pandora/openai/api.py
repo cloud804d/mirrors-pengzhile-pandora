@@ -344,7 +344,7 @@ class ChatCompletion(API):
 
     def __request_conversation(self, api_key, data, stream):
         if api_key.startswith('fk-') or api_key.startswith('pk-'):
-            prefix = 'https://api.fakeopen.com'
+            prefix = 'https://ai.fakeopen.com'
         else:
             prefix = getenv('OPENAI_API_PREFIX', 'https://api.openai.com')
         url = '{}/v1/chat/completions'.format(prefix)
