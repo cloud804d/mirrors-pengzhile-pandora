@@ -21,6 +21,11 @@ class TurboGPT:
         'gpt-4': 8192,
         'gpt-4-32k': 32768,
     }
+    FAKE_TOKENS = {
+        'gpt-3.5-turbo': 8191,
+        'gpt-4': 4095,
+        'gpt-4-32k': 8195,
+    }
 
     def __init__(self, api_keys: dict, proxy=None):
         self.api_keys = api_keys
@@ -40,6 +45,11 @@ class TurboGPT:
 
         return self.conversations_map[api_keys_key]
 
+    def __is_fake_api(self, token=None):
+        api_key = self.get_access_token(token)
+        return api_key.startswith('fk-') or api_key.startswith('pk-')
+
+
     def get_access_token(self, token_key=None):
         return self.api_keys[token_key or self.default_api_keys_key]
 
@@ -47,25 +57,27 @@ class TurboGPT:
         return self.api_keys_key_list
 
     def list_models(self, raw=False, token=None):
+        fake_api = self.__is_fake_api(token)
+
         models = {
             'models': [
                 {
                     'slug': 'gpt-3.5-turbo',
-                    'max_tokens': self.MAX_TOKENS['gpt-3.5-turbo'],
+                    'max_tokens': self.FAKE_TOKENS['gpt-3.5-turbo'] if fake_api else self.MAX_TOKENS['gpt-3.5-turbo'],
                     'title': 'GPT-3.5',
                     'description': 'Turbo is the api model that powers ChatGPT',
                     'tags': []
                 },
                 {
                     'slug': 'gpt-4',
-                    'max_tokens': self.MAX_TOKENS['gpt-4'],
+                    'max_tokens': self.FAKE_TOKENS['gpt-4'] if fake_api else self.MAX_TOKENS['gpt-4'],
                     'title': 'GPT-4',
                     'description': 'More capable than any GPT-3.5, able to do complex tasks, and optimized for chat',
                     'tags': []
                 },
                 {
                     'slug': 'gpt-4-32k',
-                    'max_tokens': self.MAX_TOKENS['gpt-4-32k'],
+                    'max_tokens': self.FAKE_TOKENS['gpt-4-32k'] if fake_api else self.MAX_TOKENS['gpt-4-32k'],
                     'title': 'GPT-4 32K',
                     'description': 'Same capabilities as the base gpt-4 mode but with 4x the context length',
                     'tags': []
@@ -243,7 +255,7 @@ class TurboGPT:
         user_prompt, gpt_prompt, messages = conversation.get_messages(message_id, model)
         try:
             status, headers, generator = self.api.request(self.get_access_token(token), model,
-                                                          self.__reduce_messages(messages, model), stream)
+                                                          self.__reduce_messages(messages, model, token), stream)
         except Exception as e:
             return self.__out_error_stream(str(e))
 
@@ -271,7 +283,7 @@ class TurboGPT:
         user_prompt, gpt_prompt, messages = conversation.get_messages(message_id, model)
         try:
             status, headers, generator = self.api.request(self.get_access_token(token), model,
-                                                          self.__reduce_messages(messages, model), stream)
+                                                          self.__reduce_messages(messages, model, token), stream)
         except Exception as e:
             return self.__out_error_stream(str(e))
 
@@ -281,8 +293,10 @@ class TurboGPT:
 
         return status, headers, __out_generator()
 
-    def __reduce_messages(self, messages, model):
-        while gpt_num_tokens(messages) > self.MAX_TOKENS[model] - 200:
+    def __reduce_messages(self, messages, model, token=None):
+        max_tokens = self.FAKE_TOKENS[model] if self.__is_fake_api(token) else self.MAX_TOKENS[model]
+
+        while gpt_num_tokens(messages) > max_tokens - 200:
             if len(messages) < 2:
                 raise Exception('prompt too long')
 
