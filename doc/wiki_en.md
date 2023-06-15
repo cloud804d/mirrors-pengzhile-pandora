@@ -121,6 +121,7 @@ These docker environment variables will override start parameters.
 * `PANDORA_API`  for using `gpt-3.5-turbo` API. **NOTICE: you will be charged if this option is in use.** 
 * `PANDORA_SENTRY` for sending error messages to author to improve Pandora. **Sensitive information won't be leaked.**
 * `PANDORA_VERBOSE` for verbose debugging messages.
+* `PANDORA_THREADS` specify the number of server workers, default is `8`, and for cloud mode, it is `4`.
 
 ## Access Token things
 

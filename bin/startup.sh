@@ -34,6 +34,10 @@ if [ -n "${PANDORA_VERBOSE}" ]; then
   PANDORA_ARGS="${PANDORA_ARGS} -v"
 fi
 
+if [ -n "${PANDORA_THREADS}" ]; then
+  PANDORA_ARGS="${PANDORA_ARGS} --threads ${PANDORA_THREADS}"
+fi
+
 if [ -n "${PANDORA_CLOUD}" ]; then
   PANDORA_COMMAND="pandora-cloud"
 fi
