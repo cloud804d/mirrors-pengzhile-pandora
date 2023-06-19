@@ -464,7 +464,8 @@ class ChatBot:
         for idx, item in enumerate(models):
             number = str(idx + 1)
             choices.append(number)
-            Console.info('  {}.\t{} - {}'.format(number, item['title'], item['description']))
+            Console.info('  {}.\t{} - {} - {}'.format(number, item['title'], item['description'],
+                                                      '|'.join(item['tags'])))
 
         Console.warn('  r.\tRefresh model list')
 
