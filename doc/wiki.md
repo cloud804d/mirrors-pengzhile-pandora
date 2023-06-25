@@ -184,6 +184,12 @@
 * 登录后，点击`Workers`，然后点击`Create a Worker`，填入服务名称后点击`创建服务`。
 * 点开你刚才创建的服务，点击`快速编辑`按钮，贴入下面的代码，然后点击`保存并部署`。
 
+## 日抛版代理地址
+
+* 每日凌晨`1`点，将会同时生成一个当日子域名，如 `ai-20230625.fakeopen.com`。
+* 子域名使用效果完全等同于 `ai.fakeopen.com`。至于作用，湖北的你肯定能懂。
+* 可将环境变量替换成子域，如 `CHATGPT_API_PREFIX=https://ai-20230625.fakeopen.com`。
+
   ```javascript
   export default {
     async fetch(request, env) {
