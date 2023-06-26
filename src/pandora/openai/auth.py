@@ -3,7 +3,6 @@
 import datetime
 import re
 from datetime import datetime as dt
-from os import getenv
 from urllib.parse import urlparse, parse_qs
 
 import requests
@@ -27,10 +26,10 @@ class Auth0:
             'timeout': 100,
         }
         self.access_token = None
+        self.refresh_token = None
         self.expires = None
         self.user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) ' \
                           'Chrome/109.0.0.0 Safari/537.36'
-        self.api_prefix = getenv('CHATGPT_API_PREFIX', 'https://ai.fakeopen.com')
 
     @staticmethod
     def __check_email(email: str):
@@ -44,7 +43,10 @@ class Auth0:
         if not self.__check_email(self.email) or not self.password:
             raise Exception('invalid email or password.')
 
-        return self.__part_two() if login_local else self.get_access_token_proxy()
+        return self.__part_two()
+
+    def get_refresh_token(self):
+        return self.refresh_token
 
     def __part_two(self) -> str:
         code_challenge = 'w6n3Ix420Xhhu-Q5-mOOEyuPZmAsJHUbBpO8Ub7xBCY'
@@ -201,30 +203,11 @@ class Auth0:
             if 'access_token' not in json:
                 raise Exception('Get access token failed, maybe you need a proxy.')
 
+            if 'refresh_token' in json:
+                self.refresh_token = json['refresh_token']
+
             self.access_token = json['access_token']
             self.expires = dt.utcnow() + datetime.timedelta(seconds=json['expires_in']) - datetime.timedelta(minutes=5)
             return self.access_token
         else:
             raise Exception(resp.text)
-
-    def get_access_token_proxy(self) -> str:
-        url = '{}/api/auth/login'.format(self.api_prefix)
-        headers = {
-            'User-Agent': self.user_agent,
-        }
-        data = {
-            'username': self.email,
-            'password': self.password,
-        }
-        resp = self.session.post(url=url, headers=headers, data=data, allow_redirects=False, **self.req_kwargs)
-
-        if resp.status_code == 200:
-            json = resp.json()
-            if 'accessToken' not in json:
-                raise Exception('Get access token failed.')
-
-            self.access_token = json['accessToken']
-            self.expires = dt.strptime(json['expires'], '%Y-%m-%dT%H:%M:%S.%fZ') - datetime.timedelta(minutes=5)
-            return self.access_token
-        else:
-            raise Exception('Error get access token.')

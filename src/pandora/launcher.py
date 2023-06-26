@@ -11,7 +11,7 @@ from . import __version__
 from .bots.legacy import ChatBot as ChatBotLegacy
 from .bots.server import ChatBot as ChatBotServer
 from .exts import sentry
-from .exts.config import USER_CONFIG_DIR
+from .exts.config import USER_CONFIG_DIR, default_api_prefix
 from .exts.hooks import hook_except_handle
 from .exts.token import check_access_token_out
 from .openai.api import ChatGPT
@@ -108,7 +108,7 @@ def parse_access_tokens(tokens_file, api=False):
 def main():
     global __show_verbose
 
-    api_prefix = getenv('CHATGPT_API_PREFIX', 'https://ai.fakeopen.com')
+    api_prefix = getenv('CHATGPT_API_PREFIX', default_api_prefix())
 
     Console.debug_b(
         '''

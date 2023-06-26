@@ -11,6 +11,7 @@ import requests
 from certifi import where
 
 from .. import __version__
+from ..exts.config import default_api_prefix
 
 
 class API:
@@ -109,8 +110,6 @@ class ChatGPT(API):
         self.user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) ' \
                           'Pandora/{} Safari/537.36'.format(__version__)
 
-        self.api_prefix = getenv('CHATGPT_API_PREFIX', 'https://ai.fakeopen.com')
-
         super().__init__(proxy, self.req_kwargs['verify'])
 
     def __get_headers(self, token_key=None):
@@ -120,6 +119,10 @@ class ChatGPT(API):
             'Content-Type': 'application/json',
         }
 
+    @staticmethod
+    def __get_api_prefix():
+        return getenv('CHATGPT_API_PREFIX', default_api_prefix())
+
     def get_access_token(self, token_key=None):
         return self.access_tokens[token_key or self.default_token_key]
 
@@ -127,7 +130,7 @@ class ChatGPT(API):
         return self.access_token_key_list
 
     def list_models(self, raw=False, token=None):
-        url = '{}/api/models'.format(self.api_prefix)
+        url = '{}/api/models'.format(self.__get_api_prefix())
         resp = self.session.get(url=url, headers=self.__get_headers(token), **self.req_kwargs)
 
         if raw:
@@ -143,7 +146,7 @@ class ChatGPT(API):
         return result['models']
 
     def list_conversations(self, offset, limit, raw=False, token=None):
-        url = '{}/api/conversations?offset={}&limit={}'.format(self.api_prefix, offset, limit)
+        url = '{}/api/conversations?offset={}&limit={}'.format(self.__get_api_prefix(), offset, limit)
         resp = self.session.get(url=url, headers=self.__get_headers(token), **self.req_kwargs)
 
         if raw:
@@ -155,7 +158,7 @@ class ChatGPT(API):
         return resp.json()
 
     def get_conversation(self, conversation_id, raw=False, token=None):
-        url = '{}/api/conversation/{}'.format(self.api_prefix, conversation_id)
+        url = '{}/api/conversation/{}'.format(self.__get_api_prefix(), conversation_id)
         resp = self.session.get(url=url, headers=self.__get_headers(token), **self.req_kwargs)
 
         if raw:
@@ -171,7 +174,7 @@ class ChatGPT(API):
             'is_visible': False,
         }
 
-        url = '{}/api/conversations'.format(self.api_prefix)
+        url = '{}/api/conversations'.format(self.__get_api_prefix())
         resp = self.session.patch(url=url, headers=self.__get_headers(token), json=data, **self.req_kwargs)
 
         if raw:
@@ -194,7 +197,7 @@ class ChatGPT(API):
         return self.__update_conversation(conversation_id, data, raw, token)
 
     def gen_conversation_title(self, conversation_id, model, message_id, raw=False, token=None):
-        url = '{}/api/conversation/gen_title/{}'.format(self.api_prefix, conversation_id)
+        url = '{}/api/conversation/gen_title/{}'.format(self.__get_api_prefix(), conversation_id)
         data = {
             'model': model,
             'message_id': message_id,
@@ -279,13 +282,13 @@ class ChatGPT(API):
         return self.__request_conversation(data, token)
 
     def __request_conversation(self, data, token=None):
-        url = '{}/api/conversation'.format(self.api_prefix)
+        url = '{}/api/conversation'.format(self.__get_api_prefix())
         headers = {**self.session.headers, **self.__get_headers(token), 'Accept': 'text/event-stream'}
 
         return self._request_sse(url, headers, data)
 
     def __update_conversation(self, conversation_id, data, raw=False, token=None):
-        url = '{}/api/conversation/{}'.format(self.api_prefix, conversation_id)
+        url = '{}/api/conversation/{}'.format(self.__get_api_prefix(), conversation_id)
         resp = self.session.patch(url=url, headers=self.__get_headers(token), json=data, **self.req_kwargs)
 
         if raw:
@@ -343,10 +346,12 @@ class ChatCompletion(API):
         return self.__request_conversation(api_key, data, stream)
 
     def __request_conversation(self, api_key, data, stream):
+        default = default_api_prefix()
+
         if api_key.startswith('fk-') or api_key.startswith('pk-'):
-            prefix = 'https://ai.fakeopen.com'
+            prefix = default
         else:
-            prefix = getenv('OPENAI_API_PREFIX', 'https://api.openai.com')
+            prefix = getenv('OPENAI_API_PREFIX', default)
         url = '{}/v1/chat/completions'.format(prefix)
 
         if stream:
