@@ -8,6 +8,8 @@ from urllib.parse import urlparse, parse_qs
 import requests
 from certifi import where
 
+from ..exts.config import default_api_prefix
+
 
 class Auth0:
     def __init__(self, email: str, password: str, proxy: str = None, use_cache: bool = True, mfa: str = None):
@@ -43,15 +45,27 @@ class Auth0:
         if not self.__check_email(self.email) or not self.password:
             raise Exception('invalid email or password.')
 
-        return self.__part_two()
+        return self.__part_one()
 
     def get_refresh_token(self):
         return self.refresh_token
 
-    def __part_two(self) -> str:
+    def __part_one(self) -> str:
+        url = '{}/auth/preauth'.format(default_api_prefix())
+        resp = self.session.get(url, allow_redirects=False, **self.req_kwargs)
+
+        if resp.status_code == 200:
+            json = resp.json()
+            if 'preauth_cookie' not in json or not json['preauth_cookie']:
+                raise Exception('Get preauth cookie failed.')
+
+            return self.__part_two(json['preauth_cookie'])
+        else:
+            raise Exception('Error request preauth.')
+
+    def __part_two(self, preauth: str) -> str:
         code_challenge = 'w6n3Ix420Xhhu-Q5-mOOEyuPZmAsJHUbBpO8Ub7xBCY'
         code_verifier = 'yGrXROHx_VazA0uovsxKfE263LMFcrSrdm4SlC-rob8'
-        preauth = '12345678-0707-0707-0707-123456789ABC%3A1689216803-UDB7Sr72DpdIO%2BCtsYEzms8uwGkzYetstlvTflB7%2BA0%3D'
 
         url = 'https://auth0.openai.com/authorize?client_id=pdlLIX2Y72MIl2rhLhTE9VV9bN905kBh&audience=https%3A%2F' \
               '%2Fapi.openai.com%2Fv1&redirect_uri=com.openai.chat%3A%2F%2Fauth0.openai.com%2Fios%2Fcom.openai.chat' \
