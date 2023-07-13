@@ -51,12 +51,13 @@ class Auth0:
     def __part_two(self) -> str:
         code_challenge = 'w6n3Ix420Xhhu-Q5-mOOEyuPZmAsJHUbBpO8Ub7xBCY'
         code_verifier = 'yGrXROHx_VazA0uovsxKfE263LMFcrSrdm4SlC-rob8'
+        preauth = '12345678-0707-0707-0707-123456789ABC%3A1689216803-UDB7Sr72DpdIO%2BCtsYEzms8uwGkzYetstlvTflB7%2BA0%3D'
 
         url = 'https://auth0.openai.com/authorize?client_id=pdlLIX2Y72MIl2rhLhTE9VV9bN905kBh&audience=https%3A%2F' \
               '%2Fapi.openai.com%2Fv1&redirect_uri=com.openai.chat%3A%2F%2Fauth0.openai.com%2Fios%2Fcom.openai.chat' \
               '%2Fcallback&scope=openid%20email%20profile%20offline_access%20model.request%20model.read' \
               '%20organization.read%20offline&response_type=code&code_challenge={}' \
-              '&code_challenge_method=S256&prompt=login'.format(code_challenge)
+              '&code_challenge_method=S256&prompt=login&preauth_cookie={}'.format(code_challenge, preauth)
         return self.__part_three(code_verifier, url)
 
     def __part_three(self, code_verifier, url: str) -> str:
