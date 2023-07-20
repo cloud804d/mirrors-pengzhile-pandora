@@ -44,7 +44,7 @@ class API:
             if 'data: [DONE]' == utf8_line[0:12]:
                 break
 
-            if 'data: {' == utf8_line[0:7]:
+            if 'data: {"message":' == utf8_line[0:17]:
                 yield json.loads(utf8_line[6:])
 
     @staticmethod
