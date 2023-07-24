@@ -9,6 +9,5 @@ flask[async]~=2.2.3
 flask-cors~=3.0.10
 waitress~=2.1.2
 loguru~=0.6.0
-sentry-sdk~=1.17.0
 pyjwt[crypto]~=2.6.0
 pyperclip~=1.8.2

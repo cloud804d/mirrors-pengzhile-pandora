@@ -10,7 +10,6 @@ from rich.prompt import Prompt, Confirm
 from . import __version__
 from .bots.legacy import ChatBot as ChatBotLegacy
 from .bots.server import ChatBot as ChatBotServer
-from .exts import sentry
 from .exts.config import USER_CONFIG_DIR, default_api_prefix
 from .exts.hooks import hook_except_handle
 from .exts.token import check_access_token_out
@@ -167,8 +166,9 @@ def main():
         action='store_true',
     )
     parser.add_argument(
-        '--sentry',
-        help='Enable sentry to send error reports when errors occur.',
+        '-l',
+        '--local',
+        help='Login locally. Pay attention to the risk control of the login ip!',
         action='store_true',
     )
     parser.add_argument(
@@ -182,9 +182,6 @@ def main():
 
     Console.debug_b(''', Mode: {}, Engine: {}
         '''.format('server' if args.server else 'cli', 'turbo' if args.api else 'free'))
-
-    if args.sentry:
-        sentry.init(args.proxy)
 
     if args.api:
         try:
@@ -202,11 +199,14 @@ def main():
         access_token, need_save = confirm_access_token(args.token_file, args.server, args.api)
         if not access_token:
             Console.info_b('Please enter your email and password to log in ChatGPT!')
+            if not args.local:
+                Console.warn('We login via {}'.format(api_prefix))
+
             email = getenv('OPENAI_EMAIL') or Prompt.ask('  Email')
             password = getenv('OPENAI_PASSWORD') or Prompt.ask('  Password', password=True)
             mfa = getenv('OPENAI_MFA_CODE') or Prompt.ask('  MFA Code(Optional if not set)')
             Console.warn('### Do login, please wait...')
-            access_token = Auth0(email, password, args.proxy, mfa=mfa).auth(True)
+            access_token = Auth0(email, password, args.proxy, mfa=mfa).auth(args.local)
 
         if not check_access_token_out(access_token, args.api):
             return
@@ -225,7 +225,7 @@ def main():
         chatgpt = ChatGPT(access_tokens, args.proxy)
 
     if args.server:
-        return ChatBotServer(chatgpt, args.verbose, args.sentry).run(args.server, args.threads)
+        return ChatBotServer(chatgpt, args.verbose).run(args.server, args.threads)
 
     ChatBotLegacy(chatgpt).run()
 
@@ -240,5 +240,3 @@ def run():
 
         if __show_verbose:
             logger.exception('Exception occurred.')
-
-        sentry.capture(e)

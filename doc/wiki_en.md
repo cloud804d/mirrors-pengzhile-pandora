@@ -105,9 +105,9 @@ Pandora, talking with ChatGPT in command lines, and with more surprises.
 * `-t` or `--token_file` for indicating the file that stores `Access Token`. You will login with access token if this option is in use.
 * `-s` or `--server` starts the HTTP server, by which you could open a web page and interact with it in a fancy UI. the value should be`ip:port`.
 * `-a` or `--api` use `gpt-3.5-turbo` API in backend. **NOTICE: you will be charged if this option is in use.** 
+* `-l` or `--local` login using the local environment. **You may need a suitable proxy IP to avoid account restrictions!**
 * `--tokens_file` indicating a file storing multiple `Access Token`s. The file content should be like`{"key": "token"}`.
 * `--threads` specify the number of server workers, default is `8`, and for cloud mode, it is `4`.
-* `--sentry` sending error messages to author for improving Pandora. **Sensitive information won't be leaked.**
 * `-v` or `--verbose` for verbose debugging messages.
 
 ## Docker
@@ -119,7 +119,7 @@ These docker environment variables will override start parameters.
 * `PANDORA_PROXY` =`protocol://user:pass@ip:port`.
 * `PANDORA_SERVER` =`ip:port`.
 * `PANDORA_API`  for using `gpt-3.5-turbo` API. **NOTICE: you will be charged if this option is in use.** 
-* `PANDORA_SENTRY` for sending error messages to author to improve Pandora. **Sensitive information won't be leaked.**
+* `PANDORA_LOGIN_LOCAL` login using the local environment. **You may need a suitable proxy IP to avoid account restrictions!**
 * `PANDORA_VERBOSE` for verbose debugging messages.
 * `PANDORA_THREADS` specify the number of server workers, default is `8`, and for cloud mode, it is `4`.
 

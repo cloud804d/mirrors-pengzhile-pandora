@@ -5,7 +5,6 @@ import argparse
 from loguru import logger
 
 from . import __version__
-from .exts import sentry
 from .exts.hooks import hook_except_handle
 from .openai.utils import Console
 
@@ -48,8 +47,9 @@ def main():
         default=4,
     )
     parser.add_argument(
-        '--sentry',
-        help='Enable sentry to send error reports when errors occur.',
+        '-l',
+        '--local',
+        help='Login locally. Pay attention to the risk control of the login ip!',
         action='store_true',
     )
     parser.add_argument(
@@ -61,13 +61,10 @@ def main():
     args, _ = parser.parse_known_args()
     __show_verbose = args.verbose
 
-    if args.sentry:
-        sentry.init(args.proxy)
-
     try:
         from pandora_cloud.server import ChatBot as CloudServer
 
-        return CloudServer(args.proxy, args.verbose, args.sentry, True).run(args.server, args.threads)
+        return CloudServer(args.proxy, args.verbose, login_local=args.local).run(args.server, args.threads)
     except (ImportError, ModuleNotFoundError):
         Console.error_bh('### You need `pip install Pandora-ChatGPT[cloud]` to support cloud mode.')
 
@@ -82,5 +79,3 @@ def run():
 
         if __show_verbose:
             logger.exception('Exception occurred.')
-
-        sentry.capture(e)

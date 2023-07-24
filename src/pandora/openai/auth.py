@@ -38,14 +38,14 @@ class Auth0:
         regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
         return re.fullmatch(regex, email)
 
-    def auth(self, login_local=True) -> str:
+    def auth(self, login_local=False) -> str:
         if self.use_cache and self.access_token and self.expires and self.expires > dt.now():
             return self.access_token
 
         if not self.__check_email(self.email) or not self.password:
             raise Exception('invalid email or password.')
 
-        return self.__part_one()
+        return self.__part_one() if login_local else self.get_access_token_proxy()
 
     def get_refresh_token(self):
         return self.refresh_token
@@ -189,6 +189,21 @@ class Auth0:
         else:
             raise Exception('Error login.')
 
+    def __parse_access_token(self, resp):
+        if resp.status_code == 200:
+            json = resp.json()
+            if 'access_token' not in json:
+                raise Exception('Get access token failed, maybe you need a proxy.')
+
+            if 'refresh_token' in json:
+                self.refresh_token = json['refresh_token']
+
+            self.access_token = json['access_token']
+            self.expires = dt.utcnow() + datetime.timedelta(seconds=json['expires_in']) - datetime.timedelta(minutes=5)
+            return self.access_token
+        else:
+            raise Exception(resp.text)
+
     def get_access_token(self, code_verifier: str, callback_url: str) -> str:
         url_params = parse_qs(urlparse(callback_url).query)
 
@@ -213,16 +228,18 @@ class Auth0:
         }
         resp = self.session.post(url, headers=headers, json=data, allow_redirects=False, **self.req_kwargs)
 
-        if resp.status_code == 200:
-            json = resp.json()
-            if 'access_token' not in json:
-                raise Exception('Get access token failed, maybe you need a proxy.')
+        return self.__parse_access_token(resp)
 
-            if 'refresh_token' in json:
-                self.refresh_token = json['refresh_token']
+    def get_access_token_proxy(self) -> str:
+        url = '{}/auth/login'.format(default_api_prefix())
+        headers = {
+            'User-Agent': self.user_agent,
+        }
+        data = {
+            'username': self.email,
+            'password': self.password,
+            'mfa_code': self.mfa,
+        }
+        resp = self.session.post(url=url, headers=headers, data=data, allow_redirects=False, **self.req_kwargs)
 
-            self.access_token = json['access_token']
-            self.expires = dt.utcnow() + datetime.timedelta(seconds=json['expires_in']) - datetime.timedelta(minutes=5)
-            return self.access_token
-        else:
-            raise Exception(resp.text)
+        return self.__parse_access_token(resp)
