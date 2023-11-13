@@ -5,14 +5,14 @@
 潘多拉实现了网页版 ChatGPT 的主要操作。后端优化，绕过 Cloudflare，速度喜人。
 
 <!-- PROJECT SHIELDS -->
-
+ 
 ![Python version](https://img.shields.io/badge/python-%3E%3D3.7-green)
 [![Issues](https://img.shields.io/github/issues-raw/pengzhile/pandora)](https://github.com/pengzhile/pandora/issues)
 [![Commits](https://img.shields.io/github/last-commit/pengzhile/pandora/master)](https://github.com/pengzhile/pandora/commits/master)
 [![PyPi](https://img.shields.io/pypi/v/pandora-chatgpt.svg)](https://pypi.python.org/pypi/pandora-chatgpt)
 [![Downloads](https://static.pepy.tech/badge/pandora-chatgpt)](https://pypi.python.org/pypi/pandora-chatgpt)
-[![PyPi workflow](https://github.com/pengzhile/pandora/actions/workflows/python-publish.yml/badge.svg)](https://github.com/pengzhile/pandora/actions/workflows/python-publish.yml)
-[![Docker workflow](https://github.com/pengzhile/pandora/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/pengzhile/pandora/actions/workflows/docker-publish.yml)
+[![PyPi workflow](https://github.com/cloud804d/mirrors-pengzhile-pandora/actions/workflows/python-publish.yml/badge.svg)](https://github.com/cloud804d/mirrors-pengzhile-pandora/actions/workflows/python-publish.yml)
+[![Docker workflow](https://github.com/cloud804d/mirrors-pengzhile-pandora/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/pengzhile/pandora/actions/workflows/docker-publish.yml)
 [![Discord](https://img.shields.io/discord/1098772912242163795?label=Discord)](https://discord.gg/QBkd9JAaWa)
 
 ## 体验地址
@@ -27,26 +27,26 @@
 
 ### 1. Please stand by, while we are checking your browser... 
 ### &nbsp;&nbsp;&nbsp;动不动来一下，有时候还不动或者出人机验证。痛！
-![t0](https://github.com/pengzhile/pandora/raw/master/doc/images/t0.png)
+![t0](./doc/images/t0.png)
 
 ### 2. Access denied. Sorry, you have been blocked
 ### &nbsp;&nbsp;&nbsp;经典问题，只能到处找可用VPN，费时费力，更费钱。移动端访问更难。痛！
-![t1.1](https://github.com/pengzhile/pandora/raw/master/doc/images/t1.1.png)
+![t1.1](./doc/images/t1.1.png)
 
 ### 3. ChatGPT is at capacity right now 
 ### &nbsp;&nbsp;&nbsp;系统负载高，白嫖用户不给用。痛！
-![t2](https://github.com/pengzhile/pandora/raw/master/doc/images/t2.png)
+![t2](./doc/images/t2.png)
 
 ### 4. This content may violate our <u>content policy</u>. 
 ### &nbsp;&nbsp;&nbsp;道德审查，多触发几次可能就封号了。痛！！！
-![t3](https://github.com/pengzhile/pandora/raw/master/doc/images/t3.png)
+![t3](./doc/images/t3.png)
 
 ### 5. Something went wrong. 
 ### &nbsp;&nbsp;&nbsp;吃着火锅唱着歌，突然就出故障了。痛！
-![t4](https://github.com/pengzhile/pandora/raw/master/doc/images/t4.png)
+![t4](./doc/images/t4.png)
 
 ### 6. 手机和电脑的模型不通用，顾这个就顾不到那个，痛！
-![t7](https://github.com/pengzhile/pandora/raw/master/doc/images/t7.png)
+![t7](./doc/images/t7.png)
 
 ### 7. 蹦字慢吞吞，卡顿不流畅，不知道的甚至想换电脑。痛！
 ### 8. 想把 `ChatGPT` 接到其他系统，结果只能接个差强人意的 `gpt-3.5-turbo`。痛！
@@ -59,17 +59,17 @@
 
   <summary>
 
-  ![alt Screenshot5](https://github.com/pengzhile/pandora/raw/master/doc/images/s05.png)<br>
-  ![alt Screenshot10](https://github.com/pengzhile/pandora/raw/master/doc/images/s12.jpeg)
+  ![alt Screenshot5](./doc/images/s05.png)<br>
+  ![alt Screenshot10](./doc/images/s12.jpeg)
 
   </summary>
 
-  ![alt Screenshot1](https://github.com/pengzhile/pandora/raw/master/doc/images/s01.png)<br>
-  ![alt Screenshot2](https://github.com/pengzhile/pandora/raw/master/doc/images/s02.png)<br>
-  ![alt Screenshot3](https://github.com/pengzhile/pandora/raw/master/doc/images/s03.png)<br>
-  ![alt Screenshot4](https://github.com/pengzhile/pandora/raw/master/doc/images/s04.png)<br>
-  ![alt Screenshot6](https://github.com/pengzhile/pandora/raw/master/doc/images/s06.png)<br>
-  ![alt Screenshot11](https://github.com/pengzhile/pandora/raw/master/doc/images/s11.jpeg)
+  ![alt Screenshot1](./doc/images/s01.png)<br>
+  ![alt Screenshot2](./doc/images/s02.png)<br>
+  ![alt Screenshot3](./doc/images/s03.png)<br>
+  ![alt Screenshot4](./doc/images/s04.png)<br>
+  ![alt Screenshot6](./doc/images/s06.png)<br>
+  ![alt Screenshot11](./doc/images/s11.jpeg)
 
   </details>
 
